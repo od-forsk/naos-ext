@@ -1,0 +1,4202 @@
+openapi: 3.0.0
+info:
+  title: Naos Gateway HTTP API
+  version: 1.5.0
+  description: |
+    ------------------
+
+    ## Naos Gateway API
+    The Naos Gateway is the single entry point for managing users, Naos instances and projects.
+
+    The [Preview] note on some endpoints is used to warn about an API that is considered not fully tested. Those endpoints can be used for development but should not be deployed in a production environment.
+
+    ### Naos Engine proxy routes
+
+    Naos Engine proxy routes direct requests and responses to a specific Naos Engine instance. The Naos Engine HTTP API documentation provides available routes and information on how to use them.
+
+    [GET](#/naos/proxy_get)
+    [POST](#/naos/proxy_post)
+    [PUT](#/naos/proxy_put)
+    [PATCH](#/naos/proxy_patch)
+    [DELETE](#/naos/proxy_delete)
+
+    ### Naos Workflow Manager proxy routes
+
+    Naos Workflow Manager proxy routes are used to interact with the Naos Workflow Manager API through Naos Gateway. See the Naos Workflow Manager HTTP API documentation.
+
+    [GET](#/scheduler/scheduler_proxy_get)
+    [POST](#/scheduler/scheduler_proxy_post)
+    [PUT](#/scheduler/scheduler_proxy_put)
+    [PATCH](#/scheduler/scheduler_proxy_patch)
+    [DELETE](#/scheduler/scheduler_proxy_delete)
+
+    ------------------
+  contact:
+    email: "supportnaos@forsk.com"
+servers:
+  - url: "/v1"
+tags:
+  - name: service
+  - name: auth
+  - name: naos
+  - name: admin
+  - name: user
+  - name: license
+  - name: teams
+  - name: geo
+  - name: projects
+  - name: workspaces
+  - name: scheduler
+security:
+  - BasicAuth: []
+  - TokenAuth: []
+
+paths:
+  /:
+    get:
+      tags:
+        - service
+      summary: Gateway health check route
+      operationId: health_check
+      responses:
+        "200":
+          description: Ok
+      security: []
+      x-openapi-router-controller: gateway.controllers.service_controller
+  /release-notes:
+    get:
+      tags:
+        - service
+      summary: Gateway release notes
+      operationId: get_release_notes
+      responses:
+        "200":
+          description: Release notes
+          content:
+            text/html:
+              schema:
+                type: string
+      security: []
+      x-openapi-router-controller: gateway.controllers.service_controller
+
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: Login user and return tokens (access and refresh)
+      operationId: login
+      responses:
+        "200":
+          description: Tokens
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenResponse"
+          links:
+            get_user_instances:
+              description: Retrieve user instances
+              operationId: get_instances
+            add_user_instance:
+              description: Allocate a new instance for the user
+              operationId: add_instance
+        "default":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+      security:
+        - BasicAuth: []
+      x-openapi-router-controller: gateway.controllers.auth_controller
+  /auth/token:
+    post:
+      tags:
+        - auth
+      summary: Returns a new access token using a refresh token
+      operationId: refresh
+      responses:
+        "200":
+          description: Access token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenResponse"
+          # TODO links
+        "default":
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+      security:
+        - TokenAuth: []
+      x-openapi-router-controller: gateway.controllers.auth_controller
+
+  /admin/users:
+    get:
+      tags:
+        - admin
+      summary: ADMIN. List users
+      operationId: get_users
+      parameters:
+        - name: name
+          in: query
+          description: User name to look for
+          required: false
+          schema:
+            type: string
+            format: regex
+          example: username
+        - name: login
+          in: query
+          description: User login to look for
+          required: false
+          schema:
+            type: string
+          example: userlogin
+        - name: email
+          in: query
+          description: User email to look for
+          required: false
+          schema:
+            type: string
+          example: user@mail.com
+        - $ref: "#/components/parameters/SkipParam"
+        - $ref: "#/components/parameters/LimitParam"
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserInfo"
+      x-openapi-router-controller: gateway.controllers.admin_controller
+    post:
+      tags:
+        - admin
+      summary: ADMIN. Create user
+      operationId: create_user
+      requestBody:
+        description: User info
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserInfo"
+      responses:
+        "201":
+          description: "Created"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IdResponse"
+      x-openapi-router-controller: gateway.controllers.admin_controller
+  /admin/users/{user_id}:
+    get:
+      tags:
+        - admin
+      summary: ADMIN. Get user
+      operationId: get_user
+      parameters:
+        - $ref: "#/components/parameters/UserIdParam"
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserInfo"
+        "404":
+          description: "User not found"
+      x-openapi-router-controller: gateway.controllers.admin_controller
+    delete:
+      tags:
+        - admin
+      summary: ADMIN. Delete user
+      operationId: delete_user
+      parameters:
+        - $ref: "#/components/parameters/UserIdParam"
+        - name: delete_workspaces
+          x-aliases: ["deleteWorkspaces"]
+          in: query
+          description: Remove user workspaces
+          required: false
+          schema:
+            type: boolean
+            default: true
+      responses:
+        "200":
+          description: "Ok"
+        "404":
+          description: "User not found"
+      x-openapi-router-controller: gateway.controllers.admin_controller
+    patch:
+      tags:
+        - admin
+      summary: ADMIN. Edit user info
+      operationId: edit_user
+      parameters:
+        - $ref: "#/components/parameters/UserIdParam"
+      requestBody:
+        description: User info
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserInfo"
+            example:
+              login: "login"
+              name: "name"
+              email: "sample@mail.com"
+              is_admin: false
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserInfo"
+        "404":
+          description: "User not found"
+      x-openapi-router-controller: gateway.controllers.admin_controller
+  /admin/users/{user_id}/password:
+    put:
+      tags:
+        - admin
+      summary: ADMIN. Change user password
+      operationId: change_user_password
+      parameters:
+        - $ref: "#/components/parameters/UserIdParam"
+      requestBody:
+        description: Password info
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SetPasswordObject"
+      responses:
+        "200":
+          description: "Ok"
+        "404":
+          description: "User not found"
+      x-openapi-router-controller: gateway.controllers.admin_controller
+  /admin/users/{user_id}/teams:
+    get:
+      tags:
+        - admin
+      summary: ADMIN. Returns a list of teams a user is member of
+      operationId: get_user_teams
+      parameters:
+        - $ref: "#/components/parameters/UserIdParam"
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GatewayTeam"
+        "404":
+          description: "User not found"
+      x-openapi-router-controller: gateway.controllers.admin_controller
+  /admin/users/{user_id}/tokens:
+    get:
+      tags:
+        - admin
+      summary: ADMIN. List user tokens
+      operationId: get_user_tokens
+      parameters:
+        - $ref: "#/components/parameters/UserIdParam"
+        - $ref: "#/components/parameters/SkipParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/CreatedFromParam"
+        - $ref: "#/components/parameters/CreatedToParam"
+        - $ref: "#/components/parameters/ExpiresFromParam"
+        - $ref: "#/components/parameters/ExpiresToParam"
+        - $ref: "#/components/parameters/LastSeenFromParam"
+        - $ref: "#/components/parameters/LastSeenToParam"
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserToken"
+        "404":
+          description: "User not found"
+      x-openapi-router-controller: gateway.controllers.admin_controller
+    delete:
+      tags:
+        - admin
+      summary: ADMIN. Delete all user tokens, effectively 'logging out' the user
+      operationId: delete_user_tokens
+      parameters:
+        - $ref: "#/components/parameters/UserIdParam"
+      responses:
+        "200":
+          description: "Ok"
+        "404":
+          description: "User not found"
+      x-openapi-router-controller: gateway.controllers.admin_controller
+  /admin/users/{user_id}/tokens/{token_id}:
+    get:
+      tags:
+        - admin
+      summary: ADMIN. Get user token
+      operationId: get_user_token
+      parameters:
+        - $ref: "#/components/parameters/UserIdParam"
+        - name: token_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Token Id
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserToken"
+        "404":
+          description: "User or Token not found"
+      x-openapi-router-controller: gateway.controllers.admin_controller
+    delete:
+      tags:
+        - admin
+      summary: ADMIN. Revoke user token
+      operationId: revoke_user_token
+      parameters:
+        - $ref: "#/components/parameters/UserIdParam"
+        - name: token_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Token Id
+      responses:
+        "200":
+          description: "Ok"
+        "404":
+          description: "User or Token not found"
+      x-openapi-router-controller: gateway.controllers.admin_controller
+  /admin/users/{user_id}/naos/{instance_id}:
+    get:
+      tags:
+        - admin
+      summary: ADMIN. Get user active instance details
+      operationId: get_user_instance
+      parameters:
+        - $ref: "#/components/parameters/UserIdParam"
+        - $ref: "#/components/parameters/InstanceIdParam"
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NaosInstance"
+        "404":
+          description: "User or instance not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+      x-openapi-router-controller: gateway.controllers.admin_controller
+    delete:
+      tags:
+        - admin
+      summary: ADMIN. Free user instance
+      operationId: free_user_instance
+      parameters:
+        - $ref: "#/components/parameters/UserIdParam"
+        - $ref: "#/components/parameters/InstanceIdParam"
+        - name: backup
+          in: query
+          description: Backup instance project if available
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+      x-openapi-router-controller: gateway.controllers.admin_controller
+  /admin/users/{user_id}/naos:
+    get:
+      tags:
+        - admin
+      summary: ADMIN. List user active instances
+      operationId: get_user_instances
+      parameters:
+        - $ref: "#/components/parameters/UserIdParam"
+        - $ref: "#/components/parameters/SkipParam"
+        - $ref: "#/components/parameters/LimitParam"
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/NaosInstance"
+        "404":
+          description: "User not found"
+      x-openapi-router-controller: gateway.controllers.admin_controller
+    delete:
+      tags:
+        - admin
+      summary: ADMIN. Free all user instances
+      operationId: free_user_instances
+      parameters:
+        - $ref: "#/components/parameters/UserIdParam"
+      responses:
+        "200":
+          description: OK
+      x-openapi-router-controller: gateway.controllers.admin_controller
+    post:
+      tags:
+        - admin
+      summary: ADMIN Create a new user instance
+      operationId: add_user_instance
+      parameters:
+        - $ref: "#/components/parameters/UserIdParam"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NaosInstance"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IdResponse"
+        "202":
+          description: Accepted (requested instance not ready yet)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IdResponse"
+      x-openapi-router-controller: gateway.controllers.admin_controller
+  /admin/naos:
+    get:
+      tags:
+        - admin
+      summary: ADMIN. List global active instances
+      operationId: get_global_instances
+      parameters:
+        - $ref: "#/components/parameters/SkipParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - name: match_pattern
+          x-aliases: ["matchPattern"]
+          in: query
+          description: Regular expression pattern used to match instance names
+          required: false
+          schema:
+            type: string
+          example: tot.*
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/NaosInstance"
+      x-openapi-router-controller: gateway.controllers.admin_controller
+  /admin/naos/{instance_id}:
+    get:
+      tags:
+        - admin
+      summary: ADMIN. Get global active instance details
+      operationId: get_global_instance
+      parameters:
+        - $ref: "#/components/parameters/InstanceIdParam"
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NaosInstance"
+      x-openapi-router-controller: gateway.controllers.admin_controller
+    delete:
+      tags:
+        - admin
+      summary: ADMIN. Free global instance
+      operationId: free_global_instance
+      parameters:
+        - $ref: "#/components/parameters/InstanceIdParam"
+        - name: backup
+          in: query
+          description: Backup instances project if available
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          description: OK
+      x-openapi-router-controller: gateway.controllers.admin_controller
+  /admin/tokens:
+    get:
+      tags:
+        - admin
+      summary: ADMIN. List tokens
+      operationId: get_global_tokens
+      parameters:
+        - $ref: "#/components/parameters/SkipParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/ClientIpParam"
+        - $ref: "#/components/parameters/CreatedFromParam"
+        - $ref: "#/components/parameters/CreatedToParam"
+        - $ref: "#/components/parameters/ExpiresFromParam"
+        - $ref: "#/components/parameters/ExpiresToParam"
+        - $ref: "#/components/parameters/LastSeenFromParam"
+        - $ref: "#/components/parameters/LastSeenToParam"
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserToken"
+      x-openapi-router-controller: gateway.controllers.admin_controller
+    delete:
+      tags:
+        - admin
+      summary: ADMIN. Revoke all tokens
+      operationId: revoke_all_token
+      responses:
+        "200":
+          description: "Ok"
+      x-openapi-router-controller: gateway.controllers.admin_controller
+  /admin/tokens/{token_id}:
+    get:
+      tags:
+        - admin
+      summary: ADMIN. Get a token
+      operationId: get_token
+      parameters:
+        - name: token_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Token Id
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserToken"
+        "404":
+          description: "Token not found"
+      x-openapi-router-controller: gateway.controllers.admin_controller
+    delete:
+      tags:
+        - admin
+      summary: ADMIN. Revoke a token
+      operationId: revoke_token
+      parameters:
+        - name: token_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Token Id
+      responses:
+        "200":
+          description: "Ok"
+        "404":
+          description: "Token not found"
+      x-openapi-router-controller: gateway.controllers.admin_controller
+  /admin/workspaces:
+    get:
+      tags:
+        - admin
+      summary: ADMIN. List workspaces
+      operationId: get_all_workspaces
+      parameters:
+      - name: name
+        in: query
+        description: Workspace name to look for
+        required: false
+        schema:
+          type: string
+          format: regex
+        example: workspacename
+      - name: created_from
+        x-aliases: ["createdFrom"]
+        in: query
+        description: Filter on starting creation date
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: created_to
+        x-aliases: ["createdTo"]
+        in: query
+        description: Filter on ending creation date
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: modified_from
+        x-aliases: ["modifiedFrom"]
+        in: query
+        description: Filter on starting modification date
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: modified_to
+        x-aliases: ["modifiedTo"]
+        in: query
+        description: Filter on ending modification date
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: user_id
+        x-aliases: ["userId"]
+        in: query
+        description: Filter on user id
+        required: false
+        schema:
+          type: string
+      - name: project_name
+        x-aliases: ["projectName"]
+        in: query
+        description: Filter on project name
+        required: false
+        schema:
+          type: string
+          format: regex
+      - name: project_id
+        x-aliases: ["projectId"]
+        in: query
+        description: Filter on project id
+        required: false
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/TechnologiesQuery'
+      - name: skip
+        in: query
+        description: Workspaces to skip
+        required: false
+        schema:
+          type: integer
+        example: 0
+      - name: limit
+        in: query
+        description: Max workspaces to return
+        required: false
+        schema:
+          type: integer
+        example: 10
+      responses:
+        '200':
+          description: Workspaces
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Workspace"
+        'default':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      x-openapi-router-controller: gateway.controllers.admin_controller
+  /admin/{user_id}/workspaces:
+    get:
+      tags:
+        - admin
+      summary: ADMIN. List user workspaces
+      operationId: get_user_workspaces
+      parameters:
+      - $ref: '#/components/parameters/UserIdParam'
+      - name: name
+        in: query
+        description: Workspace name to look for
+        required: false
+        schema:
+          type: string
+          format: regex
+        example: workspacename
+      - name: created_from
+        x-aliases: ["createdFrom"]
+        in: query
+        description: Filter on starting creation date
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: created_to
+        x-aliases: ["createdTo"]
+        in: query
+        description: Filter on ending creation date
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: modified_from
+        x-aliases: ["modifiedFrom"]
+        in: query
+        description: Filter on starting modification date
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: modified_to
+        x-aliases: ["modifiedTo"]
+        in: query
+        description: Filter on ending modification date
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: project_name
+        x-aliases: ["projectName"]
+        in: query
+        description: Filter on project name
+        required: false
+        schema:
+          type: string
+      - name: project_id
+        x-aliases: ["projectId"]
+        in: query
+        description: Filter on project id
+        required: false
+        schema:
+          type: string
+          format: uuid
+      - $ref: '#/components/parameters/TechnologiesQuery'
+      - name: skip
+        in: query
+        description: Workspaces to skip
+        required: false
+        schema:
+          type: integer
+        example: 0
+      - name: limit
+        in: query
+        description: Max workspaces to return
+        required: false
+        schema:
+          type: integer
+        example: 10
+      responses:
+        '200':
+          description: Workspaces
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Workspace"
+        'default':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      x-openapi-router-controller: gateway.controllers.admin_controller
+    post:
+      tags:
+        - admin
+      summary: ADMIN. Create a user's workspace
+      operationId: create_user_workspace
+      parameters:
+      - $ref: '#/components/parameters/UserIdParam'
+      - name: apply_project_cfg
+        x-aliases: ["applyProjectCfg"]
+        in: query
+        description: |
+          Load project's configfuration files while creating the workspace, these configuration files will not appear in the workspace metadata and loaded only once.
+          Configuration files defined in the body of the request are applied at workspace openning.
+        required: false
+        schema:
+          type: boolean
+          default: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Workspace'
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdResponse'
+        "400":
+          description: Invalid workspace details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      x-openapi-router-controller: gateway.controllers.admin_controller
+  /admin/workspaces/{workspace_id}:
+    get:
+      tags:
+        - admin
+      summary: ADMIN. Get details concerning a specific workspace
+      operationId: get_workspace_admin
+      parameters:
+      - $ref: '#/components/parameters/WorkspaceIdParam'
+      responses:
+        "200":
+          description: Workspace details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Workspace"
+        "404":
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      x-openapi-router-controller: gateway.controllers.admin_controller
+    delete:
+      tags:
+        - admin
+      summary: ADMIN. Delete a workspace
+      operationId: delete_workspace_admin
+      parameters:
+      - $ref: '#/components/parameters/WorkspaceIdParam'
+      - $ref: '#/components/parameters/ForceDeleteQuery'
+      responses:
+        "200":
+          description: OK
+        default:
+          $ref: '#/components/responses/DefaultError'
+      x-openapi-router-controller: gateway.controllers.admin_controller
+    patch:
+      tags:
+        - admin
+      summary: ADMIN. Edit a workspace
+      operationId: edit_workspace_admin
+      parameters:
+      - $ref: '#/components/parameters/WorkspaceIdParam'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Workspace'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workspace'
+        "404":
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      x-openapi-router-controller: gateway.controllers.admin_controller
+  /teams:
+    get:
+      tags:
+      - teams
+      summary: ADMIN. List teams
+      operationId: get_teams
+      parameters:
+        - $ref: "#/components/parameters/SkipParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - name: match_pattern
+          x-aliases: ["matchPattern"]
+          in: query
+          description: Regular expression pattern used to match teams names
+          required: false
+          schema:
+            type: string
+          example: tot.*
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GatewayTeam"
+      x-openapi-router-controller: gateway.controllers.teams_controller
+    post:
+      tags:
+        - teams
+      summary: ADMIN. Create team
+      operationId: create_team
+      requestBody:
+        description: Team details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GatewayTeam"
+      responses:
+        "201":
+          description: "Created"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IdResponse"
+      x-openapi-router-controller: gateway.controllers.teams_controller
+  /teams/{team_id}:
+    get:
+      tags:
+        - teams
+      summary: ADMIN. Get team
+      operationId: get_team
+      parameters:
+        - $ref: "#/components/parameters/TeamIdParam"
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GatewayTeam"
+        "404":
+          description: "Team not found"
+      x-openapi-router-controller: gateway.controllers.teams_controller
+    delete:
+      tags:
+        - teams
+      summary: ADMIN. Delete team
+      operationId: delete_team
+      parameters:
+        - $ref: "#/components/parameters/TeamIdParam"
+      responses:
+        "200":
+          description: "Ok"
+        "404":
+          description: "Team not found"
+      x-openapi-router-controller: gateway.controllers.teams_controller
+    patch:
+      tags:
+        - teams
+      summary: ADMIN. Edit team details
+      operationId: edit_team
+      parameters:
+        - $ref: "#/components/parameters/TeamIdParam"
+      requestBody:
+        description: Team details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GatewayTeam"
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GatewayTeam"
+        "404":
+          description: "Team not found"
+      x-openapi-router-controller: gateway.controllers.teams_controller
+  /teams/{team_id}/users:
+    get:
+      tags:
+        - teams
+      summary: ADMIN. Get team's users
+      operationId: get_team_users
+      parameters:
+        - $ref: "#/components/parameters/TeamIdParam"
+        - $ref: "#/components/parameters/SkipParam"
+        - $ref: "#/components/parameters/LimitParam"
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GatewayTeamUser"
+        "404":
+          description: "Team not found"
+      x-openapi-router-controller: gateway.controllers.teams_controller
+    post:
+      tags:
+        - teams
+      summary: ADMIN. Add a batch of users to an existing team
+      operationId: add_team_users
+      parameters:
+        - $ref: "#/components/parameters/TeamIdParam"
+      requestBody:
+        description: List of users and roles to add to the team
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/GatewayTeamUser'
+      responses:
+        "200":
+          description: "List of added users. Skip if the user already belong to the team"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GatewayTeamUser"
+        "400":
+          description: "User not found"
+        "404":
+          description: "Team not found"
+      x-openapi-router-controller: gateway.controllers.teams_controller
+  /teams/{team_id}/users/{user_id}:
+    put:
+      tags:
+        - teams
+      summary: ADMIN. Add a user to an existing team
+      operationId: add_team_user
+      parameters:
+        - $ref: "#/components/parameters/TeamIdParam"
+        - $ref: "#/components/parameters/UserIdParam"
+        - name: role
+          in: query
+          description: User can be a member or a team admin
+          required: true
+          schema:
+            type: string
+            enum:
+              - MEMBER
+              - ADMIN
+          example: MEMBER
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GatewayTeamUser"
+        "400":
+          description: "User already exists in the team"
+        "404":
+          description: "Team/User not found"
+      x-openapi-router-controller: gateway.controllers.teams_controller
+    delete:
+      tags:
+        - teams
+      summary: ADMIN. Remove a user from a team
+      operationId: delete_team_user
+      parameters:
+        - $ref: "#/components/parameters/TeamIdParam"
+        - $ref: "#/components/parameters/UserIdParam"
+      responses:
+        "200":
+          description: "Ok"
+        "404":
+          description: "Team/User not found"
+      x-openapi-router-controller: gateway.controllers.teams_controller
+    patch:
+      tags:
+        - teams
+      summary: ADMIN. Modify the role of a user that belongs to a team
+      operationId: edit_team_user
+      parameters:
+        - $ref: "#/components/parameters/TeamIdParam"
+        - $ref: "#/components/parameters/UserIdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GatewayTeamUser"
+            example:
+              role: MEMBER
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GatewayTeamUser"
+        "404":
+          description: "Team/User not found"
+      x-openapi-router-controller: gateway.controllers.teams_controller
+
+
+  /user:
+    get:
+      tags:
+        - user
+      summary: Get user info
+      description: Gets information about the current user.
+      operationId: get_current_user
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserInfo"
+        "404":
+          description: "User not found"
+      x-openapi-router-controller: gateway.controllers.user_controller
+    patch:
+      tags:
+        - user
+      summary: Edit user info
+      description: Changes information about the current user.
+      operationId: edit_current_user
+      requestBody:
+        description: User info
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserInfo"
+            example:
+              # Visible Properties for this route of a referenced object
+              login: "login"
+              name: "name"
+              email: "sample@mail.com"
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserInfo"
+        "404":
+          description: "User not found"
+      x-openapi-router-controller: gateway.controllers.user_controller
+  /user/password:
+    put:
+      tags:
+        - user
+      summary: Change password
+      description: Changes the password of the current user.
+      operationId: change_current_user_password
+      requestBody:
+        description: Password info
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangePasswordObject"
+      responses:
+        "200":
+          description: "Ok"
+        "404":
+          description: "User not found"
+      x-openapi-router-controller: gateway.controllers.user_controller
+  /user/teams:
+    get:
+      tags:
+        - user
+      summary: Get user teams
+      description: Gets the list of teams that the current user belongs to. Only returns the team id and name from the Gateway Teams object.
+      operationId: get_current_user_teams
+      parameters:
+        - $ref: "#/components/parameters/SkipParam"
+        - $ref: "#/components/parameters/LimitParam"
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GatewayTeam"
+              examples:
+                example:
+                  value:
+                    - id: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+                      name: string
+        "404":
+          description: "User not found"
+      x-openapi-router-controller: gateway.controllers.user_controller
+
+
+  /naos:
+    get:
+      tags:
+        - naos
+      summary: List user active instances
+      operationId: get_instances
+      parameters:
+        - $ref: "#/components/parameters/SkipParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - name: match_pattern
+          x-aliases: ["matchPattern"]
+          in: query
+          description: Regular expression pattern used to match instance names
+          required: false
+          schema:
+            type: string
+          example: tot.*
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/NaosInstance"
+      x-openapi-router-controller: gateway.controllers.naos_controller
+    post:
+      tags:
+        - naos
+      summary: Request a new instance
+      operationId: add_instance
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NaosInstance"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IdResponse"
+        "202":
+          description: Accepted (requested instance not ready yet)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IdResponse"
+        default:
+          $ref: "#/components/responses/DefaultError"
+      x-openapi-router-controller: gateway.controllers.naos_controller
+    delete:
+      tags:
+        - naos
+      summary: Free all user instances
+      operationId: free_instances
+      responses:
+        "200":
+          description: OK
+      x-openapi-router-controller: gateway.controllers.naos_controller
+  /naos/{instance_id}:
+    get:
+      tags:
+        - naos
+      summary: Get user active instance details
+      operationId: get_instance
+      parameters:
+        - $ref: "#/components/parameters/InstanceIdParam"
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NaosInstance"
+        "403":
+          description: "Current user has no access to this instance"
+        "404":
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+      x-openapi-router-controller: gateway.controllers.naos_controller
+    delete:
+      tags:
+        - naos
+      summary: Free user instance
+      operationId: free_instance
+      parameters:
+        - $ref: "#/components/parameters/InstanceIdParam"
+        - name: backup
+          in: query
+          description: Backup instance project if available
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          description: OK
+        "403":
+          description: "Current user has no access to this instance"
+        "404":
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+      x-openapi-router-controller: gateway.controllers.naos_controller
+    post:
+      tags:
+        - naos
+      summary: Force backup creation. <b>Warning</b> this API may change without notice
+      operationId: create_backup
+      parameters:
+        - $ref: "#/components/parameters/InstanceIdParam"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IdResponse"
+        "403":
+          description: "Current user has no access to this instance"
+        "404":
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+      x-openapi-router-controller: gateway.controllers.naos_controller
+  /naos/{instance_id}/{route}:
+    get:
+      tags:
+        - naos
+      summary: "Forwards a GET request to a naos instance. The service along with its \
+                query parameters are specified in the 'route' parameter"
+      operationId: proxy_get
+      parameters:
+        - $ref: "#/components/parameters/InstanceIdParam"
+        - name: route
+          in: path
+          required: true
+          schema:
+            type: string
+            format: path
+            example: "v2/doc"
+      responses:
+        "200":
+          description: OK
+        "403":
+          description: "Current user has no access to this instance"
+        "404":
+          description: "Not found"
+        "502":
+          description: "Naos service is unhealthy"
+        "503":
+          description: "Connection timeout trying to communicate with the Naos service"
+        "504":
+          description: "Read timeout trying to communicate with the Naos engine"
+      x-openapi-router-controller: gateway.controllers.naos_proxy
+    post:
+      tags:
+        - naos
+      summary: "Forwards a POST request to a naos instance. The service along with its \
+                query parameters are specified in the 'route' parameter"
+      operationId: proxy_post
+      parameters:
+        - $ref: "#/components/parameters/InstanceIdParam"
+        - name: route
+          in: path
+          required: true
+          schema:
+            type: string
+            format: path
+            example: "v2/doc/study/df643635-5404-4a51-adc8-badb33de8c92/export?includeMetadata=true&runInBackground=true"
+      requestBody:
+        $ref: "#/components/requestBodies/AnyValueBody"
+      responses:
+        "200":
+          description: OK
+        "403":
+          description: "Current user has no access to this instance"
+        "404":
+          description: "Not found"
+        "502":
+          description: "Naos service is unhealthy"
+        "503":
+          description: "Connection timeout trying to communicate with the Naos service"
+        "504":
+          description: "Read timeout trying to communicate with the Naos engine"
+      x-openapi-router-controller: gateway.controllers.naos_proxy
+    put:
+      tags:
+        - naos
+      summary: "Forwards a PUT request to a naos instance. The service along with its \
+                query parameters are specified in the 'route' parameter"
+      operationId: proxy_put
+      parameters:
+        - $ref: "#/components/parameters/InstanceIdParam"
+        - name: route
+          in: path
+          required: true
+          schema:
+            type: string
+            format: path
+            example: "v2/doc"
+      requestBody:
+        $ref: "#/components/requestBodies/AnyValueBody"
+      responses:
+        "200":
+          description: OK
+        "403":
+          description: "Current user has no access to this instance"
+        "404":
+          description: "Not found"
+        "502":
+          description: "Naos service is unhealthy"
+        "503":
+          description: "Connection timeout trying to communicate with the Naos service"
+        "504":
+          description: "Read timeout trying to communicate with the Naos engine"
+      x-openapi-router-controller: gateway.controllers.naos_proxy
+    patch:
+      tags:
+        - naos
+      summary: "Forwards a PATCH request to a naos instance. The service along with its \
+                query parameters are specified in the 'route' parameter"
+      operationId: proxy_patch
+      parameters:
+        - $ref: "#/components/parameters/InstanceIdParam"
+        - name: route
+          in: path
+          required: true
+          schema:
+            type: string
+            format: path
+            example: "v2/doc?create_parents=true&copy_externalised_results=false"
+      requestBody:
+        $ref: "#/components/requestBodies/AnyValueBody"
+      responses:
+        "200":
+          description: OK
+        "403":
+          description: "Current user has no access to this instance"
+        "404":
+          description: "Not found"
+        "502":
+          description: "Naos service is unhealthy"
+        "503":
+          description: "Connection timeout trying to communicate with the Naos service"
+        "504":
+          description: "Read timeout trying to communicate with the Naos engine"
+      x-openapi-router-controller: gateway.controllers.naos_proxy
+    delete:
+      tags:
+        - naos
+      summary: "Forwards a DELETE request to a naos instance. The service along with its \
+                query parameters are specified in the 'route' parameter"
+      operationId: proxy_delete
+      parameters:
+        - $ref: "#/components/parameters/InstanceIdParam"
+        - name: route
+          in: path
+          required: true
+          schema:
+            type: string
+            format: path
+            example: "v2/doc"
+      responses:
+        "200":
+          description: OK
+        "403":
+          description: "Current user has no access to this instance"
+        "404":
+          description: "Not found"
+        "502":
+          description: "Naos service is unhealthy"
+        "503":
+          description: "Connection timeout trying to communicate with the Naos service"
+        "504":
+          description: "Read timeout trying to communicate with the Naos engine"
+      x-openapi-router-controller: gateway.controllers.naos_proxy
+  /naos/{instance_id}/project:
+    get:
+      tags:
+        - naos
+      summary: Get instance project
+      operationId: get_instance_project
+      parameters:
+      - $ref: '#/components/parameters/InstanceIdParam'
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        "403":
+          description: "Current user has no access to this instance"
+      x-openapi-router-controller: gateway.controllers.naos_controller
+    post:
+      tags:
+        - naos
+      summary: Opens a project
+      operationId: open_project
+      parameters:
+      - $ref: '#/components/parameters/InstanceIdParam'
+      - $ref: '#/components/parameters/ForceOpenEditProjectQuery'
+      requestBody:
+        $ref: '#/components/requestBodies/IdBody'
+      responses:
+        "200":
+          description: "Ok"
+        "202":
+          description: Accepted
+        "403":
+          description: "Current user has no access to this instance"
+      x-openapi-router-controller: gateway.controllers.naos_controller
+    delete:
+      tags:
+        - naos
+      summary: Closes a project. Has no effect if a workspace is attached to the instance.
+      operationId: close_project
+      parameters:
+      - $ref: '#/components/parameters/InstanceIdParam'
+      responses:
+        "200":
+          description: Ok
+        "403":
+          description: "Current user has no access to this instance"
+      x-openapi-router-controller: gateway.controllers.naos_controller
+    patch:
+      tags:
+        - naos
+      summary: Save the changes made to the project
+      description: Only available for projects whose source type is Atl
+      operationId: save_project
+      parameters:
+      - $ref: '#/components/parameters/InstanceIdParam'
+      - $ref: '#/components/parameters/HistoryMessageQuery'
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        "202":
+          description: Accepted
+        "403":
+          description: "Current user has no access to this instance"
+      x-openapi-router-controller: gateway.controllers.naos_controller
+    put:
+      tags:
+        - naos
+      summary: Archive the changes made to the project
+      description: The project's source type must be a db type or an Atl connected to a db.
+      operationId: archive_project
+      parameters:
+      - $ref: '#/components/parameters/InstanceIdParam'
+      - name: history_message
+        x-aliases: ["historyMessage"]
+        in: query
+        description: A message indicating the changes to the project
+        required: false
+        schema:
+          type: string
+        example: Archive project
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        "202":
+          description: Accepted
+        "403":
+          description: "Current user has no access to this instance"
+      x-openapi-router-controller: gateway.controllers.naos_controller
+  /naos/{instance_id}/workspace:
+    get:
+      tags:
+        - naos
+      summary: Get instance workspace
+      operationId: get_instance_workspace
+      parameters:
+      - $ref: '#/components/parameters/InstanceIdParam'
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workspace'
+        "403":
+          description: "Current user has no access to this instance"
+      x-openapi-router-controller: gateway.controllers.naos_controller
+    post:
+      tags:
+        - naos
+      summary: Opens a workspace
+      operationId: open_workspace
+      parameters:
+      - $ref: '#/components/parameters/InstanceIdParam'
+      requestBody:
+        $ref: '#/components/requestBodies/IdBody'
+      responses:
+        "200":
+          description: "Ok"
+        "202":
+          description: Accepted
+        "403":
+          description: "Current user has no access to this instance"
+      x-openapi-router-controller: gateway.controllers.naos_controller
+    delete:
+      tags:
+        - naos
+      summary: Closes a workspace. Has no effect if no workspace is attached to the instance.
+      operationId: close_workspace
+      parameters:
+      - $ref: '#/components/parameters/InstanceIdParam'
+      responses:
+        "200":
+          description: Ok
+        "403":
+          description: "Current user has no access to this instance"
+      x-openapi-router-controller: gateway.controllers.naos_controller
+    patch:
+      tags:
+        - naos
+      summary: Save the changes made to the workspace
+      description: If body is empty, SAVE. If name in body, SAVE AS
+      operationId: save_workspace
+      parameters:
+      - $ref: '#/components/parameters/InstanceIdParam'
+      - $ref: '#/components/parameters/HistoryMessageQuery'
+      requestBody:
+        $ref: '#/components/requestBodies/OptionalNameBody'
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workspace'
+        "403":
+          description: "Current user has no access to this instance"
+      x-openapi-router-controller: gateway.controllers.naos_controller
+    put:
+      tags:
+        - naos
+      summary: Push the changes made to the workspace onto the parent project
+      description: The project's source type must be a db type or an Atl connected to a db
+      operationId: archive_workspace
+      parameters:
+      - $ref: '#/components/parameters/InstanceIdParam'
+      - $ref: '#/components/parameters/HistoryMessageQuery'
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        "403":
+          description: "Current user has no access to this instance"
+      x-openapi-router-controller: gateway.controllers.naos_controller
+  /naos/{instance_id}/create_workspace:
+    post:
+      tags:
+        - naos
+      summary: Create a workspace from an opened project or raw Naos document.
+      description: When creating a workspace from project, it is strongly recommended to use the POST /workspaces route that is more efficient.
+      operationId: create_workspace_from_instance
+      parameters:
+      - $ref: '#/components/parameters/InstanceIdParam'
+      requestBody:
+        $ref: '#/components/requestBodies/NameBody'
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdResponse'
+        "403":
+          description: "Current user has no access to this instance"
+      x-openapi-router-controller: gateway.controllers.naos_controller
+  /naos/flavors:
+    get:
+      tags:
+        - naos
+      summary: Get accepted naos flavors
+      operationId: get_naos_flavors
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+      x-openapi-router-controller: gateway.controllers.naos_controller
+  /geofiles:
+    post:
+      tags:
+        - geo
+      summary: " ADMIN. Create geo file"
+      description: |
+        Uses the geo_file request body to create a geo file in a volume that is mapped to the explorer.
+        Use the `zip_file` parameter in conjunction with the geo_file body to create and upload the geo file from a zip file.
+        When a zip file is uploaded, the URI parameter in the request body is not necessary and is ignored.
+      operationId: create_geo_file
+      parameters:
+        - name: autoscan
+          in: query
+          description: |
+            Automatic scanning of `bounding_box` and `crs`.
+            This opens the geo file in an async task and extracts the info if present in the metadata.
+          required: false
+          schema:
+            type: boolean
+            default: false
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/GeoFileForm"
+            encoding:
+              geo_file:
+                contentType: application/json
+              zip_file:
+                contentType: application/zipk
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IdResponse"
+        "400":
+          description: Invalid geo file details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+      x-openapi-router-controller: gateway.controllers.geo_controller
+    get:
+      tags:
+        - geo
+      summary: "ADMIN. Get geo file list"
+      description: 'Lists all available geo files that match the query criteria.'
+      operationId: get_geo_files
+      parameters:
+        - name: name
+          in: query
+          description: Filter by file name or regex. Logic AND.
+          required: false
+          schema:
+            type: string
+            format: regex
+        - name: geo_type
+          x-aliases: ["geoType"]
+          in: query
+          description: Filter by geo type (clutter classes, clutter heights, or DTM). Logic OR.
+          required: false
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/GeoTypeEnum"
+        - name: file_format
+          x-aliases: ["fileFormat"]
+          in: query
+          description: Filter by file format. Logic OR.
+          required: false
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/GeoFileFormatEnum"
+        - name: graphics_type
+          x-aliases: ["graphicsType"]
+          in: query
+          description: Filter by spatial data type (vector or raster). Logic OR.
+          required: false
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/GeoGraphicsTypeEnum"
+        - name: tags
+          in: query
+          description: Filter by tags. Logic AND.
+          required: false
+          schema:
+            type: "array"
+            items:
+              type: "string"
+        - name: properties_field_key
+          x-aliases: ["propertiesFieldKey"]
+          in: query
+          description: Filter. Select an attribute of the raster/vector properties. Logic AND.
+          required: false
+          schema:
+            type: string
+        - name: properties_field_type
+          x-aliases: ["propertiesFieldType"]
+          in: query
+          description: Filter. Select the type of the attribute of the raster/vector properties. Logic AND.
+          required: false
+          schema:
+            type: string
+            enum:
+              - string
+              - regex
+              - number
+            default: string
+        - name: properties_field_value
+          x-aliases: ["propertiesFieldValue"]
+          in: query
+          description: Filter. Select a value to apply to the field selected in propertiesFieldKey. Logic AND.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: uri
+          in: query
+          description: Filter by URI. The URI is translated internally to perform the search. If provided, all other filters are ignored.
+          required: false
+          schema:
+            type: string
+            format: uri
+            example: "file:///c:/naos_share/my_geo_file.shp"
+        - $ref: "#/components/parameters/SkipParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/NaosFilepathMode"
+      responses:
+        "200":
+          description: Geo files
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GeoFile"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+      x-openapi-router-controller: gateway.controllers.geo_controller
+  /geofiles/atoll-xml:
+    post:
+      tags:
+        - geo
+      summary: "ADMIN. Create geo files from XML"
+      description: Parses an Atoll XML configuration file and extracts the geo files.
+      operationId: create_geo_files_from_xml
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uri:
+                  description: URI of the XML configuration file.
+                  type: string
+                  format: uri
+                  example: file:///path/to/file.geo
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/IdResponse"
+        "400":
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+      x-openapi-router-controller: gateway.controllers.geo_controller
+  /geofiles/{geofile_id}:
+    get:
+      tags:
+        - geo
+      summary: "ADMIN. Get geo file information"
+      description: "Returns the details of a specific geo file."
+      operationId: get_geo_file
+      parameters:
+        - name: geofile_id
+          in: path
+          description: Geo file identifier.
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: "#/components/parameters/NaosFilepathMode"
+      responses:
+        "200":
+          description: Geo file
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GeoFile"
+        "404":
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+      x-openapi-router-controller: gateway.controllers.geo_controller
+    patch:
+      tags:
+        - geo
+      summary: "ADMIN. Edit geo file"
+      description: Modifies the `name`, `tags`, `bounding_box` and `crs` fields of a specific geo file. Other fields are ignored.
+      operationId: edit_geo_file
+      parameters:
+        - name: geofile_id
+          in: path
+          description: Geo file identifier.
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GeoFile"
+            example: {
+              "tags": ["northwest chicago"],
+              "bounding_box": [0, 10, 20, 30],
+              "crs": 1980
+            }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GeoFile"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+      x-openapi-router-controller: gateway.controllers.geo_controller
+    delete:
+      tags:
+        - geo
+      summary: "ADMIN. Delete a geo file"
+      description: 'Deletes a specific geo file in the file system.'
+      operationId: delete_geo_file
+      parameters:
+        - name: geofile_id
+          in: path
+          description: Geo file identifier.
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: erase_file
+          x-aliases: ["eraseFile"]
+          in: query
+          description: Deletes the file from the location referenced by its URI.
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+      x-openapi-router-controller: gateway.controllers.geo_controller
+
+  /projects:
+    get:
+      tags:
+        - projects
+      summary: List available projects
+      operationId: get_projects
+      parameters:
+      - name: name
+        in: query
+        description: Project name to look for
+        required: false
+        schema:
+          type: string
+          format: regex
+        example: projectname
+      - name: created_from
+        x-aliases: ["createdFrom"]
+        in: query
+        description: Filter on starting creation date
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: created_to
+        x-aliases: ["createdTo"]
+        in: query
+        description: Filter on ending creation date
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: modified_from
+        x-aliases: ["modifiedFrom"]
+        in: query
+        description: Filter on starting modification date
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: modified_to
+        x-aliases: ["modifiedTo"]
+        in: query
+        description: Filter on ending modification date
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: created_by
+        x-aliases: ["createdBy"]
+        in: query
+        description: Filter on project creator id
+        required: false
+        schema:
+          type: string
+      - name: modified_by
+        x-aliases: ["modifiedBy"]
+        in: query
+        description: Filter on project last modifier id
+        required: false
+        schema:
+          type: string
+      - $ref: '#/components/parameters/TechnologiesQuery'
+      - $ref: "#/components/parameters/NaosFilepathMode"
+      responses:
+        '200':
+          description: Projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Project"
+        'default':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      x-openapi-router-controller: gateway.controllers.project_controller
+    post:
+      tags:
+        - projects
+      summary: ADMIN. Create a new project
+      description: "Adds a new project to a Naos instance. This allows you to create a project with autoscan in an asynchronous mode."
+      operationId: create_project
+      parameters:
+      - name: autoscan
+        in: query
+        description: Automatic scanning of project's info. This opens the project in a new Naos instance to retrieve project's info.
+        required: false
+        schema:
+          type: boolean
+          default: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Project'
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdResponse'
+        "400":
+          description: Invalid project details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      x-openapi-router-controller: gateway.controllers.project_controller
+  /projects/{project_id}:
+    get:
+      tags:
+        - projects
+      summary: Get details concerning a specific project
+      operationId: get_project
+      parameters:
+      - $ref: '#/components/parameters/ProjectIdParam'
+      - $ref: "#/components/parameters/NaosFilepathMode"
+      responses:
+        "200":
+          description: Project details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "404":
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      x-openapi-router-controller: gateway.controllers.project_controller
+    delete:
+      tags:
+        - projects
+      summary: ADMIN. Delete a project
+      operationId: delete_project
+      parameters:
+      - $ref: '#/components/parameters/ProjectIdParam'
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      x-openapi-router-controller: gateway.controllers.project_controller
+    patch:
+      tags:
+        - projects
+      summary: ADMIN. Edit a project
+      operationId: edit_project
+      parameters:
+      - $ref: '#/components/parameters/ProjectIdParam'
+      - $ref: '#/components/parameters/HistoryMessageQuery'
+      - $ref: '#/components/parameters/ForceOpenEditProjectQuery'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Project'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        "404":
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      x-openapi-router-controller: gateway.controllers.project_controller
+  /projects/{project_id}/data/{route}:
+    get:
+      tags:
+        - projects
+      summary: Proxy GET to Data Access Service
+      description: |
+        [Preview]
+        Forwards a GET request to the Naos Data Access Service.
+        The service along with its query parameters are specified in the 'route' parameter.
+      operationId: das_project_proxy_get
+      parameters:
+        - $ref: '#/components/parameters/ProjectIdParam'
+        - name: route
+          in: path
+          required: true
+          schema:
+            type: string
+            format: path
+            example: "raw/sites?limit=200"
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: "Not found"
+        "502":
+          description: "Naos Data Access Service is unhealthy"
+        "503":
+          description: "Connection timeout trying to communicate with the Naos Data Access Service"
+        "504":
+          description: "Read timeout trying to communicate with the Naos Data Access Service"
+      x-openapi-router-controller: gateway.controllers.data_explorer_proxy
+    post:
+      tags:
+        - projects
+      summary: Proxy POST to Data Access Service
+      description: |
+        [Preview]
+        Forwards a POST request to the Naos Data Access Service.
+        The service along with its query parameters are specified in the 'route' parameter.
+      operationId: das_project_proxy_post
+      parameters:
+        - $ref: "#/components/parameters/ProjectIdParam"
+        - name: route
+          in: path
+          required: true
+          schema:
+            type: string
+            format: path
+            example: "raw/sites"
+      requestBody:
+        $ref: "#/components/requestBodies/AnyValueBody"
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: "Not found"
+        "502":
+          description: "Naos Data Access Service is unhealthy"
+        "503":
+          description: "Connection timeout trying to communicate with the Naos Data Access Service"
+        "504":
+          description: "Read timeout trying to communicate with the Naos Data Access Service"
+      x-openapi-router-controller: gateway.controllers.data_explorer_proxy
+    put:
+      tags:
+        - projects
+      summary: Proxy PUT to Data Access Service
+      description: |
+        [Preview]
+        Forwards a PUT request to the Naos Data Access Service.
+        The service along with its query parameters are specified in the 'route' parameter.
+      operationId: das_project_proxy_put
+      parameters:
+        - $ref: "#/components/parameters/ProjectIdParam"
+        - name: route
+          in: path
+          required: true
+          schema:
+            type: string
+            format: path
+            example: "raw/sites?filters=db_record_id.eq.11"
+      requestBody:
+        $ref: "#/components/requestBodies/AnyValueBody"
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: "Not found"
+        "502":
+          description: "Naos Data Access Service is unhealthy"
+        "503":
+          description: "Connection timeout trying to communicate with the Naos Data Access Service"
+        "504":
+          description: "Read timeout trying to communicate with the Naos Data Access Service"
+      x-openapi-router-controller: gateway.controllers.data_explorer_proxy
+    patch:
+      tags:
+        - projects
+      summary: Proxy PATCH to Data Access Service
+      description: |
+        [Preview]
+        Forwards a PATCH request to the Naos Data Access Service.
+        The service along with its query parameters are specified in the 'route' parameter.
+      operationId: das_project_proxy_patch
+      parameters:
+        - $ref: "#/components/parameters/ProjectIdParam"
+        - name: route
+          in: path
+          required: true
+          schema:
+            type: string
+            format: path
+            example: "raw/sites"
+      requestBody:
+        $ref: "#/components/requestBodies/AnyValueBody"
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: "Not found"
+        "502":
+          description: "Naos Data Access Service is unhealthy"
+        "503":
+          description: "Connection timeout trying to communicate with the Naos Data Access Service"
+        "504":
+          description: "Read timeout trying to communicate with the Naos Data Access Service"
+      x-openapi-router-controller: gateway.controllers.data_explorer_proxy
+    delete:
+      tags:
+        - projects
+      summary: Proxy DELETE to Data Access Service
+      description: |
+        [Preview]
+        Forwards a DELETE request to the Naos Data Access Service.
+        The service along with its query parameters are specified in the 'route' parameter.
+      operationId: das_project_proxy_delete
+      parameters:
+        - $ref: "#/components/parameters/ProjectIdParam"
+        - name: route
+          in: path
+          required: true
+          schema:
+            type: string
+            format: path
+            example: "raw/sites?filters=db_record_id.ge.9"
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: "Not found"
+        "502":
+          description: "Naos Data Access Service is unhealthy"
+        "503":
+          description: "Connection timeout trying to communicate with the Naos Data Access Service"
+        "504":
+          description: "Read timeout trying to communicate with the Naos Data Access Service"
+      x-openapi-router-controller: gateway.controllers.data_explorer_proxy
+  /projects/{project_id}/geofiles:
+    post:
+      tags:
+        - projects
+      summary: "ADMIN. Add geo files to an existing project"
+      operationId: add_geo_files_to_project
+      parameters:
+        - $ref: '#/components/parameters/ProjectIdParam'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/SimpleId"
+      responses:
+        "200":
+          description: Project details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+      x-openapi-router-controller: gateway.controllers.project_controller
+    delete:
+      tags:
+        - projects
+      summary: "ADMIN. Removes all geo files from a project"
+      operationId: delete_geo_files_from_project
+      parameters:
+        - $ref: '#/components/parameters/ProjectIdParam'
+      responses:
+        "200":
+          description: Project details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+      x-openapi-router-controller: gateway.controllers.project_controller
+  /projects/{project_id}/geofiles/{geo_file_id}:
+    put:
+      tags:
+        - projects
+      summary: "ADMIN. Add geo file to project"
+      description: "Adds a single geo file to an existing project."
+      operationId: add_geo_file_to_project
+      parameters:
+        - $ref: '#/components/parameters/ProjectIdParam'
+        - $ref: '#/components/parameters/GeoFileIdParam'
+      responses:
+        "200":
+          description: Project details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+      x-openapi-router-controller: gateway.controllers.project_controller
+    delete:
+      tags:
+        - projects
+      summary: "ADMIN. Deletes a geo file from a project"
+      description: "Deletes a single geo file from an existing project."
+      operationId: delete_geo_file_from_project
+      parameters:
+        - $ref: '#/components/parameters/ProjectIdParam'
+        - $ref: '#/components/parameters/GeoFileIdParam'
+      responses:
+        "200":
+          description: Project details.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "400":
+          description: Bad request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        "404":
+          description: Not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+      x-openapi-router-controller: gateway.controllers.project_controller
+  /projects/{project_id}/permissions:
+    get:
+      tags:
+        - projects
+      summary: ADMIN. List project permissions
+      description: ''
+      operationId: get_permissions
+      parameters:
+        - $ref: "#/components/parameters/ProjectIdParam"
+        - $ref: "#/components/parameters/SkipParam"
+        - $ref: "#/components/parameters/LimitParam"
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProjectPermission"
+        "404":
+          description: "Team not found"
+      x-openapi-router-controller: gateway.controllers.project_controller
+    post:
+      tags:
+        - projects
+      summary: ADMIN. Grant read/write access for teams and users
+      operationId: add_permissions
+      parameters:
+        - $ref: "#/components/parameters/ProjectIdParam"
+      requestBody:
+        description: List of permissions for teams and users
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/ProjectPermission"
+              example:
+                [{
+                  "user_id": "5a99435b-432b-4fd9-a853-cc043981dda7",
+                  "read": true,
+                  "write": true
+                },
+                {
+                  "team_id": "09eb7a80-b2dc-493b-b496-8952c8b1cd90",
+                  "read": true,
+                  "write": true
+                }]
+      responses:
+        "201":
+          description: "List of created permissions. Skip permissions that may already exist"
+          content:
+            application/json:
+              schema:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/IdResponse"
+        "404":
+          description: "Project/Team not found"
+      x-openapi-router-controller: gateway.controllers.project_controller
+  /projects/{project_id}/permissions/{permission_id}:
+    get:
+      tags:
+        - projects
+      summary: ADMIN. Get permission details
+      operationId: get_permission
+      parameters:
+        - $ref: "#/components/parameters/ProjectIdParam"
+        - name: permission_id
+          in: path
+          description: Permission Id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: d3f2df6d-3bc9-42ab-82f6-09c14d30be50
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectPermission"
+        "404":
+          description: "Permission not found"
+      x-openapi-router-controller: gateway.controllers.project_controller
+    delete:
+      tags:
+        - projects
+      summary: ADMIN. Remove a permission for a project
+      operationId: delete_permission
+      parameters:
+        - $ref: "#/components/parameters/ProjectIdParam"
+        - name: permission_id
+          in: path
+          description: Permission Id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: d3f2df6d-3bc9-42ab-82f6-09c14d30be50
+      responses:
+        "200":
+          description: "Ok"
+        "404":
+          description: "Permission not found"
+      x-openapi-router-controller: gateway.controllers.project_controller
+    patch:
+      tags:
+        - projects
+      summary: ADMIN. Edit a project permission
+      operationId: edit_permission
+      parameters:
+        - $ref: "#/components/parameters/ProjectIdParam"
+        - name: permission_id
+          in: path
+          description: Permission Id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: d3f2df6d-3bc9-42ab-82f6-09c14d30be50
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectPermission"
+            example:
+              read: true
+              write: false
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectPermission"
+        "404":
+          description: "Permission not found"
+      x-openapi-router-controller: gateway.controllers.project_controller
+  /workspaces:
+    get:
+      tags:
+        - workspaces
+      summary: List available user workspaces
+      operationId: get_workspaces
+      parameters:
+      - name: name
+        in: query
+        description: Workspace name to look for
+        required: false
+        schema:
+          type: string
+          format: regex
+        example: workspacename
+      - name: created_from
+        x-aliases: ["createdFrom"]
+        in: query
+        description: Filter on starting creation date
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: created_to
+        x-aliases: ["createdTo"]
+        in: query
+        description: Filter on ending creation date
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: modified_from
+        x-aliases: ["modifiedFrom"]
+        in: query
+        description: Filter on starting modification date
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: modified_to
+        x-aliases: ["modifiedTo"]
+        in: query
+        description: Filter on ending modification date
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - $ref: '#/components/parameters/TechnologiesQuery'
+      - $ref: "#/components/parameters/NaosFilepathMode"
+      responses:
+        '200':
+          description: Workspaces
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Workspace"
+        'default':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      x-openapi-router-controller: gateway.controllers.workspace_controller
+    post:
+      tags:
+        - workspaces
+      summary: Create a new workspace
+      operationId: create_workspace
+      parameters:
+      - name: apply_project_cfg
+        x-aliases: ["applyProjectCfg"]
+        in: query
+        description: |
+          Load project's configfuration files while creating the workspace, these configuration files will not appear in the workspace metadata and loaded only once.
+          Configuration files defined in the body of the request are applied at workspace openning.
+        required: false
+        schema:
+          type: boolean
+          default: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Workspace'
+      responses:
+        "202":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IdResponse'
+        "400":
+          description: Invalid workspace details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      x-openapi-router-controller: gateway.controllers.workspace_controller
+  /workspaces/{workspace_id}:
+    get:
+      tags:
+        - workspaces
+      summary: Get details concerning a specific workspace
+      operationId: get_workspace
+      parameters:
+      - $ref: '#/components/parameters/WorkspaceIdParam'
+      - $ref: "#/components/parameters/NaosFilepathMode"
+      responses:
+        "200":
+          description: Workspace details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Workspace"
+        "404":
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      x-openapi-router-controller: gateway.controllers.workspace_controller
+    delete:
+      tags:
+        - workspaces
+      summary: Delete a workspace
+      operationId: delete_workspace
+      parameters:
+      - $ref: '#/components/parameters/WorkspaceIdParam'
+      - $ref: '#/components/parameters/ForceDeleteQuery'
+      responses:
+        "200":
+          description: OK
+        default:
+          $ref: '#/components/responses/DefaultError'
+      x-openapi-router-controller: gateway.controllers.workspace_controller
+    patch:
+      tags:
+        - workspaces
+      summary: Edit a workspace
+      operationId: edit_workspace
+      parameters:
+      - $ref: '#/components/parameters/WorkspaceIdParam'
+      - $ref: '#/components/parameters/HistoryMessageQuery'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Workspace'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workspace'
+        "404":
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+      x-openapi-router-controller: gateway.controllers.workspace_controller
+    post:
+      tags:
+        - workspaces
+      summary: Opens a workspace on a new instance
+      operationId: start_instance_and_open_workspace
+      parameters:
+      - $ref: '#/components/parameters/WorkspaceIdParam'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NaosInstance"
+      responses:
+        "202":
+          description: Accepted
+      x-openapi-router-controller: gateway.controllers.workspace_controller
+  /workspaces/{workspace_id}/data/{route}:
+    get:
+      tags:
+        - workspaces
+      summary: Proxy GET to Data Access Service
+      description: |
+        [Preview]
+        Forwards a GET request to the Naos Data Access Service.
+        The service along with its query parameters are specified in the 'route' parameter".
+      operationId: das_workspace_proxy_get
+      parameters:
+        - $ref: '#/components/parameters/WorkspaceIdParam'
+        - name: route
+          in: path
+          required: true
+          schema:
+            type: string
+            format: path
+            example: "raw/sites?limit=200"
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: "Not found"
+        "501":
+          description: "Not implemented"
+        "502":
+          description: "Naos Data Access Service is unhealthy"
+        "503":
+          description: "Connection timeout trying to communicate with the Naos Data Access Service"
+        "504":
+          description: "Read timeout trying to communicate with the Naos Data Access Service"
+      x-openapi-router-controller: gateway.controllers.data_explorer_proxy
+    post:
+      tags:
+        - workspaces
+      summary: Proxy POST to Data Access Service
+      description: |
+        [Preview]
+        Forwards a POST request to the Naos Data Access Service.
+        The service along with its query parameters are specified in the 'route' parameter.
+      operationId: das_workspace_proxy_post
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceIdParam"
+        - name: route
+          in: path
+          required: true
+          schema:
+            type: string
+            format: path
+            example: "raw/sites"
+      requestBody:
+        $ref: "#/components/requestBodies/AnyValueBody"
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: "Not found"
+        "501":
+          description: "Not implemented"
+        "502":
+          description: "Naos Data Access Service is unhealthy"
+        "503":
+          description: "Connection timeout trying to communicate with the Naos Data Access Service"
+        "504":
+          description: "Read timeout trying to communicate with the Naos Data Access Service"
+      x-openapi-router-controller: gateway.controllers.data_explorer_proxy
+    put:
+      tags:
+        - workspaces
+      summary: Proxy PUT to Data Access Service
+      description: |
+        [Preview]
+        Forwards a PUT request to the Naos Data Access Service.
+        The service along with its query parameters are specified in the 'route' parameter.
+      operationId: das_workspace_proxy_put
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceIdParam"
+        - name: route
+          in: path
+          required: true
+          schema:
+            type: string
+            format: path
+            example: "raw/sites?filters=db_record_id.eq.11"
+      requestBody:
+        $ref: "#/components/requestBodies/AnyValueBody"
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: "Not found"
+        "501":
+          description: "Not implemented"
+        "502":
+          description: "Naos Data Access Service is unhealthy"
+        "503":
+          description: "Connection timeout trying to communicate with the Naos Data Access Service"
+        "504":
+          description: "Read timeout trying to communicate with the Naos Data Access Service"
+      x-openapi-router-controller: gateway.controllers.data_explorer_proxy
+    patch:
+      tags:
+        - workspaces
+      summary: Proxy PATCH to Data Access Service
+      description: |
+        [Preview]
+        Forwards a PATCH request to the Naos Data Access Service.
+        The service along with its query parameters are specified in the 'route' parameter.
+      operationId: das_workspace_proxy_patch
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceIdParam"
+        - name: route
+          in: path
+          required: true
+          schema:
+            type: string
+            format: path
+            example: "raw/sites"
+      requestBody:
+        $ref: "#/components/requestBodies/AnyValueBody"
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: "Not found"
+        "501":
+          description: "Not implemented"
+        "502":
+          description: "Naos Data Access Service is unhealthy"
+        "503":
+          description: "Connection timeout trying to communicate with the Naos Data Access Service"
+        "504":
+          description: "Read timeout trying to communicate with the Naos Data Access Service"
+      x-openapi-router-controller: gateway.controllers.data_explorer_proxy
+    delete:
+      tags:
+        - workspaces
+      summary: Proxy DELETE to Data Access Service
+      description: |
+        [Preview]
+        Forwards a DELETE request to the Naos Data Access Service.
+        The service along with its query parameters are specified in the 'route' parameter.
+      operationId: das_workspace_proxy_delete
+      parameters:
+        - $ref: "#/components/parameters/WorkspaceIdParam"
+        - name: route
+          in: path
+          required: true
+          schema:
+            type: string
+            format: path
+            example: "raw/sites?filters=db_record_id.ge.9"
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: "Not found"
+        "501":
+          description: "Not implemented"
+        "502":
+          description: "Naos Data Access Service is unhealthy"
+        "503":
+          description: "Connection timeout trying to communicate with the Naos Data Access Service"
+        "504":
+          description: "Read timeout trying to communicate with the Naos Data Access Service"
+      x-openapi-router-controller: gateway.controllers.data_explorer_proxy
+
+  /license:
+    get:
+      tags:
+        - license
+      summary: ADMIN. Get details about license keys
+      operationId: get_licenses
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LicenseKey"
+      x-openapi-router-controller: gateway.controllers.license_controller
+  /license/session:
+    get:
+      tags:
+        - license
+      summary: ADMIN. List consumed tokens per instance
+      operationId: get_sessions
+      parameters:
+        - $ref: "#/components/parameters/SkipParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - name: user_id
+          x-aliases: ["userId"]
+          in: query
+          description: Filter by user
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: team_id
+          x-aliases: ["teamId"]
+          in: query
+          description: Filter by team
+          required: false
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: "Ok"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LicenseSession"
+      x-openapi-router-controller: gateway.controllers.license_controller
+
+  /scheduler/{route}:
+    get:
+      tags:
+        - scheduler
+      summary: "Forwards a GET request to the Naos Workflow Manager service. The service along with its \
+               query parameters are specified in the 'route' parameter"
+      operationId: scheduler_proxy_get
+      parameters:
+        - name: route
+          in: path
+          required: true
+          schema:
+            type: string
+            format: path
+            example: "v1/jobs"
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: "Not found"
+      x-openapi-router-controller: gateway.controllers.scheduler_controller
+    post:
+      tags:
+        - scheduler
+      summary: "Forwards a POST request to the Naos Workflow Manager service. The service along with its \
+                query parameters are specified in the 'route' parameter"
+      operationId: scheduler_proxy_post
+      parameters:
+        - name: route
+          in: path
+          required: true
+          schema:
+            type: string
+            format: path
+            example: "v1/jobs"
+      requestBody:
+        $ref: "#/components/requestBodies/AnyValueBody"
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: "Not found"
+      x-openapi-router-controller: gateway.controllers.scheduler_controller
+    put:
+      tags:
+        - scheduler
+      summary: "Forwards a PUT request to the Naos Workflow Manager service. The service along with its \
+               query parameters are specified in the 'route' parameter"
+      operationId: scheduler_proxy_put
+      parameters:
+        - name: route
+          in: path
+          required: true
+          schema:
+            type: string
+            format: path
+            example: "v1/jobs/"
+      requestBody:
+        $ref: "#/components/requestBodies/AnyValueBody"
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: "Not found"
+      x-openapi-router-controller: gateway.controllers.scheduler_controller
+    patch:
+      tags:
+        - scheduler
+      summary: "Forwards a PATCH request to the Naos Workflow Manager service. The service along with its \
+               query parameters are specified in the 'route' parameter"
+      operationId: scheduler_proxy_patch
+      parameters:
+        - name: route
+          in: path
+          required: true
+          schema:
+            type: string
+            format: path
+            example: "v1/jobs/15c61933-0b06-442c-8bab-723b2b41f570"
+      requestBody:
+        $ref: "#/components/requestBodies/AnyValueBody"
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: "Not found"
+      x-openapi-router-controller: gateway.controllers.scheduler_controller
+    delete:
+      tags:
+        - scheduler
+      summary: "Forwards a DELETE request to the Naos Workflow Manager service. The service along with its \
+               query parameters are specified in the 'route' parameter"
+      operationId: scheduler_proxy_delete
+      parameters:
+        - name: route
+          in: path
+          required: true
+          schema:
+            type: string
+            format: path
+            example: "v1/jobs/15c61933-0b06-442c-8bab-723b2b41f570"
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: "Not found"
+      x-openapi-router-controller: gateway.controllers.scheduler_controller
+
+components:
+  schemas:
+    GeoFileFormatEnum:
+      description: Geo file format extension.
+      type: string
+      enum:
+        - AGD
+        - SHP
+        - MIF
+        - TAB
+        - BIL
+        - TIFF
+        - BMP
+        - IMG
+        - TXT
+        - GRD
+        - GRC
+        - ECW
+        - PNG
+        - JPEG
+    GeoTypeEnum:
+      description: 'Geo file type. Possible values are: CLUTTER_CLASSES, CLUTTER_HEIGHTS, DTM or OTHER.'
+      type: string
+      enum:
+        - CLUTTER_CLASSES
+        - CLUTTER_HEIGHTS
+        - DTM
+        - OTHER
+    GeoGraphicsTypeEnum:
+      description: 'Geo spatial data type. Possible values are: RASTER or VECTOR.'
+      type: string
+      enum:
+        - RASTER
+        - VECTOR
+    GeoFile:
+      description: Object describing a Naos/Atoll geo file.
+      type: object
+      properties:
+        id:
+          description: Geo file identifier.
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          description: Geo file name.
+          type: string
+          example: "my_geo_file"
+        uri:
+          description: Geo file URI.
+          type: string
+          format: uri
+          example: "file:///mnt/naos_share/my_geo_file.shp"
+        geo_type:
+          $ref: "#/components/schemas/GeoTypeEnum"
+        file_format:
+          $ref: "#/components/schemas/GeoFileFormatEnum"
+        graphics_type:
+          $ref: "#/components/schemas/GeoGraphicsTypeEnum"
+        tags:
+          type: array
+          items:
+            type: string
+            example: "northwest chicago"
+        crs:
+          type: integer
+          example: 1980
+        bounding_box:
+          $ref: "#/components/schemas/BoundingBox"
+    GeoFileForm:
+      type: object
+      properties:
+        geo_file:
+          $ref: "#/components/schemas/GeoFile"
+        zip_file:
+          description: Content of the zip file.
+          type: string
+          format: binary
+    UserInfo:
+      title: User information
+      type: object
+      properties:
+        id:
+          description: Unique user identifier.
+          type: string
+          format: uuid
+          example: d17ecc23-7b9d-409a-b987-adcbb3f5d400
+        name:
+          description: Full name of the user.
+          type: string
+          example: "Name"
+        login:
+          description: User login
+          type: string
+          example: "login"
+        password:
+          description: User password
+          type: string
+          example: "aligator!33"
+        confirm:
+          description: Confirmed user password.
+          type: string
+          example: "aligator!33"
+        email:
+          description: Email of the user
+          type: string
+          format: email
+          example: "sample@mail.com"
+        is_admin:
+          description: User has administrator privileges.
+          type: boolean
+          default: false
+        last_login:
+          description: Timestamp of the last login.
+          type: string
+          format: date-time
+          readOnly: true
+        last_seen_at:
+          description: Timestamp of the last activity.
+          type: string
+          format: date-time
+          readOnly: true
+    UserToken:
+      title: An API token
+      type: object
+      required:
+        - id
+        - token
+        - client_ip
+        - user_agent
+        - created
+        - expires
+        - last_seen_at
+        - user_id
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        token:
+          type: string
+          readOnly: true
+        client_ip:
+          type: string
+          readOnly: true
+        user_agent:
+          type: string
+          readOnly: true
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        expires:
+          type: string
+          format: date-time
+          readOnly: true
+        last_seen_at:
+          type: string
+          format: date-time
+          readOnly: true
+        user_id:
+          type: string
+          format: uuid
+          readOnly: true
+    InstanceParameters:
+      title: Instance parameters
+      type: object
+      properties:
+        cpu:
+          type: number
+          default: 1
+          example: 2.5
+        memory:
+          type: string
+          default: 2GB
+          example: 2GB
+        flavor:
+          type: string
+          example: vmcentos8:5000/naos-engine:develop
+        haspid:
+          type: string
+          example: "772686143799491514"
+          nullable: true
+    NaosInstance:
+      title: A Naos instance
+      type: object
+      required:
+        - id
+        - created
+        - expires
+        - url
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+          example: d17ecc23-7b9d-409a-b987-adcbb3f5d400
+        name:
+          type: string
+          example: prudent-armadillo
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+          example: "2022-03-25T14:33:08.021000Z"
+        expires:
+          type: string
+          format: date-time
+          readOnly: true
+          example: "2022-03-25T14:33:08.021000Z"
+        url:
+          type: string
+          format: uri
+          readOnly: true
+          example: "http://naos_d17ecc237b9d409ab987adcbb3f5d400:8080/"
+        parameters:
+          $ref: "#/components/schemas/InstanceParameters"
+        service_state:
+          type: string
+          description: One of ['starting', 'running', 'healthy', 'unhealthy', 'removed', 'stopping', 'failed']
+          readOnly: true
+          example: "healthy"
+        service_state_error:
+          description: "Service state error description"
+          type: object
+          readOnly: true
+        user_id:
+          type: string
+          format: uuid
+          example: "9c32d8de-f3af-460b-8300-e9ad5f26026b"
+        team_id:
+          type: string
+          format: uuid
+          example: "38096dc9-6a62-43c6-865a-377ea0ebe4b3"
+    SetPasswordObject:
+      title: Set password object
+      description: Information for creating a new password.
+      type: object
+      required:
+        - password
+        - confirm
+      properties:
+        password:
+          description: New password
+          type: string
+          writeOnly: true
+        confirm:
+          description: Confirmed new password. Must match 'password'.
+          type: string
+          writeOnly: true
+    ChangePasswordObject:
+      title: Change password object
+      type: object
+      required:
+        - old_password
+        - new_password
+        - confirm_new
+      properties:
+        old_password:
+          description: Current password
+          type: string
+          writeOnly: true
+        new_password:
+          description: New password
+          type: string
+          writeOnly: true
+        confirm_new:
+          description: Confirmed new password. Must match 'new_password'.
+          type: string
+          writeOnly: true
+    GatewayTeam:
+      title: Gateway team
+      description: Information related to a Gateway team.
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          description: Unique team identifier
+          type: string
+          format: uuid
+          readOnly: true
+          example: "9c32d8de-f3af-460b-8300-e9ad5f26026b"
+        name:
+          description: Name of the team
+          type: string
+          example: "My team"
+        created:
+          description: Timestamp of when the team was created
+          type: string
+          format: date-time
+          readOnly: true
+          example: "2022-03-25T14:33:08.021000Z"
+        modified:
+          description: Timestamp of when the team was last modified
+          type: string
+          format: date-time
+          readOnly: true
+          example: "2022-03-25T14:33:08.021000Z"
+        allocated_naos_tokens:
+          description: Number of Naos license tokens that are allocated to the team
+          type: integer
+          example: 20
+        used_naos_tokens:
+          description: Number of Naos license tokens that are currently in use by the team members
+          type: integer
+          readOnly: true
+          example: 10
+    GatewayTeamUser:
+      title: Gateway team user
+      type: object
+      properties:
+        user_id:
+          type: string
+          format: uuid
+          example: 43d4f9b0-8395-4cc3-91c4-ae03b5d5e8ed
+        user_name:
+          type: string
+          example: Johnnie Walker
+          readOnly: true
+        role:
+          type: string
+          enum:
+            - MEMBER
+            - ADMIN
+          example: MEMBER
+      required:
+        - role
+    SimpleId:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+    IdResponse:
+      title: Simple identifier response
+      allOf:
+        - $ref: "#/components/schemas/SimpleId"
+        - type: object
+          properties:
+            links:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Link"
+    TokenResponse:
+      title: Token response
+      type: object
+      required:
+        - access_token
+        - access_token_expires_in
+      properties:
+        access_token:
+          type: string
+          readOnly: true
+        access_token_expires_in:
+          type: integer
+          description: access token expiration time in secondes
+          readOnly: true
+        refresh_token:
+          type: string
+          readOnly: true
+    ApiError:
+      description: Error object
+      type: object
+      required:
+        - status
+        - detail
+      properties:
+        status:
+          description: HTTP error code
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          readOnly: true
+        detail:
+          description: Detail concerning encountered error
+          type: string
+          readOnly: true
+        type:
+          type: string
+          readOnly: true
+    Link:
+      description: HATEOAS link
+      type: object
+      required:
+        - href
+        - rel
+        - type
+      properties:
+        href:
+          type: string
+          readOnly: true
+        rel:
+          type: string
+          readOnly: true
+        type:
+          type: string
+          readOnly: true
+      example:
+        rel: relation
+        href: hreference
+        type: GET
+    BoundingBox:
+      type: array
+      items:
+        type: number
+      minItems: 4
+      maxItems: 4
+      example: [0, 0, 0, 0]
+    SourceInfo:
+      description: Object describing a Naos/Atoll source top level information.
+      type: object
+      required:
+        - "type"
+      properties:
+        type:
+          description: Source provider.
+          type: string
+          enum:
+          - MS_Access
+          - MS_SQL_Server
+          - Oracle
+          - PostgreSQL
+          - Atl
+        filepath:
+          description: For file-based sources (MS Access, SQLite, Atl, etc.). Paths are relative to the *naos_share* storage location defined in configuration.
+          type: string
+          format: uri
+        host:
+          description: For hostname connections (MS SQL Server, Oracle, PostgreSQL, etc.).
+          type: string
+        port:
+          description: For hostname connections (MS SQL Server, Oracle, PostgreSQL, etc.).
+          type: integer
+        dbname:
+          description: For hostname connections (MS SQL Server, Oracle, PostgreSQL, etc.).
+          type: string
+        schema:
+          description: Database schema (MS SQL Server, PostgreSQL, etc.).
+          type: string
+        options:
+          description: Driver specific extra options.
+          type: object
+        scenario:
+          description: For **Scenario Manager** managed databases.
+          type: string
+        scenario_geodata:
+          description: For **Scenario Manager** managed databases.
+          type: string
+        naos_connection_string:
+          description: Naos database connection string.
+          type: string
+          readOnly: true
+        naos_schema:
+          description: Naos database schema.
+          type: string
+    StorageInfo:
+      description: Object describing external data location.
+      type: object
+      properties:
+        root:
+          type: string
+          format: uri
+        pathloss:
+          type: object
+          properties:
+            private:
+              type: string
+              format: uri
+            shared:
+              type: string
+              format: uri
+    ProjectBase:
+      title: ProjectBase
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          example: "Name"
+        source:
+          $ref: '#/components/schemas/SourceInfo'
+        storage:
+          $ref: '#/components/schemas/StorageInfo'
+        configuration_files:
+          title: 'ProjectConfigurationFiles'
+          type: object
+          properties:
+            replace:
+              type: array
+              description: Main configuration files, meant to replace existing configurations. Applied in array order. Paths are relative to the *naos_share* storage location defined in configuration.
+              items:
+                type: string
+                format: uri
+            append:
+              type: array
+              description: Secondary configuration files, meant to append to existing configurations (applicable to geographic files). Applied in array order. Paths are relative to the naos_share storage location defined in configuration.
+              items:
+                type: string
+                format: uri
+        geographic_data:
+          type: array
+          readOnly: true
+          description: Main configuration files, meant to replace existing configurations. Applied in array order.
+          items:
+            $ref: "#/components/schemas/GeoFile"
+        info:
+          title: 'ProjectInfo'
+          type: object
+          properties:
+            technologies:
+              type: array
+              items:
+                title: 'ProjectInfoTechnologies'
+                type: object
+                properties:
+                  name:
+                    type: string
+                    enum:
+                    - 5G_NR
+                    - LTE
+                    - NB_IOT
+                    - UMTS
+                    - 1XRTT
+                    - GSM
+                  cells:
+                    type: integer
+            coordinate_system:
+              type: object
+              title: 'ProjectInfoCoordinateSystem'
+              properties:
+                code:
+                  type: integer
+            studies:
+              type: array
+              items:
+                title: 'ProjectInfoStudies'
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                  name:
+                    type: string
+            bounding_box:
+              $ref: "#/components/schemas/BoundingBox"
+            sites:
+              type: integer
+            shared_pathloss:
+              type: string
+        created:
+          type: string
+          format: date-time
+        modified:
+          type: string
+          format: date-time
+        history:
+          title: 'ProjectHistory'
+          type: object
+          readOnly: true
+          properties:
+            entries:
+              type: array
+              items:
+                title: 'ProjectHistoryEntry'
+                type: object
+                properties:
+                  date:
+                    type: string
+                    format: date-time
+                  user_id:
+                    type: string
+                    format: uuid
+                  user:
+                    type: string
+                  message:
+                    type: string
+        status:
+          type: object
+          readOnly: true
+    Project:
+      title: Project
+      allOf:
+      - $ref: '#/components/schemas/ProjectBase'
+      - title: 'ProjectMeta'
+        type: object
+        properties:
+          created_by:
+            title: 'CreatedBy'
+            readOnly: true
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              name:
+                type: string
+          modified_by:
+            title: 'ModifiedBy'
+            readOnly: true
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              name:
+                type: string
+    ProjectPermission:
+      title: Project permissions.
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        project_id:
+          type: string
+          format: uuid
+          readOnly: true
+        team_id:
+          type: string
+          format: uuid
+        team_name:
+          type: string
+          readOnly: true
+        user_id:
+          type: string
+          format: uuid
+        user_name:
+          type: string
+          readOnly: true
+        user_login:
+          type: string
+          readOnly: true
+        read:
+          type: boolean
+        write:
+          type: boolean
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        modified:
+          type: string
+          format: date-time
+          readOnly: true
+    Workspace:
+      title: Workspace
+      allOf:
+      - $ref: '#/components/schemas/ProjectBase'
+      - title: 'WorkspaceMeta'
+        type: object
+        properties:
+          user:
+            type: string
+          user_id:
+            type: string
+            format: uuid
+          project_id:
+            type: string
+            format: uuid
+    Feature:
+      title: Feature and product
+      type: object
+      properties:
+        productId:
+          description: Product identifier
+          type: integer
+          example: 2
+        productName:
+          description: Product Name
+          type: string
+          example: 'Naos'
+        featureId:
+          description: Feature identifier
+          type: integer
+          example: 1001
+        featureName:
+          description: Feature Name
+          type: string
+          example: 'Plateforme'
+    FeatureStatus:
+      title: Details about a feature
+      allOf:
+      - $ref: "#/components/schemas/Feature"
+      - title: 'FeatureStatusMeta'
+        type: object
+        properties:
+          usedTokens:
+            description: Number of license tokens currently in use
+            type: integer
+            example: 30
+          tokenLimit:
+            description: Maximum number of token available
+            type: integer
+            example: 50
+          isExpired:
+            description: True if the license has expired False otherwise
+            type: boolean
+            example: false
+    LicenseKey:
+      title: License key information
+      type: object
+      properties:
+        serverAddress:
+          type: string
+          description: 'License server address'
+          readOnly: true
+          example: 'server_host'
+        haspid:
+          type: string
+          description: 'License key identifier'
+          readOnly: true
+          example: "954076454789058722"
+        features:
+          type: array
+          items:
+            $ref: '#/components/schemas/FeatureStatus'
+    LicenseSession:
+      title: License session information
+      allOf:
+      - $ref: "#/components/schemas/Feature"
+      - title: 'LicenseSessionMeta'
+        type: object
+        properties:
+          key:
+            description: License key identifier (haspId)
+            type: string
+            example: '954076454789058722'
+          address:
+            description: Client IP address
+            type: string
+            example: '192.9.200.215'
+          systemUser:
+            description: System user running the client application
+            type: string
+            example: 'ContainerAdministrator'
+          machine:
+            description: Client hostname
+            type: string
+            example: 'naos_490b11e953634892a7dcbb7d4927c2d5_host'
+          loginDate:
+            description: License login date
+            type: string
+            format: date-time
+            example: "2022-03-25T14:33:08.021000Z"
+          timeout:
+            description: License timeout in case of client inactivity
+            type: string
+            example: '11:58:11'
+          count:
+            description: Number of license tokens in use by the client
+            type: integer
+            example: 4
+          userId:
+            description: User identifier.
+            type: string
+            format: uuid
+            example: 'be881052-2eaa-42ef-976e-62bf4b91edc5'
+          teamId:
+            description: Team identifier.
+            type: string
+            format: uuid
+            example: 'e17c3211-5dc2-401d-ae94-45a8dab47c13'
+          links:
+            type: array
+            items:
+              $ref: "#/components/schemas/Link"
+  parameters:
+    SkipParam:
+      name: skip
+      in: query
+      description: Number of items to skip.
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      example: 0
+    LimitParam:
+      name: limit
+      in: query
+      description: Maximum number of items to return.
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 1000
+        default: 1000
+      example: 10
+    # MatchPatternParam:
+    #   name: match_pattern
+    #   x-aliases: ["matchPattern"]
+    #   in: query
+    #   description: Regular expression pattern used to match by name.
+    #   required: false
+    #   schema:
+    #     type: string
+    #   example: tot.*
+    NaosFilepathMode:
+      name: Naos-Filepath-Mode
+      in: header
+      description: "Map URI values in the response to the desired context"
+      schema:
+        type: string
+        enum:
+          - atoll
+          - naos-service-win
+          - naos-service-linux
+      required: false
+    UserIdParam:
+      name: user_id
+      in: path
+      description: User identifier.
+      required: true
+      schema:
+        type: string
+        format: uuid
+      example: 490b11e9-5363-4892-a7dc-bb7d4927c2d5
+    InstanceIdParam:
+      name: instance_id
+      in: path
+      description: Instance identifier.
+      required: true
+      schema:
+        type: string
+        format: uuid
+      example: 490b11e9-5363-4892-a7dc-bb7d4927c2d5
+    HistoryMessageQuery:
+      name: history_message
+      x-aliases: ["historyMessage"]
+      in: query
+      description: An optional message indicating the changes that were made to the document. If omitted, a default meaningful message will be generated.
+      required: false
+      schema:
+        type: string
+      example: This is a comment
+    TechnologiesQuery:
+      name: technologies
+      in: query
+      description: Determines the radio technologies for the query.
+      schema:
+        type: array
+        items:
+          type: string
+          enum:
+          - 5G_NR
+          - LTE
+          - NB_IOT
+          - UMTS
+          - 1XRTT
+          - GSM
+      example: [5G_NR]
+    WorkspaceIdParam:
+      name: workspace_id
+      in: path
+      description: Workspace identifier.
+      required: true
+      schema:
+        type: string
+        format: uuid
+      example: 490b11e9-5363-4892-a7dc-bb7d4927c2d5
+    ProjectIdParam:
+      name: project_id
+      in: path
+      description: Project identifier.
+      required: true
+      schema:
+        type: string
+        format: uuid
+      example: 490b11e9-5363-4892-a7dc-bb7d4927c2d5
+    TeamIdParam:
+      name: team_id
+      in: path
+      description: Team identifier.
+      required: true
+      schema:
+        type: string
+        format: uuid
+      example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    ForceDeleteQuery:
+      name: force
+      description: |
+        Forces deletion. When applied to workspaces, any pending modifications are not saved.
+        Workspaces are deleted if their state is different from `accepted`, `created`, or `failed`.
+      in: query
+      required: false
+      schema:
+        type: boolean
+        default: false
+    ForceOpenEditProjectQuery:
+      name: force
+      description: |
+        Forces an open or edit of a project. This opens or edits the project even if:
+        - the parsing of the geo files did not finish or finished with errors.
+        - the automatic scanning did not finished or finished with errors.
+      in: query
+      required: false
+      schema:
+        type: boolean
+        default: false
+    GeoFileIdParam:
+      name: geo_file_id
+      in: path
+      description: Geo file identifier.
+      required: true
+      schema:
+        type: string
+        format: uuid
+      example: 490b11e9-5363-4892-a7dc-bb7d4927c2d5
+    ClientIpParam:
+      name: client_ip
+      description: Filter by client IP.
+      in: query
+      schema:
+        type: string
+      example: 192.168.0.1
+    CreatedFromParam:
+      name: created_from
+      description: Filter creation date from (lower bound).
+      in: query
+      schema:
+        type: string
+        format: date-time
+      example: "2022-03-25T14:33:08.021000Z"
+    CreatedToParam:
+      name: created_to
+      description: Filter creation date to (upper bound).
+      in: query
+      schema:
+        type: string
+        format: date-time
+      example: "2022-03-25T14:33:08.021000Z"
+    ExpiresFromParam:
+      name: expires_from
+      description: Filter expiration date from (lower bound).
+      in: query
+      schema:
+        type: string
+        format: date-time
+      example: "2022-03-25T14:33:08.021000Z"
+    ExpiresToParam:
+      name: expires_to
+      description: Filter expiration date to (upper bound).
+      in: query
+      schema:
+        type: string
+        format: date-time
+      example: "2022-03-25T14:33:08.021000Z"
+    LastSeenFromParam:
+      name: last_seen_from
+      description: Filter last seen date from (lower bound).
+      in: query
+      schema:
+        type: string
+        format: date-time
+      example: "2022-03-25T14:33:08.021000Z"
+    LastSeenToParam:
+      name: last_seen_to
+      description: Filter last seen date to (upper bound).
+      in: query
+      schema:
+        type: string
+        format: date-time
+      example: "2022-03-25T14:33:08.021000Z"
+  requestBodies:
+    AnyValueBody:
+      description: Any value.
+      content:
+        application/json:
+          schema:
+            title: 'AnyValueBody'
+            anyOf:
+              - type: string
+              - type: object
+                nullable: true
+        multipart/form-data:
+          schema:
+            type: object
+    IdBody:
+      description: Simple JSON body that contains an identifier.
+      required: true
+      content:
+        application/json:
+          schema:
+            title: 'IdBody'
+            type: object
+            required:
+              - "id"
+            properties:
+              id:
+                type: string
+                format: uuid
+    OptionalNameBody:
+      description: Simple JSON body that contains an optional name.
+      content:
+        application/json:
+          schema:
+            title: 'OptionalNameBody'
+            type: object
+            properties:
+              name:
+                type: string
+    NameBody:
+      description: Simple JSON body that contains a name.
+      required: true
+      content:
+        application/json:
+          schema:
+            title: 'NameBody'
+            type: object
+            required:
+              - "name"
+            properties:
+              name:
+                type: string
+  responses:
+    DefaultError:
+      description: Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
+  securitySchemes:
+    BasicAuth:
+      $ref: './external/security_schemes.yaml#/BasicAuth'
+    TokenAuth:
+      $ref: './external/security_schemes.yaml#/TokenAuth'

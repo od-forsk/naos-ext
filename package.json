@@ -1,0 +1,158 @@
+{
+  "name": "naos",
+  "displayName": "NAOS",
+  "description": "NAOS extension for VSCode.",
+  "icon": "resources/naos.png",
+  "version": "0.0.1",
+  "publisher": "forsk-sas",
+  "engines": {
+    "vscode": "^1.79.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "naos.misc.whattime",
+        "category": "NAOS",
+        "title": "What time is it?",
+        "icon": "$(bell)"
+      },
+      {
+        "command": "naos.user.add",
+        "category": "NAOS",
+        "title": "Add user",
+        "icon": "$(person-add)"
+      },
+      {
+        "command": "naos.team.add",
+        "category": "NAOS",
+        "title": "Add team",
+        "icon": "$(add)"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "naos",
+          "title": "NAOS",
+          "icon": "resources/naos.svg"
+        }
+      ]
+    },
+    "views": {
+      "naos": [
+        {
+          "id": "naos.users",
+          "name": "users"
+        },
+        {
+          "id": "naos.teams",
+          "name": "teams"
+        },
+        {
+          "id": "naos.instances",
+          "name": "instances"
+        },
+        {
+          "id": "naos.projects",
+          "name": "projects"
+        },
+        {
+          "id": "naos.workspaces",
+          "name": "workspaces"
+        },
+        {
+          "id": "naos.geofiles",
+          "name": "geofiles"
+        },
+        {
+          "id": "naos.jobs",
+          "name": "jobs"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "naos.misc.whattime",
+          "group": "navigation",
+          "when": "view == naos.users"
+        },
+        {
+          "command": "naos.user.add",
+          "group": "navigation",
+          "when": "view == naos.users"
+        },
+        {
+          "command": "naos.team.add",
+          "group": "navigation",
+          "when": "view == naos.teams"
+        }
+      ],
+      "view/item/context": []
+    },
+    "configuration": {
+      "title": "NAOS",
+      "properties": {
+        "naos.gatewayURL": {
+          "type": "string",
+          "default": "http://localhost:9090",
+          "description": "URL of the NAOS gateway"
+        }
+      }
+    },
+    "viewsWelcome": [
+      {
+        "view": "naos.teams",
+        "contents": "test welcome view."
+      }
+    ],
+    "walkthroughs": [
+      {
+        "id": "naos.tuto",
+        "title": "Get Started with NAOS!",
+        "description": "Get Started with NAOS!",
+        "icon": "resources/naos.svg",
+        "steps": [
+          {
+            "id": "runcommand",
+            "title": "Run command",
+            "description": "This step will run a command and check off once it has been run.\n[Run Command](command:naos.misc.whattime)",
+            "completionEvents": [
+              "onCommand:naos.misc.whattime"
+            ],
+            "media": {
+              "image": "resources/naos.svg",
+              "altText": "NAOS Logo"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "20.2.5",
+    "@types/vscode": "^1.79.0",
+    "@typescript-eslint/eslint-plugin": "^5.59.8",
+    "@typescript-eslint/parser": "^5.59.8",
+    "@vscode/test-electron": "^2.3.2",
+    "eslint": "^8.41.0",
+    "glob": "^8.1.0",
+    "mocha": "^10.2.0",
+    "typescript": "^5.1.3"
+  }
+}
