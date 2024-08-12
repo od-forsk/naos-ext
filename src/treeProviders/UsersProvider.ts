@@ -1,29 +1,29 @@
 import * as vscode from 'vscode';
-import { User } from '../models/User';
-import axios from 'axios';
+import { NaosClient } from '../naosclient';
+import { UserInfo } from '../naosclient/models/UserInfo';
 
-export class UsersProvider implements vscode.TreeDataProvider<User> {
+export class UsersProvider implements vscode.TreeDataProvider<UserInfo> {
 
-	public users: User[] = [];
+	constructor(
+		private api: NaosClient
+	) { }
 
-	constructor() {
+	private _onDidChangeTreeData = new vscode.EventEmitter<any>();
+	readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
+
+	async getChildren(element?: any) {
+		if (!element) {
+			return await this.api.admin.getUsers();
+		}
+		// return await this.api.admin.getUsers();
 	}
 
-	private _onDidChangeTreeData: vscode.EventEmitter<any> = new vscode.EventEmitter<any>();
-	readonly onDidChangeTreeData: vscode.Event<any> = this._onDidChangeTreeData.event;
-
-	getChildren(element?: any): vscode.ProviderResult<User[]> {
-		const gateway = vscode.workspace.getConfiguration('naos.gatewayURL');
-		return axios.get(`${gateway}/admin/users`).then(resp => resp.data.map((u: any) => new User(u.name)));
-		// return element ? [] : this.users;
-	}
-
-	getTreeItem(user: User): vscode.TreeItem | Thenable<vscode.TreeItem> {
+	getTreeItem(user: UserInfo) {
 		return {
 			collapsibleState: vscode.TreeItemCollapsibleState.None,
 			label: user.name,
 			iconPath: new vscode.ThemeIcon("person"),
-			
+			user,
 		};
 	}
 

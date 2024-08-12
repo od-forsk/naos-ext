@@ -1,9 +1,0 @@
-BasicAuth:
-  type: http
-  scheme: basic
-  x-basicInfoFunc: gateway.controllers.security_controller.info_from_BasicAuth
-TokenAuth:
-  type: http
-  scheme: bearer
-  bearerFormat: JWT
-  x-bearerInfoFunc: gateway.controllers.security_controller.info_from_TokenAuth

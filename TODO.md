@@ -3,7 +3,7 @@
 - une gestion du token et/ou des credentials dans le vscode\[.workspace].**secrets**
 - un groupe de **treeviews** pour chaque ressources
 - une **configuration** pour l'acces à la gateway
-- une **tache** de rafraichissement des treeview
+- une **tache** de rafraichissement par treeview
 - une **ecoute** de la config pour lancer la teche de refresh
 - une ouverture des retours des reponses d'api (si 200) dans des **editeurs JSON**
 - un **task provider** allowing to run Naos jobs:

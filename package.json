@@ -1,31 +1,38 @@
 {
   "name": "naos",
+  "version": "0.0.1",
+  "publisher": "forsk-sas",
   "displayName": "NAOS",
   "description": "NAOS extension for VSCode.",
   "icon": "resources/naos.png",
-  "version": "0.0.1",
-  "publisher": "forsk-sas",
   "engines": {
     "vscode": "^1.79.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "keywords": [
+    "NAOS",
+    "RAN",
+    "Network"
+  ],
+  "activationEvents": [
+    "onCommand:workbench.action.tasks.runTask"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
-      {
-        "command": "naos.misc.whattime",
-        "category": "NAOS",
-        "title": "What time is it?",
-        "icon": "$(bell)"
-      },
       {
         "command": "naos.user.add",
         "category": "NAOS",
         "title": "Add user",
         "icon": "$(person-add)"
+      },
+      {
+        "command": "naos.user.delete",
+        "category": "NAOS",
+        "title": "Delete user",
+        "icon": "$(trash)"
       },
       {
         "command": "naos.team.add",
@@ -84,11 +91,6 @@
     "menus": {
       "view/title": [
         {
-          "command": "naos.misc.whattime",
-          "group": "navigation",
-          "when": "view == naos.users"
-        },
-        {
           "command": "naos.user.add",
           "group": "navigation",
           "when": "view == naos.users"
@@ -99,7 +101,13 @@
           "when": "view == naos.teams"
         }
       ],
-      "view/item/context": []
+      "view/item/context": [
+        {
+          "command": "naos.user.delete",
+          "group": "inline",
+          "when": "view == naos.users"
+        }
+      ]
     },
     "configuration": {
       "title": "NAOS",
@@ -111,6 +119,26 @@
         }
       }
     },
+    "taskDefinitions": [
+      {
+        "type": "naos-job",
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "description": "NAOS Job ID"
+          },
+          "priority": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9,
+            "description": "job scheduling priority"
+          }
+        },
+        "required": [
+          "jobId"
+        ]
+      }
+    ],
     "viewsWelcome": [
       {
         "view": "naos.teams",
@@ -127,9 +155,9 @@
           {
             "id": "runcommand",
             "title": "Run command",
-            "description": "This step will run a command and check off once it has been run.\n[Run Command](command:naos.misc.whattime)",
+            "description": "This step will run a command and check off once it has been run.\n[Run Command](command:naos.user.add)",
             "completionEvents": [
-              "onCommand:naos.misc.whattime"
+              "onCommand:naos.user.add"
             ],
             "media": {
               "image": "resources/naos.svg",
@@ -146,7 +174,8 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "genclient": "sh scripts/genclient.sh"
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",
@@ -159,6 +188,7 @@
     "eslint": "^8.41.0",
     "glob": "^8.1.0",
     "mocha": "^10.2.0",
+    "openapi-typescript-codegen": "^0.29.0",
     "typescript": "^5.1.3"
   },
   "dependencies": {
