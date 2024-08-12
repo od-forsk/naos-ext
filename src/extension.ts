@@ -3,6 +3,11 @@ import { NaosTaskProvider } from './NaosTaskProvider';
 import { ApiError, NaosClient } from './naosclient';
 import { UserInfo } from './naosclient/models/UserInfo';
 import { UsersProvider } from './treeProviders/UsersProvider';
+import { TeamsProvider, TeamUser } from './treeProviders/TeamsProvider';
+import { GatewayTeamUser } from './naosclient/models/GatewayTeamUser';
+import { uuidValidateV4 } from './utils';
+import { v4 as uuidV4 } from 'uuid';
+import { GatewayTeam } from './naosclient/models/GatewayTeam';
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -23,9 +28,13 @@ export function activate(context: vscode.ExtensionContext) {
 				language: "json",
 				content: JSON.stringify(user),
 			});
-        }
+		}
 	});
 	context.subscriptions.push(userTreeview);
+
+	const teamProvider = new TeamsProvider(apiClient);
+	const teamTreeView = vscode.window.createTreeView("naos.teams", { treeDataProvider: teamProvider });
+	context.subscriptions.push(teamTreeView);
 
 	// Task provider
 	const taskProvider = vscode.tasks.registerTaskProvider("naos-job", new NaosTaskProvider(apiClient));
@@ -65,17 +74,47 @@ export function activate(context: vscode.ExtensionContext) {
 			prompt: "Enter the user login again.",
 			placeHolder: user.login,
 			// validateInput(value) {
-				
+
 			// },
 		});
-		if (typed === user.login){
+		if (typed === user.login) {
 			await apiClient.admin.deleteUser(user.id!);
 			await vscode.commands.executeCommand("naos.refresh");
 		}
 	});
 
+	registerNaosCommand("naos.team.add", async () => {
+		const name = await vscode.window.showInputBox({ title: "team name", prompt: "What is its name?" });
+		if (name) {
+			try {
+				await apiClient.teams.createTeam({name} as GatewayTeam);
+				await vscode.commands.executeCommand("naos.refresh");
+			} catch (error) {
+				if (error instanceof ApiError) {
+					vscode.window.showErrorMessage(error.message, error.body as string);
+				}
+			}
+		}
+	});
+
+	registerNaosCommand("naos.team.addUser", async (teamId: string, userId: string, role?: GatewayTeamUser.role) => {
+		teamId = await getUUID(teamId, { title: "NAOS Team ID" });
+		userId = await getUUID(userId, { title: "NAOS User ID" });
+		role = role ?? await vscode.window.showQuickPick(Object.values(GatewayTeamUser.role)) as GatewayTeamUser.role;
+		if (role !== undefined) {
+			await apiClient.teams.addTeamUser(teamId, userId, role);
+			await vscode.commands.executeCommand("naos.refresh");
+		}
+	});
+
+	registerNaosCommand("naos.team.removeUser", async (teamUser: TeamUser) => {
+		await apiClient.teams.deleteTeamUser(teamUser.team_id, teamUser.user_id!);
+		await vscode.commands.executeCommand("naos.refresh");
+	});
+
 	registerNaosCommand("naos.refresh", () => {
 		userProvider.refresh();
+		teamProvider.refresh();
 	});
 
 	// Config listening
@@ -90,3 +129,16 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() { }
+
+
+async function getUUID(arg: any, prompt: vscode.InputBoxOptions): Promise<string> {
+	if (arg === undefined) {
+		arg = await vscode.window.showInputBox(prompt);
+	} else if ("id" in arg) {
+		arg = arg.id;
+	}
+	if (uuidValidateV4(arg)) {
+		return arg;
+	}
+	throw new Error("Impossible to get the UUID");
+}

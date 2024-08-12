@@ -13,3 +13,19 @@
 - creation de **filtres** et **stockage** (où?)
 
 - customisation du display (docker-ext like)
+
+- document build steps :
+  - npm install -g @vscode/vsce
+  - vsce package
+
+- UX politic:
+  - commands args:
+    - if explicitly passed : use
+    - elif something selected : use
+    - else : ask user
+  - create/update:
+    - if ID provided : update or die
+    - else: create
+  - use contributes...enablement rules.
+
+WARNING: No need for TreeView? (as TreeItem have a "command" property)
