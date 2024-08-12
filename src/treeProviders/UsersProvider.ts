@@ -15,15 +15,13 @@ export class UsersProvider implements vscode.TreeDataProvider<UserInfo> {
 		if (!element) {
 			return await this.api.admin.getUsers();
 		}
-		// return await this.api.admin.getUsers();
 	}
 
-	getTreeItem(user: UserInfo) {
+	getTreeItem(user: UserInfo): vscode.TreeItem | Thenable<vscode.TreeItem> {
 		return {
 			collapsibleState: vscode.TreeItemCollapsibleState.None,
 			label: user.name,
 			iconPath: new vscode.ThemeIcon("person"),
-			user,
 		};
 	}
 
