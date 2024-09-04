@@ -6,8 +6,16 @@ import { UsersProvider } from './treeProviders/UsersProvider';
 import { TeamsProvider, TeamUser } from './treeProviders/TeamsProvider';
 import { GatewayTeamUser } from './naosclient/models/GatewayTeamUser';
 import { uuidValidateV4 } from './utils';
-import { v4 as uuidV4 } from 'uuid';
 import { GatewayTeam } from './naosclient/models/GatewayTeam';
+import { ServicesProvider } from './treeProviders/ServicesProvider';
+import { NaosTextDocumentContentProvider } from './NaosTextDocumentContentProvider';
+import { InstancesProvider } from './treeProviders/InstancesProvider';
+import { WorkareasProvider } from './treeProviders/WorkareasProvider';
+import { GeofilesProvider } from './treeProviders/GeofilesProvider';
+import { JobsProvider } from './treeProviders/JobsProvider';
+import { CoveragesProvider } from './treeProviders/CoveragesProvider';
+import { ArtifactsProvider } from './treeProviders/ArtifactsProvider';
+import { NaosInstance } from './naosclient/models/NaosInstance';
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -16,30 +24,64 @@ export function activate(context: vscode.ExtensionContext) {
 	const baseURL = config.get<string>("gatewayURL");
 	const apiClient = new NaosClient({ BASE: baseURL });
 
-	// TreeViews
-	const userProvider = new UsersProvider(apiClient);
-	const userTreeview = vscode.window.createTreeView("naos.users", { treeDataProvider: userProvider });
-	userTreeview.onDidChangeSelection(async (e) => {
-		const selectedUser = e.selection[0];
-		if (selectedUser) {
-			console.log('selected');
-			const user = await apiClient.admin.getUser(selectedUser.id);
-			vscode.workspace.openTextDocument({
-				language: "json",
-				content: JSON.stringify(user),
-			});
+	// Config listening
+	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(async e => {
+		if (e.affectsConfiguration("naos")) {
+			await vscode.window.showInformationMessage(`naos config changed!`);
+			const config = vscode.workspace.getConfiguration("naos");
+			apiClient.request.config.BASE = config.get<string>("gatewayURL")!;
+			await vscode.commands.executeCommand("naos.refresh");
 		}
-	});
-	context.subscriptions.push(userTreeview);
-
-	const teamProvider = new TeamsProvider(apiClient);
-	const teamTreeView = vscode.window.createTreeView("naos.teams", { treeDataProvider: teamProvider });
-	context.subscriptions.push(teamTreeView);
+	}));
 
 	// Task provider
-	const taskProvider = vscode.tasks.registerTaskProvider("naos-job", new NaosTaskProvider(apiClient));
+	const taskProvider = vscode.tasks.registerTaskProvider(
+		"naos-job",
+		new NaosTaskProvider(apiClient)
+	);
 	context.subscriptions.push(taskProvider);
 
+	// TextDocumentProvider
+	const docProvider = vscode.workspace.registerTextDocumentContentProvider(
+		"naos",
+		new NaosTextDocumentContentProvider(apiClient)
+	);
+	context.subscriptions.push(docProvider);
+
+	// TreeViews
+	function registerTreeView(viewId: string, options: vscode.TreeViewOptions<any>) {
+		// vscode.window.registerTreeDataProvider("naos.services", servicesProvider);
+		const treeView = vscode.window.createTreeView(viewId, options);
+		context.subscriptions.push(treeView);
+		return treeView;
+	}
+
+	const usersProvider = new UsersProvider(apiClient);
+	registerTreeView("naos.users", { treeDataProvider: usersProvider });
+
+	const teamsProvider = new TeamsProvider(apiClient);
+	registerTreeView("naos.teams", { treeDataProvider: teamsProvider });
+
+	const servicesProvider = new ServicesProvider(apiClient);
+	registerTreeView("naos.services", { treeDataProvider: servicesProvider });
+
+	const instancesProvider = new InstancesProvider(apiClient);
+	registerTreeView("naos.instances", { treeDataProvider: instancesProvider });
+
+	// const workareasProvider = new WorkareasProvider(apiClient);
+	// registerTreeView("naos.workareas", { treeDataProvider: workareasProvider });
+
+	// const geofilesProvider = new GeofilesProvider(apiClient);
+	// registerTreeView("naos.geofiles", { treeDataProvider: geofilesProvider });
+
+	// const jobsProvider = new JobsProvider(apiClient);
+	// registerTreeView("naos.jobs", { treeDataProvider: jobsProvider });
+
+	// const coveragesProvider = new CoveragesProvider(apiClient);
+	// registerTreeView("naos.coverages", { treeDataProvider: coveragesProvider });
+
+	// const artifactsProvider = new ArtifactsProvider(apiClient);
+	// registerTreeView("naos.artifacts", { treeDataProvider: artifactsProvider });
 
 	// Commands
 	function registerNaosCommand(command: string, callback: (...args: any[]) => any) {
@@ -62,7 +104,7 @@ export function activate(context: vscode.ExtensionContext) {
 				await vscode.commands.executeCommand("naos.refresh");
 			} catch (error) {
 				if (error instanceof ApiError) {
-					vscode.window.showErrorMessage(error.message, error.body as string);
+					await vscode.window.showErrorMessage(error.message, error.body as string);
 				}
 			}
 		}
@@ -87,13 +129,28 @@ export function activate(context: vscode.ExtensionContext) {
 		const name = await vscode.window.showInputBox({ title: "team name", prompt: "What is its name?" });
 		if (name) {
 			try {
-				await apiClient.teams.createTeam({name} as GatewayTeam);
+				await apiClient.teams.createTeam({ name } as GatewayTeam);
 				await vscode.commands.executeCommand("naos.refresh");
 			} catch (error) {
 				if (error instanceof ApiError) {
-					vscode.window.showErrorMessage(error.message, error.body as string);
+					await vscode.window.showErrorMessage(error.message, error.body as string);
 				}
 			}
+		}
+	});
+
+	registerNaosCommand("naos.team.delete", async (team: GatewayTeam) => {
+		const typed = await vscode.window.showInputBox({
+			title: "Confirm team delete?",
+			prompt: "Enter the team name again.",
+			placeHolder: team.name,
+			// validateInput(value) {
+
+			// },
+		});
+		if (typed === team.name) {
+			await apiClient.teams.deleteTeam(team.id!);
+			await vscode.commands.executeCommand("naos.refresh");
 		}
 	});
 
@@ -112,19 +169,37 @@ export function activate(context: vscode.ExtensionContext) {
 		await vscode.commands.executeCommand("naos.refresh");
 	});
 
-	registerNaosCommand("naos.refresh", () => {
-		userProvider.refresh();
-		teamProvider.refresh();
+	registerNaosCommand("naos.instance.add", async () => {
+		// TODO multiple step QuickPick
+		// vscode.window.createQuickPick()
+
+		// await apiClient.admin.addUserInstance(user.id);
+		await vscode.commands.executeCommand("naos.refresh");
 	});
 
-	// Config listening
-	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e => {
-		if (e.affectsConfiguration("naos")) {
-			vscode.window.showInformationMessage(`naos config changed!`);
-			apiClient.request.config.BASE = config.get<string>("gatewayURL")!;
-			vscode.commands.executeCommand("naos.refresh");
+	registerNaosCommand("naos.instance.delete", async (instance: NaosInstance) => {
+		await apiClient.admin.freeGlobalInstance(instance.id);
+		await vscode.commands.executeCommand("naos.refresh");
+	});
+
+	registerNaosCommand("naos.copyid", async (e: any) => {
+		if (e.id !== undefined) {
+			await vscode.env.clipboard.writeText(e.id);
+			await vscode.window.showInformationMessage(`Copied UUID ${e.id}`);
 		}
-	}));
+	});
+
+	registerNaosCommand("naos.refresh", () => {
+		servicesProvider.refresh();
+		usersProvider.refresh();
+		teamsProvider.refresh();
+		instancesProvider.refresh();
+		// workareasProvider.refresh();
+		// geofilesProvider.refresh();
+		// jobsProvider.refresh();
+		// coveragesProvider.refresh();
+		// artifactsProvider.refresh();
+	});
 
 }
 
@@ -134,10 +209,11 @@ export function deactivate() { }
 async function getUUID(arg: any, prompt: vscode.InputBoxOptions): Promise<string> {
 	if (arg === undefined) {
 		arg = await vscode.window.showInputBox(prompt);
-	} else if ("id" in arg) {
+	} else if (typeof arg === "object" && "id" in arg) {
 		arg = arg.id;
 	}
-	if (uuidValidateV4(arg)) {
+
+	if (typeof arg === "string" && uuidValidateV4(arg)) {
 		return arg;
 	}
 	throw new Error("Impossible to get the UUID");

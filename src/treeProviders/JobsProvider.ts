@@ -2,7 +2,9 @@ import * as vscode from 'vscode';
 import { NaosClient } from '../naosclient';
 import { UserInfo } from '../naosclient/models/UserInfo';
 
-export class UsersProvider implements vscode.TreeDataProvider<UserInfo> {
+// TODO type SchedulingUnit = JobDescribe | typeof JobSummary['work_area_type']
+
+export class JobsProvider implements vscode.TreeDataProvider<UserInfo> {
 
 	constructor(
 		private api: NaosClient

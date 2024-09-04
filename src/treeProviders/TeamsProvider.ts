@@ -4,7 +4,7 @@ import { GatewayTeam } from '../naosclient/models/GatewayTeam';
 import { GatewayTeamUser } from '../naosclient/models/GatewayTeamUser';
 
 export interface TeamUser extends GatewayTeamUser{
-	team_id: string
+	team_id: string;
 }
 
 type AdminItem = GatewayTeam | TeamUser;
@@ -31,12 +31,13 @@ export class TeamsProvider implements vscode.TreeDataProvider<AdminItem> {
 
 	getTreeItem(element: AdminItem): vscode.TreeItem {
 		if ("user_name" in element) {
-			const user = element as GatewayTeamUser;
+			const user = element as TeamUser;
 			return {
 				label: user.user_name,
+				description: user.role,
 				iconPath: new vscode.ThemeIcon("person"),
 				contextValue: "naos.user",
-				id: user.user_id,
+				id: `${user.team_id}:${user.user_id}`,
 				// resourceUri
 				// command
 				// how to display role MEMBER | ADMIN
@@ -46,8 +47,15 @@ export class TeamsProvider implements vscode.TreeDataProvider<AdminItem> {
 		return {
 			collapsibleState: vscode.TreeItemCollapsibleState.Collapsed,
 			label: team.name,
-			iconPath: new vscode.ThemeIcon("account"),
+			description: team.id,
+			iconPath: new vscode.ThemeIcon("organization"),
 			contextValue: "naos.team",
+			id: team.id,
+			command: {
+				command: "vscode.open",
+				title: "Open NAOS Team description.",
+				arguments: [vscode.Uri.parse(`naos:/team/${team.id}.json`)]
+			}
 		};
 	}
 

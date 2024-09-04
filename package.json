@@ -26,7 +26,7 @@
         "command": "naos.user.add",
         "category": "NAOS",
         "title": "Add user",
-        "icon": "$(person-add)"
+        "icon": "$(add)"
       },
       {
         "command": "naos.user.delete",
@@ -59,6 +59,24 @@
         "icon": "$(remove)"
       },
       {
+        "command": "naos.instance.add",
+        "category": "NAOS",
+        "title": "Add NAOS Instance.",
+        "icon": "$(add)"
+      },
+      {
+        "command": "naos.instance.delete",
+        "category": "NAOS",
+        "title": "Free NAOS Instance",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "naos.copyid",
+        "category": "NAOS",
+        "title": "Copy the item UUID.",
+        "icon": "$(key)"
+      },
+      {
         "command": "naos.refresh",
         "category": "NAOS",
         "title": "Refresh",
@@ -77,32 +95,49 @@
     "views": {
       "naos": [
         {
+          "id": "naos.services",
+          "name": "services",
+          "icon": "$(run)"
+        },
+        {
           "id": "naos.users",
-          "name": "users"
+          "name": "users",
+          "icon": "$(person)"
         },
         {
           "id": "naos.teams",
-          "name": "teams"
+          "name": "teams",
+          "icon": "$(organization)"
         },
         {
           "id": "naos.instances",
-          "name": "instances"
+          "name": "instances",
+          "icon": "$(gear)"
         },
         {
-          "id": "naos.projects",
-          "name": "projects"
-        },
-        {
-          "id": "naos.workspaces",
-          "name": "workspaces"
+          "id": "naos.workareas",
+          "name": "workareas",
+          "icon": "$(database)"
         },
         {
           "id": "naos.geofiles",
-          "name": "geofiles"
+          "name": "geofiles",
+          "icon": "$(globe)"
         },
         {
           "id": "naos.jobs",
-          "name": "jobs"
+          "name": "jobs",
+          "icon": "$(wrench)"
+        },
+        {
+          "id": "naos.coverages",
+          "name": "coverages",
+          "icon": "$(graph)"
+        },
+        {
+          "id": "naos.artifacts",
+          "name": "artifacts",
+          "icon": "$(gift)"
         }
       ]
     },
@@ -117,9 +152,24 @@
           "command": "naos.team.add",
           "group": "navigation",
           "when": "view == naos.teams"
+        },
+        {
+          "command": "naos.instance.add",
+          "group": "navigation",
+          "when": "view == naos.instances"
+        },
+        {
+          "command": "naos.refresh",
+          "group": "navigation",
+          "when": "view =~ /^naos\\./"
         }
       ],
       "view/item/context": [
+        {
+          "command": "naos.copyid",
+          "group": "inline",
+          "when": "view == naos.users || (view == naos.teams && viewItem === naos.team) || view == naos.instances"
+        },
         {
           "command": "naos.user.delete",
           "group": "inline",
@@ -131,6 +181,11 @@
           "when": "view == naos.teams && viewItem === naos.team"
         },
         {
+          "command": "naos.team.delete",
+          "group": "rest",
+          "when": "view == naos.teams && viewItem === naos.team"
+        },
+        {
           "command": "naos.team.addUser",
           "group": "inline",
           "when": "view == naos.teams && viewItem === naos.team"
@@ -139,6 +194,11 @@
           "command": "naos.team.removeUser",
           "group": "inline",
           "when": "view == naos.teams && viewItem === naos.user"
+        },
+        {
+          "command": "naos.instance.delete",
+          "group": "inline",
+          "when": "view == naos.instances"
         }
       ]
     },
@@ -147,7 +207,7 @@
       "properties": {
         "naos.gatewayURL": {
           "type": "string",
-          "default": "http://localhost:9090",
+          "default": "http://localhost:9090/v1/",
           "description": "URL of the NAOS gateway"
         }
       }
@@ -198,6 +258,26 @@
             }
           }
         ]
+      }
+    ],
+    "colors": [
+      {
+        "id": "naos.serviceStatus.valid",
+        "description": "Color for a valid NAOS service icon.",
+        "defaults": {
+          "light": "#00dd30",
+          "dark": "#00af26",
+          "highContrast": "#00ff00"
+        }
+      },
+      {
+        "id": "naos.serviceStatus.invalid",
+        "description": "Color for an invalid NAOS service icon.",
+        "defaults": {
+          "dark": "#dd0000",
+          "light": "#af0000",
+          "highContrast": "#ff0000"
+        }
       }
     ]
   },

@@ -3,7 +3,7 @@ import { NaosClient } from './naosclient';
 import { Project } from './naosclient/models/Project';
 
 
-interface NaosTaskDefinition extends vscode.TaskDefinition {
+export interface NaosTaskDefinition extends vscode.TaskDefinition {
     jobId: string;
     priority?: number;
 }
@@ -62,13 +62,18 @@ class NaosTaskTerminal implements vscode.Pseudoterminal {
     ) { }
 
     async open(initialDimensions?: vscode.TerminalDimensions) {
-        this.writeEmitter.fire('Starting NAOS Job...\r\n');
-        this.writeEmitter.fire(`${this.definition.jobId}\r\n`);
+        this.write('Starting NAOS Job...\r\n');
+        this.write(`${this.definition.jobId}\r\n`);
         // TODO {priority: this.definition.priority}
         await this.apiClient.scheduler.schedulerProxyPost(`/jobs/${this.definition.jobId}/_run`);
+        this.write(`posted...\r\n`);
+        await vscode.commands.executeCommand("naos.refresh");
         // TODO ws output
-        this.writeEmitter.fire(`posted...\r\n`);
         this.closeEmitter.fire(0);
+    }
+
+    private write(line: string) {
+        this.writeEmitter.fire(line);
     }
 
     close(): void {

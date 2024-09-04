@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { NaosClient } from '../naosclient';
 import { UserInfo } from '../naosclient/models/UserInfo';
 
-export class UsersProvider implements vscode.TreeDataProvider<UserInfo> {
+export class CoveragesProvider implements vscode.TreeDataProvider<UserInfo> {
 
 	constructor(
 		private api: NaosClient

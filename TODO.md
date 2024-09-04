@@ -29,3 +29,22 @@
   - use contributes...enablement rules.
 
 WARNING: No need for TreeView? (as TreeItem have a "command" property)
+
+- services:
+    - refresh
+
+
+- contributes
+    - jsonValidation
+    - languages + grammars
+
+
+,
+    "jsonValidation": [
+      {
+        "fileMatch": "naos:/",
+        "url": "url"
+      }
+    ]
+
+    
