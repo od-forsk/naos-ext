@@ -1,23 +1,24 @@
 import * as vscode from 'vscode';
 import { NaosTaskProvider } from './NaosTaskProvider';
-import { ApiError, NaosClient } from './naosclient';
-import { UserInfo } from './naosclient/models/UserInfo';
-import { UsersProvider } from './treeProviders/UsersProvider';
-import { TeamsProvider, TeamUser } from './treeProviders/TeamsProvider';
-import { GatewayTeamUser } from './naosclient/models/GatewayTeamUser';
-import { uuidValidateV4 } from './utils';
-import { GatewayTeam } from './naosclient/models/GatewayTeam';
-import { ServicesProvider } from './treeProviders/ServicesProvider';
 import { NaosTextDocumentContentProvider } from './NaosTextDocumentContentProvider';
-import { InstancesProvider } from './treeProviders/InstancesProvider';
-import { WorkareasProvider } from './treeProviders/WorkareasProvider';
-import { GeofilesProvider } from './treeProviders/GeofilesProvider';
-import { JobsProvider } from './treeProviders/JobsProvider';
-import { RunDescribe } from './models/RunDescribe';
-import { CoveragesProvider } from './treeProviders/CoveragesProvider';
-import { ArtifactsProvider } from './treeProviders/ArtifactsProvider';
-import { NaosInstance } from './naosclient/models/NaosInstance';
+import { ApiError, NaosClient } from './naosclient';
+import { GatewayTeam } from './naosclient/models/GatewayTeam';
+import { GatewayTeamUser } from './naosclient/models/GatewayTeamUser';
 import { JobDescribe } from './naosclient/models/JobDescribe';
+import { NaosInstance } from './naosclient/models/NaosInstance';
+import { UserInfo } from './naosclient/models/UserInfo';
+import { ArtifactsProvider } from './treeProviders/ArtifactsProvider';
+import { CoveragesProvider } from './treeProviders/CoveragesProvider';
+import { GeofilesProvider } from './treeProviders/GeofilesProvider';
+import { InstancesProvider } from './treeProviders/InstancesProvider';
+import { JobsProvider } from './treeProviders/JobsProvider';
+import { ServicesProvider } from './treeProviders/ServicesProvider';
+import { TeamsProvider, TeamUser } from './treeProviders/TeamsProvider';
+import { UsersProvider } from './treeProviders/UsersProvider';
+import { WorkareasProvider } from './treeProviders/WorkareasProvider';
+import { uuidValidateV4 } from './utils';
+
+let autoRefresh: any = null;
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -29,10 +30,11 @@ export function activate(context: vscode.ExtensionContext) {
 	// Config listening
 	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(async e => {
 		if (e.affectsConfiguration("naos")) {
-			await vscode.window.showInformationMessage(`naos config changed!`);
+			vscode.window.showInformationMessage(`naos config changed!`);
 			const config = vscode.workspace.getConfiguration("naos");
 			apiClient.request.config.BASE = config.get<string>("gatewayURL")!;
 			await vscode.commands.executeCommand("naos.refresh");
+			restartAutoRefresh();
 		}
 	}));
 
@@ -217,9 +219,15 @@ export function activate(context: vscode.ExtensionContext) {
 		artifactsProvider.refresh();
 	});
 
+	restartAutoRefresh();
+
 }
 
-export function deactivate() { }
+export function deactivate() {
+	if (autoRefresh) {
+		clearInterval(autoRefresh);
+	}
+}
 
 
 async function getUUID(arg: any, prompt: vscode.InputBoxOptions): Promise<string> {
@@ -233,4 +241,19 @@ async function getUUID(arg: any, prompt: vscode.InputBoxOptions): Promise<string
 		return arg;
 	}
 	throw new Error("Impossible to get the UUID");
+}
+
+function restartAutoRefresh(){
+	const config = vscode.workspace.getConfiguration("naos");
+	const doAutoRefresh = config.get<boolean>("autorefresh.enabled");
+	if (autoRefresh) {
+		clearInterval(autoRefresh);
+		autoRefresh = null;
+	}
+	if (doAutoRefresh){
+		const period = config.get<number>("autorefresh.period") ?? 3000;
+		autoRefresh = setInterval(async () => {
+			await vscode.commands.executeCommand("naos.refresh");
+		}, period);
+	}
 }

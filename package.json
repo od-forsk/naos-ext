@@ -231,6 +231,17 @@
           "type": "string",
           "default": "http://localhost:9090/v1/",
           "description": "URL of the NAOS gateway"
+        },
+        "naos.autorefresh.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Wether auto refreshing is enabled."
+        },
+        "naos.autorefresh.period": {
+          "type": "integer",
+          "minimum": 100,
+          "default": 3000,
+          "description": "Auto refresh period in ms."
         }
       }
     },
