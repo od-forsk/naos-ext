@@ -36,6 +36,9 @@ export class NaosTextDocumentContentProvider implements vscode.TextDocumentConte
         if (resourceKind === "project") {
             content = await this.apiClient.projects.getProject(resourceIds[0]);
         }
+        if (resourceKind === "workspace") {
+            content = await this.apiClient.workspaces.getWorkspace(resourceIds[0]);
+        }
         if (resourceKind === "geofile") {
             content = await this.apiClient.geo.getGeoFile(resourceIds[0]);
         }
