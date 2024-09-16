@@ -13,9 +13,11 @@ import { InstancesProvider } from './treeProviders/InstancesProvider';
 import { WorkareasProvider } from './treeProviders/WorkareasProvider';
 import { GeofilesProvider } from './treeProviders/GeofilesProvider';
 import { JobsProvider } from './treeProviders/JobsProvider';
+import { RunDescribe } from './models/RunDescribe';
 import { CoveragesProvider } from './treeProviders/CoveragesProvider';
 import { ArtifactsProvider } from './treeProviders/ArtifactsProvider';
 import { NaosInstance } from './naosclient/models/NaosInstance';
+import { JobDescribe } from './naosclient/models/JobDescribe';
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -68,20 +70,20 @@ export function activate(context: vscode.ExtensionContext) {
 	const instancesProvider = new InstancesProvider(apiClient);
 	registerTreeView("naos.instances", { treeDataProvider: instancesProvider });
 
-	// const workareasProvider = new WorkareasProvider(apiClient);
-	// registerTreeView("naos.workareas", { treeDataProvider: workareasProvider });
+	const workareasProvider = new WorkareasProvider(apiClient);
+	registerTreeView("naos.workareas", { treeDataProvider: workareasProvider });
 
-	// const geofilesProvider = new GeofilesProvider(apiClient);
-	// registerTreeView("naos.geofiles", { treeDataProvider: geofilesProvider });
+	const geofilesProvider = new GeofilesProvider(apiClient);
+	registerTreeView("naos.geofiles", { treeDataProvider: geofilesProvider });
 
-	// const jobsProvider = new JobsProvider(apiClient);
-	// registerTreeView("naos.jobs", { treeDataProvider: jobsProvider });
+	const jobsProvider = new JobsProvider(apiClient);
+	registerTreeView("naos.jobs", { treeDataProvider: jobsProvider });
 
-	// const coveragesProvider = new CoveragesProvider(apiClient);
-	// registerTreeView("naos.coverages", { treeDataProvider: coveragesProvider });
+	const coveragesProvider = new CoveragesProvider(apiClient);
+	registerTreeView("naos.coverages", { treeDataProvider: coveragesProvider });
 
-	// const artifactsProvider = new ArtifactsProvider(apiClient);
-	// registerTreeView("naos.artifacts", { treeDataProvider: artifactsProvider });
+	const artifactsProvider = new ArtifactsProvider(apiClient);
+	registerTreeView("naos.artifacts", { treeDataProvider: artifactsProvider });
 
 	// Commands
 	function registerNaosCommand(command: string, callback: (...args: any[]) => any) {
@@ -169,16 +171,30 @@ export function activate(context: vscode.ExtensionContext) {
 		await vscode.commands.executeCommand("naos.refresh");
 	});
 
-	registerNaosCommand("naos.instance.add", async () => {
+	registerNaosCommand("naos.instance.add", async (userId?: string) => {
 		// TODO multiple step QuickPick
 		// vscode.window.createQuickPick()
-
-		// await apiClient.admin.addUserInstance(user.id);
+		
+		// userId = await getUUID(userId, { title: "NAOS User ID" });
+		// await apiClient.admin.addUserInstance(userId, {} as NaosInstance);
 		await vscode.commands.executeCommand("naos.refresh");
 	});
 
 	registerNaosCommand("naos.instance.delete", async (instance: NaosInstance) => {
 		await apiClient.admin.freeGlobalInstance(instance.id);
+		await vscode.commands.executeCommand("naos.refresh");
+	});
+
+	registerNaosCommand("naos.job.delete", async (job: JobDescribe) => {
+		await apiClient.scheduler.schedulerProxyDelete(`jobs/${job.id}`);
+		await vscode.commands.executeCommand("naos.refresh");
+	});
+
+	registerNaosCommand("naos.job.run", async (job: JobDescribe) => {
+		await vscode.commands.executeCommand("workbench.action.tasks.runTask", {
+			type: NaosTaskProvider.taskType,
+			jobId: job.id,
+		});
 		await vscode.commands.executeCommand("naos.refresh");
 	});
 
@@ -194,11 +210,11 @@ export function activate(context: vscode.ExtensionContext) {
 		usersProvider.refresh();
 		teamsProvider.refresh();
 		instancesProvider.refresh();
-		// workareasProvider.refresh();
-		// geofilesProvider.refresh();
-		// jobsProvider.refresh();
-		// coveragesProvider.refresh();
-		// artifactsProvider.refresh();
+		workareasProvider.refresh();
+		geofilesProvider.refresh();
+		jobsProvider.refresh();
+		coveragesProvider.refresh();
+		artifactsProvider.refresh();
 	});
 
 }

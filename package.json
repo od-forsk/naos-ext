@@ -67,8 +67,20 @@
       {
         "command": "naos.instance.delete",
         "category": "NAOS",
-        "title": "Free NAOS Instance",
+        "title": "Free NAOS Instance.",
         "icon": "$(trash)"
+      },
+      {
+        "command": "naos.job.delete",
+        "category": "NAOS",
+        "title": "Remove a NAOS Job.",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "naos.job.run",
+        "category": "NAOS",
+        "title": "Run a NAOS Job.",
+        "icon": "$(run)"
       },
       {
         "command": "naos.copyid",
@@ -168,7 +180,7 @@
         {
           "command": "naos.copyid",
           "group": "inline",
-          "when": "view == naos.users || (view == naos.teams && viewItem === naos.team) || view == naos.instances"
+          "when": "view == naos.users || (view == naos.teams && viewItem === naos.team) || view == naos.instances || view == naos.jobs || view == naos.workareas || view == naos.geofiles || view == naos.coverages || view == naos.artifacts"
         },
         {
           "command": "naos.user.delete",
@@ -199,6 +211,16 @@
           "command": "naos.instance.delete",
           "group": "inline",
           "when": "view == naos.instances"
+        },
+        {
+          "command": "naos.job.delete",
+          "group": "inline",
+          "when": "view == naos.jobs && viewItem === naos.job"
+        },
+        {
+          "command": "naos.job.run",
+          "group": "inline",
+          "when": "view == naos.jobs && viewItem === naos.job"
         }
       ]
     },

@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import { NaosClient } from '../naosclient';
-import { UserInfo } from '../naosclient/models/UserInfo';
+import { Coverage } from '../naosclient/models/Coverage';
 
-export class CoveragesProvider implements vscode.TreeDataProvider<UserInfo> {
+export class CoveragesProvider implements vscode.TreeDataProvider<Coverage> {
 
 	constructor(
 		private api: NaosClient
@@ -13,27 +13,24 @@ export class CoveragesProvider implements vscode.TreeDataProvider<UserInfo> {
 
 	async getChildren(element?: any) {
 		if (!element) {
-			return await this.api.admin.getUsers();
+			return await this.api.coverages.getCoverages() as Coverage[];
 		}
 	}
 
-	getTreeItem(user: UserInfo): vscode.TreeItem | Thenable<vscode.TreeItem> {
-		const uri = vscode.Uri.parse(`naos:/user/${user.id}.json`);
+	getTreeItem(coverage: Coverage): vscode.TreeItem | Thenable<vscode.TreeItem> {
 		return {
 			collapsibleState: vscode.TreeItemCollapsibleState.None,
-			label: user.name,
-			description: user.email,
-			iconPath: new vscode.ThemeIcon("person"),
-			contextValue: "naos.user",
-			id: user.id,
+			label: coverage.name,
+			description: `${coverage.type ?? ''} ${coverage.work_area?.name ?? ''}` ,
+			iconPath: new vscode.ThemeIcon("graph"),
+			contextValue: "naos.coverage",
+			id: coverage.id,
 			command: {
 				command: "vscode.open",
 				title: "Open Call",
 				arguments: [
-					uri,
-					<vscode.TextDocumentShowOptions>{
-						
-					}
+					vscode.Uri.parse(`naos:/coverage/${coverage.id}.json`),
+					<vscode.TextDocumentShowOptions>{}
 				]
 			}
 		};
