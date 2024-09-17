@@ -93,6 +93,12 @@
         "category": "NAOS",
         "title": "Refresh",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "naos.task.getMessages",
+        "category": "NAOS",
+        "title": "Retrieve Task messages",
+        "icon": "$(comment-discussion)"
       }
     ],
     "viewsContainers": {
@@ -221,6 +227,11 @@
           "command": "naos.job.run",
           "group": "inline",
           "when": "view == naos.jobs && viewItem === naos.job"
+        },
+        {
+          "command": "naos.task.getMessages",
+          "group": "inline",
+          "when": "view == naos.jobs && viewItem === naos.task"
         }
       ]
     },

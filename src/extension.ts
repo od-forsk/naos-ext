@@ -18,6 +18,7 @@ import { CoveragesProvider } from './treeProviders/CoveragesProvider';
 import { ArtifactsProvider } from './treeProviders/ArtifactsProvider';
 import { NaosInstance } from './naosclient/models/NaosInstance';
 import { JobDescribe } from './naosclient/models/JobDescribe';
+import { TaskDescribe } from './models/TaskDescribe';
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -196,6 +197,15 @@ export function activate(context: vscode.ExtensionContext) {
 			jobId: job.id,
 		});
 		await vscode.commands.executeCommand("naos.refresh");
+	});
+
+	registerNaosCommand("naos.task.getMessages", async (task: TaskDescribe) => {
+		const messages = await apiClient.scheduler.schedulerProxyGet(`jobs/${task.job_id}/runs/${task.run_id}/tasks/${task.id}/_messages`);
+		const doc = await vscode.workspace.openTextDocument({
+			language: "json",
+			content: JSON.stringify(messages, undefined, 2)
+		});
+		const editor = await vscode.window.showTextDocument(doc);
 	});
 
 	registerNaosCommand("naos.copyid", async (e: any) => {
