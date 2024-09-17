@@ -48,6 +48,9 @@ export class NaosTextDocumentContentProvider implements vscode.TextDocumentConte
         if (resourceKind === "artifact") {
             content = await this.apiClient.artifacts.getArtifact(resourceIds[0]);
         }
+        if (resourceKind === "messages") {
+            content = await this.apiClient.scheduler.schedulerProxyGet(`jobs/${resourceIds[0]}/runs/${resourceIds[1]}/tasks/${resourceIds[2]}/_messages`);
+        }
         if (content) {
             return JSON.stringify(content, null, 2);
         }

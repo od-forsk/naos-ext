@@ -200,12 +200,11 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 
 	registerNaosCommand("naos.task.getMessages", async (task: TaskDescribe) => {
-		const messages = await apiClient.scheduler.schedulerProxyGet(`jobs/${task.job_id}/runs/${task.run_id}/tasks/${task.id}/_messages`);
-		const doc = await vscode.workspace.openTextDocument({
-			language: "json",
-			content: JSON.stringify(messages, undefined, 2)
-		});
-		const editor = await vscode.window.showTextDocument(doc);
+		await vscode.commands.executeCommand(
+			"vscode.open", 
+			vscode.Uri.parse(`naos:/messages/${task.job_id}/${task.run_id}/${task.id}.json`),
+			<vscode.TextDocumentShowOptions>{},
+		);
 	});
 
 	registerNaosCommand("naos.copyid", async (e: any) => {
