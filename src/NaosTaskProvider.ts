@@ -1,6 +1,10 @@
 import * as vscode from 'vscode';
+import { WebSocket } from 'ws';
+import { TaskDescribe } from './models/TaskDescribe';
+import { TaskLogMessage } from './models/TaskLogMessage';
 import { NaosClient } from './naosclient';
 import { Project } from './naosclient/models/Project';
+import { TokenResponse } from './naosclient/models/TokenResponse';
 
 
 export interface NaosTaskDefinition extends vscode.TaskDefinition {
@@ -56,20 +60,42 @@ class NaosTaskTerminal implements vscode.Pseudoterminal {
     private closeEmitter = new vscode.EventEmitter<number>();
     onDidClose?: vscode.Event<number> = this.closeEmitter.event;
 
+    private websockets: WebSocket[] = [];
+
     constructor(
         private definition: NaosTaskDefinition,
         private apiClient: NaosClient,
     ) { }
 
     async open(initialDimensions?: vscode.TerminalDimensions) {
-        this.write('Starting NAOS Job...\r\n');
-        this.write(`${this.definition.jobId}\r\n`);
+        const job_id = this.definition.jobId;
         // TODO {priority: this.definition.priority}
-        await this.apiClient.scheduler.schedulerProxyPost(`/jobs/${this.definition.jobId}/_run`);
-        this.write(`posted...\r\n`);
-        await vscode.commands.executeCommand("naos.refresh");
-        // TODO ws output
-        this.closeEmitter.fire(0);
+        this.write(`Starting NAOS Job ${job_id}.\r\n`);
+        const { run_id } = await this.apiClient.scheduler.schedulerProxyPost(`/jobs/${this.definition.jobId}/_run`);
+        this.write(`posted as run ${run_id}\r\n`);
+        vscode.commands.executeCommand("naos.refresh");
+
+        const { access_token } = await this.apiClient.auth.login() as TokenResponse;
+        const config = vscode.workspace.getConfiguration("naos");
+        const baseURL = config.get<string>("gatewayURL");
+        const host = new URL(baseURL!).host;
+        const minLogLevel = config.get<number>("messages.minloglevel", 20);
+
+        const tasks: TaskDescribe[] = await this.apiClient.scheduler.schedulerProxyGet(`jobs/${job_id}/runs/${run_id}/tasks`);
+        tasks.forEach(task => {
+            const ws = new WebSocket(`ws://${host}/scheduler/messages/${task.id}?token=${access_token}`);
+            this.websockets.push(ws);
+            ws.on('message', data => {
+                const message: TaskLogMessage = JSON.parse(data.toString());
+                if (message.headers.level >= minLogLevel) {
+                    const dt = new Date(message.dt / 1e6).toLocaleTimeString();
+                    this.write(`${dt} [${message.content?.levelname}] ${message.content?.message}\r\n`);
+                }
+            });
+        });
+
+        // TODO call when all websockets are done... not with current WS status
+        // this.closeEmitter.fire(0);
     }
 
     private write(line: string) {
@@ -77,6 +103,9 @@ class NaosTaskTerminal implements vscode.Pseudoterminal {
     }
 
     close(): void {
-        // The terminal has been closed. Shutdown the build.
+        this.websockets.forEach(ws => {
+            ws.close();
+            console.debug('closing task messages websocket.')
+        });
     }
 }
