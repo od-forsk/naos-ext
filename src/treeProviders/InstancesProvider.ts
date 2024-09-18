@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { NaosClient } from '../naosclient';
-import { invalidColor, validColor } from '../utils';
 import { NaosInstance } from '../naosclient/models/NaosInstance';
+import { invalidColor, validColor } from '../utils';
 
 
 export class InstancesProvider implements vscode.TreeDataProvider<NaosInstance> {
@@ -20,7 +20,6 @@ export class InstancesProvider implements vscode.TreeDataProvider<NaosInstance> 
 	}
 
 	getTreeItem(instance: NaosInstance): vscode.TreeItem | Thenable<vscode.TreeItem> {
-		const uri = vscode.Uri.parse(`naos:/instance/${instance.id}.json`);
 		const icon = instance.service_state === "healthy" ?
 			new vscode.ThemeIcon("gear", validColor) :
 			new vscode.ThemeIcon("error", invalidColor);
@@ -35,10 +34,8 @@ export class InstancesProvider implements vscode.TreeDataProvider<NaosInstance> 
 				command: "vscode.open",
 				title: "Open Call",
 				arguments: [
-					uri,
-					<vscode.TextDocumentShowOptions>{
-						
-					}
+					vscode.Uri.parse(`naos:/instance/${instance.id}.json`),
+					<vscode.TextDocumentShowOptions>{},
 				]
 			}
 		};
