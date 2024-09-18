@@ -20,14 +20,13 @@ export class InstancesProvider implements vscode.TreeDataProvider<NaosInstance> 
 	}
 
 	getTreeItem(instance: NaosInstance): vscode.TreeItem | Thenable<vscode.TreeItem> {
-		const icon = instance.service_state === "healthy" ?
-			new vscode.ThemeIcon("gear", validColor) :
-			new vscode.ThemeIcon("error", invalidColor);
 		return {
 			collapsibleState: vscode.TreeItemCollapsibleState.None,
 			label: instance.name,
-			description: instance.url,
-			iconPath: icon,
+			description: `${instance.service_state} ${instance.url}`,
+			iconPath: instance.service_state === "healthy" ?
+				new vscode.ThemeIcon("gear", validColor) :
+				new vscode.ThemeIcon("error", invalidColor),
 			contextValue: "naos.instance",
 			id: instance.id,
 			command: {

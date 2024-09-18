@@ -1,24 +1,23 @@
 import * as vscode from 'vscode';
 import { NaosTaskProvider } from './NaosTaskProvider';
-import { ApiError, NaosClient } from './naosclient';
-import { UserInfo } from './naosclient/models/UserInfo';
-import { UsersProvider } from './treeProviders/UsersProvider';
-import { TeamsProvider, TeamUser } from './treeProviders/TeamsProvider';
-import { GatewayTeamUser } from './naosclient/models/GatewayTeamUser';
-import { uuidValidateV4 } from './utils';
-import { GatewayTeam } from './naosclient/models/GatewayTeam';
-import { ServicesProvider } from './treeProviders/ServicesProvider';
 import { NaosTextDocumentContentProvider } from './NaosTextDocumentContentProvider';
-import { InstancesProvider } from './treeProviders/InstancesProvider';
-import { WorkareasProvider } from './treeProviders/WorkareasProvider';
-import { GeofilesProvider } from './treeProviders/GeofilesProvider';
-import { JobsProvider } from './treeProviders/JobsProvider';
-import { RunDescribe } from './models/RunDescribe';
-import { CoveragesProvider } from './treeProviders/CoveragesProvider';
-import { ArtifactsProvider } from './treeProviders/ArtifactsProvider';
-import { NaosInstance } from './naosclient/models/NaosInstance';
-import { JobDescribe } from './naosclient/models/JobDescribe';
 import { TaskDescribe } from './models/TaskDescribe';
+import { ApiError, NaosClient } from './naosclient';
+import { GatewayTeam } from './naosclient/models/GatewayTeam';
+import { GatewayTeamUser } from './naosclient/models/GatewayTeamUser';
+import { JobDescribe } from './naosclient/models/JobDescribe';
+import { NaosInstance } from './naosclient/models/NaosInstance';
+import { UserInfo } from './naosclient/models/UserInfo';
+import { ArtifactsProvider } from './treeProviders/ArtifactsProvider';
+import { CoveragesProvider } from './treeProviders/CoveragesProvider';
+import { GeofilesProvider } from './treeProviders/GeofilesProvider';
+import { InstancesProvider } from './treeProviders/InstancesProvider';
+import { JobsProvider } from './treeProviders/JobsProvider';
+import { ServicesProvider } from './treeProviders/ServicesProvider';
+import { TeamsProvider, TeamUser } from './treeProviders/TeamsProvider';
+import { UsersProvider } from './treeProviders/UsersProvider';
+import { WorkareasProvider } from './treeProviders/WorkareasProvider';
+import { uuidValidateV4 } from './utils';
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -172,17 +171,17 @@ export function activate(context: vscode.ExtensionContext) {
 		await vscode.commands.executeCommand("naos.refresh");
 	});
 
-	registerNaosCommand("naos.instance.add", async (userId?: string) => {
+	registerNaosCommand("naos.instance.add", async () => {
 		// TODO multiple step QuickPick
 		// vscode.window.createQuickPick()
-		
-		// userId = await getUUID(userId, { title: "NAOS User ID" });
-		// await apiClient.admin.addUserInstance(userId, {} as NaosInstance);
+
+		await apiClient.naos.addInstance({parameters: {}});
 		await vscode.commands.executeCommand("naos.refresh");
 	});
 
 	registerNaosCommand("naos.instance.delete", async (instance: NaosInstance) => {
-		await apiClient.admin.freeGlobalInstance(instance.id);
+		// await apiClient.admin.freeGlobalInstance(instance.id);
+		await apiClient.naos.freeInstance(instance.id);
 		await vscode.commands.executeCommand("naos.refresh");
 	});
 
@@ -201,7 +200,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	registerNaosCommand("naos.task.getMessages", async (task: TaskDescribe) => {
 		await vscode.commands.executeCommand(
-			"vscode.open", 
+			"vscode.open",
 			vscode.Uri.parse(`naos:/messages/${task.job_id}/${task.run_id}/${task.id}.json`),
 			<vscode.TextDocumentShowOptions>{},
 		);
