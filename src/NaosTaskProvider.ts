@@ -1,10 +1,11 @@
-import * as vscode from 'vscode';
-import { WebSocket } from 'ws';
-import { TaskDescribe } from './models/TaskDescribe';
-import { TaskLogMessage } from './models/TaskLogMessage';
-import { NaosClient } from './naosclient';
-import { Project } from './naosclient/models/Project';
-import { TokenResponse } from './naosclient/models/TokenResponse';
+import * as vscode from "vscode";
+import { WebSocket } from "ws";
+import { RunDescribe } from "./models/RunDescribe";
+import { TaskDescribe } from "./models/TaskDescribe";
+import { TaskLogMessage } from "./models/TaskLogMessage";
+import { NaosClient } from "./naosclient";
+import { JobSummary } from "./naosclient/models/JobSummary";
+import { TokenResponse } from "./naosclient/models/TokenResponse";
 
 
 export interface NaosTaskDefinition extends vscode.TaskDefinition {
@@ -14,7 +15,7 @@ export interface NaosTaskDefinition extends vscode.TaskDefinition {
 
 // https://github.com/microsoft/vscode-extension-samples/blob/main/task-provider-sample/src/extension.ts
 export class NaosTaskProvider implements vscode.TaskProvider<vscode.Task> {
-    static taskType = 'naos-job';
+    static taskType = "naos-job";
 
     constructor(
         private apiClient: NaosClient,
@@ -22,10 +23,9 @@ export class NaosTaskProvider implements vscode.TaskProvider<vscode.Task> {
 
     async provideTasks(token: vscode.CancellationToken) {
         const tasks: vscode.Task[] = [];
-        for (const project of await this.apiClient.projects.getProjects() as Project[]) {
-            for (const job of await this.apiClient.jobs.getProjectJobs(project.id!)) {
-                tasks.push(this.getTask(job.id, `${project.name}: ${job.name}`));
-            }
+        const jobs: JobSummary[] = await this.apiClient.scheduler.schedulerProxyGet("jobs");
+        for (const job of jobs) {
+            tasks.push(this.getTask(job.id, job.name));
         }
         return tasks;
     }
@@ -47,7 +47,7 @@ export class NaosTaskProvider implements vscode.TaskProvider<vscode.Task> {
             vscode.TaskScope.Workspace,
             // `${project.name}: ${job.name}`,
             name,
-            'naos-job',
+            "naos-job",
             new vscode.CustomExecution(async definition => new NaosTaskTerminal(definition as NaosTaskDefinition, this.apiClient))
         );
     }
@@ -61,6 +61,7 @@ class NaosTaskTerminal implements vscode.Pseudoterminal {
     onDidClose?: vscode.Event<number> = this.closeEmitter.event;
 
     private websockets: WebSocket[] = [];
+    private interval: any = null;
 
     constructor(
         private definition: NaosTaskDefinition,
@@ -81,11 +82,13 @@ class NaosTaskTerminal implements vscode.Pseudoterminal {
         const host = new URL(baseURL!).host;
         const minLogLevel = config.get<number>("messages.minloglevel", 20);
 
+        let lastMessage = Date.now();
         const tasks: TaskDescribe[] = await this.apiClient.scheduler.schedulerProxyGet(`jobs/${job_id}/runs/${run_id}/tasks`);
         tasks.forEach(task => {
             const ws = new WebSocket(`ws://${host}/scheduler/messages/${task.id}?token=${access_token}`);
             this.websockets.push(ws);
-            ws.on('message', data => {
+            ws.on("message", data => {
+                lastMessage = Date.now();
                 const message: TaskLogMessage = JSON.parse(data.toString());
                 if (message.headers.level >= minLogLevel) {
                     const dt = new Date(message.dt / 1e6).toLocaleTimeString();
@@ -94,8 +97,16 @@ class NaosTaskTerminal implements vscode.Pseudoterminal {
             });
         });
 
-        // TODO call when all websockets are done... not with current WS status
-        // this.closeEmitter.fire(0);
+        this.interval = setInterval(async () => {
+            const noMessageMs = Date.now() - lastMessage;
+            if (noMessageMs > 2000) {
+                const run: RunDescribe = await this.apiClient.scheduler.schedulerProxyGet(`jobs/${job_id}/runs/${run_id}`);
+                if (["COMPLETED", "FAILED"].includes(run.status.status)) {
+                    this.closeEmitter.fire(0);
+                    this.close();
+                }
+            }
+        }, 3000);
     }
 
     private write(line: string) {
@@ -103,9 +114,11 @@ class NaosTaskTerminal implements vscode.Pseudoterminal {
     }
 
     close(): void {
+        this.interval && clearInterval(this.interval);
         this.websockets.forEach(ws => {
             ws.close();
-            console.debug('closing task messages websocket.')
+            console.debug("closing task messages websocket.");
+            vscode.commands.executeCommand("naos.refresh");
         });
     }
 }
