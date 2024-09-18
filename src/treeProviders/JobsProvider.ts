@@ -3,6 +3,7 @@ import { RunDescribe } from '../models/RunDescribe';
 import { TaskDescribe } from '../models/TaskDescribe';
 import { NaosClient } from '../naosclient';
 import { JobDescribe } from '../naosclient/models/JobDescribe';
+import { invalidColor, validColor } from '../utils';
 
 type Job = JobDescribe & { kind: "job" };
 type Run = RunDescribe & { kind: "run" };
@@ -36,11 +37,15 @@ export class JobsProvider implements vscode.TreeDataProvider<SchedulingUnit> {
 	getTreeItem(item: SchedulingUnit): vscode.TreeItem | Thenable<vscode.TreeItem> {
 		switch (item.kind) {
 			case "job":
+				const jobStatus = item.last_run_status?.status;
 				return {
 					collapsibleState: vscode.TreeItemCollapsibleState.Collapsed,
 					label: item.name,
-					description: item.job_version ? `v${item.job_version}` : "unknown version",
-					iconPath: new vscode.ThemeIcon("wrench"),
+					description: [
+						item.job_version ? `v${item.job_version}` : "",
+						jobStatus === "COMPLETED" ? undefined : jobStatus,
+					].filter(e => e !== undefined).join(" "),
+					iconPath: new vscode.ThemeIcon("wrench", statusColor(jobStatus)),
 					contextValue: "naos.job",
 					id: item.id,
 					command: {
@@ -53,11 +58,12 @@ export class JobsProvider implements vscode.TreeDataProvider<SchedulingUnit> {
 					}
 				};
 			case 'run':
+				const runStatus = item.status?.status;
 				return {
 					collapsibleState: vscode.TreeItemCollapsibleState.Collapsed,
-					label: item.creation_date,
+					label: new Date(item.creation_date).toLocaleString(),
 					description: `${item.status.status} ${item.status.progress}%`,
-					iconPath: new vscode.ThemeIcon("run"),
+					iconPath: new vscode.ThemeIcon(runStatus === "FAILED" ? "run-errors" : "run", statusColor(runStatus)),
 					contextValue: "naos.run",
 					id: item.id,
 					command: {
@@ -73,8 +79,8 @@ export class JobsProvider implements vscode.TreeDataProvider<SchedulingUnit> {
 				return {
 					collapsibleState: vscode.TreeItemCollapsibleState.None,
 					label: item.name,
-					description: `${item.status.status} ${item.status.progress}%`,
-					iconPath: new vscode.ThemeIcon("debug-breakpoint"),
+					description: `${item.status?.status} ${item.status.progress}%`,
+					iconPath: new vscode.ThemeIcon("debug-breakpoint", statusColor(item.status?.status)),
 					contextValue: "naos.task",
 					id: item.id,
 					command: {
@@ -96,3 +102,13 @@ export class JobsProvider implements vscode.TreeDataProvider<SchedulingUnit> {
 	}
 
 }
+
+function statusColor(jobStatus?: string): vscode.ThemeColor | undefined {
+	switch (jobStatus) {
+		case "COMPLETED":
+			return validColor;
+		case "FAILED":
+			return invalidColor;
+	}
+}
+
