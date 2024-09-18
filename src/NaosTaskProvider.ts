@@ -54,6 +54,8 @@ export class NaosTaskProvider implements vscode.TaskProvider<vscode.Task> {
 }
 
 
+const TERMINAL_STATUSES = ["COMPLETED", "FAILED", "ABORTED", "CANCELLED"];
+
 class NaosTaskTerminal implements vscode.Pseudoterminal {
     private writeEmitter = new vscode.EventEmitter<string>();
     onDidWrite: vscode.Event<string> = this.writeEmitter.event;
@@ -101,7 +103,7 @@ class NaosTaskTerminal implements vscode.Pseudoterminal {
             const noMessageMs = Date.now() - lastMessage;
             if (noMessageMs > 2000) {
                 const run: RunDescribe = await this.apiClient.scheduler.schedulerProxyGet(`jobs/${job_id}/runs/${run_id}`);
-                if (["COMPLETED", "FAILED"].includes(run.status.status)) {
+                if (TERMINAL_STATUSES.includes(run.status.status)) {
                     this.closeEmitter.fire(0);
                     this.close();
                 }
