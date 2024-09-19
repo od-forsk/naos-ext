@@ -186,7 +186,7 @@
         {
           "command": "naos.copyid",
           "group": "inline",
-          "when": "view == naos.users || (view == naos.teams && viewItem === naos.team) || view == naos.instances || view == naos.jobs || view == naos.workareas || view == naos.geofiles || view == naos.coverages || view == naos.artifacts"
+          "when": "view == naos.users || view == naos.teams || view == naos.instances || view == naos.jobs || view == naos.workareas || view == naos.geofiles || view == naos.coverages || view == naos.artifacts"
         },
         {
           "command": "naos.user.delete",

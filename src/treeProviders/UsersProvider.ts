@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { NaosClient } from '../naosclient';
 import { UserInfo } from '../naosclient/models/UserInfo';
+import { validColor } from '../utils';
 
 export class UsersProvider implements vscode.TreeDataProvider<UserInfo> {
 
@@ -18,22 +19,20 @@ export class UsersProvider implements vscode.TreeDataProvider<UserInfo> {
 	}
 
 	getTreeItem(user: UserInfo): vscode.TreeItem | Thenable<vscode.TreeItem> {
-		const uri = vscode.Uri.parse(`naos:/user/${user.id}.json`);
 		return {
 			collapsibleState: vscode.TreeItemCollapsibleState.None,
 			label: user.name,
-			description: user.email,
-			iconPath: new vscode.ThemeIcon("person"),
+			description: user.id,
+			tooltip: user.id,
+			iconPath: new vscode.ThemeIcon("person", user.is_admin ? validColor : undefined),
 			contextValue: "naos.user",
 			id: user.id,
 			command: {
 				command: "vscode.open",
 				title: "Open Call",
 				arguments: [
-					uri,
-					<vscode.TextDocumentShowOptions>{
-						
-					}
+					vscode.Uri.parse(`naos:/user/${user.id}.json`),
+					<vscode.TextDocumentShowOptions>{}
 				]
 			}
 		};

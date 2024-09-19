@@ -2,8 +2,9 @@ import * as vscode from 'vscode';
 import { NaosClient } from '../naosclient';
 import { GatewayTeam } from '../naosclient/models/GatewayTeam';
 import { GatewayTeamUser } from '../naosclient/models/GatewayTeamUser';
+import { validColor } from '../utils';
 
-export interface TeamUser extends GatewayTeamUser{
+export interface TeamUser extends GatewayTeamUser {
 	team_id: string;
 }
 
@@ -26,7 +27,7 @@ export class TeamsProvider implements vscode.TreeDataProvider<AdminItem> {
 		}
 		const team = element as GatewayTeam;
 		const users = await this.api.teams.getTeamUsers(team.id);
-		return users.map(user => ({...user, team_id: team.id}));
+		return users.map(user => ({ ...user, id: user.user_id, team_id: team.id }));
 	}
 
 	getTreeItem(element: AdminItem): vscode.TreeItem {
@@ -35,12 +36,10 @@ export class TeamsProvider implements vscode.TreeDataProvider<AdminItem> {
 			return {
 				label: user.user_name,
 				description: user.role,
-				iconPath: new vscode.ThemeIcon("person"),
+				tooltip: user.user_id,
+				iconPath: new vscode.ThemeIcon("person", user.role === "ADMIN" ? validColor : undefined),
 				contextValue: "naos.user",
 				id: `${user.team_id}:${user.user_id}`,
-				// resourceUri
-				// command
-				// how to display role MEMBER | ADMIN
 			};
 		}
 		const team = element as GatewayTeam;
@@ -48,6 +47,7 @@ export class TeamsProvider implements vscode.TreeDataProvider<AdminItem> {
 			collapsibleState: vscode.TreeItemCollapsibleState.Collapsed,
 			label: team.name,
 			description: team.id,
+			tooltip: team.id,
 			iconPath: new vscode.ThemeIcon("organization"),
 			contextValue: "naos.team",
 			id: team.id,
