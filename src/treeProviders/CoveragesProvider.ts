@@ -21,7 +21,8 @@ export class CoveragesProvider implements vscode.TreeDataProvider<Coverage> {
 		return {
 			collapsibleState: vscode.TreeItemCollapsibleState.None,
 			label: coverage.name,
-			description: `${coverage.type ?? ''} ${coverage.work_area?.name ?? ''}` ,
+			description: `${coverage.type ?? ''} ${coverage.work_area?.name ?? ''}`,
+			tooltip: coverage.id,
 			iconPath: new vscode.ThemeIcon("graph"),
 			contextValue: "naos.coverage",
 			id: coverage.id,

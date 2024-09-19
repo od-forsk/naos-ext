@@ -26,6 +26,7 @@ export class ArtifactsProvider implements vscode.TreeDataProvider<Artifact> {
 			collapsibleState: vscode.TreeItemCollapsibleState.None,
 			label: artifact.name ?? artifact.id,
 			description: artifact.type ?? artifact.metadata?.type,
+			tooltip: artifact.id,
 			iconPath: new vscode.ThemeIcon("gift"),
 			contextValue: "naos.artifact",
 			id: artifact.id,

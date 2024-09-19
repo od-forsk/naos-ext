@@ -24,6 +24,7 @@ export class InstancesProvider implements vscode.TreeDataProvider<NaosInstance> 
 			collapsibleState: vscode.TreeItemCollapsibleState.None,
 			label: instance.name,
 			description: `${instance.service_state} ${instance.url}`,
+			tooltip: instance.id,
 			iconPath: instance.service_state === "healthy" ?
 				new vscode.ThemeIcon("gear", validColor) :
 				new vscode.ThemeIcon("error", invalidColor),

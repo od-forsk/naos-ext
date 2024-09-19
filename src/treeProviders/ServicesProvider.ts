@@ -30,14 +30,10 @@ export class ServicesProvider implements vscode.TreeDataProvider<Service> {
 			collapsibleState: vscode.TreeItemCollapsibleState.None,
 			label: service.name,
 			description: service.version,
+			tooltip: JSON.stringify(service, undefined, 2),
 			iconPath: icon,
 			contextValue: "naos.service",
 			id: service.name,
-			// command: {
-			// 	command: "naos.copyid",
-			// 	title: "zelfuezf",
-			// 	arguments: [{ id: service.name }],
-			// }
 			// command: {
 			// 	command: "vscode.open",
 			// 	title: "Display NAOS service status",

@@ -22,6 +22,7 @@ export class GeofilesProvider implements vscode.TreeDataProvider<GeoFile> {
 			collapsibleState: vscode.TreeItemCollapsibleState.None,
 			label: geofile.name,
 			description: geofile.file_format,
+			tooltip: geofile.id,
 			iconPath: new vscode.ThemeIcon("globe"),
 			contextValue: "naos.geofile",
 			id: geofile.id,
