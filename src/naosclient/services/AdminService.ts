@@ -43,6 +43,9 @@ export class AdminService {
                 'limit': limit,
                 'match_pattern': matchPattern,
             },
+            errors: {
+                403: `Current user is not admin`,
+            },
         });
     }
     /**
@@ -64,6 +67,9 @@ export class AdminService {
             },
             query: {
                 'backup': backup,
+            },
+            errors: {
+                403: `Current user is not admin`,
             },
         });
     }
@@ -90,6 +96,9 @@ export class AdminService {
             headers: {
                 'Prefer': prefer,
             },
+            errors: {
+                403: `Current user is not admin`,
+            },
         });
     }
     /**
@@ -101,6 +110,9 @@ export class AdminService {
         return this.httpRequest.request({
             method: 'DELETE',
             url: '/admin/tokens',
+            errors: {
+                403: `Current user is not admin`,
+            },
         });
     }
     /**
@@ -142,6 +154,9 @@ export class AdminService {
                 'last_seen_from': lastSeenFrom,
                 'last_seen_to': lastSeenTo,
             },
+            errors: {
+                403: `Current user is not admin`,
+            },
         });
     }
     /**
@@ -160,6 +175,7 @@ export class AdminService {
                 'token_id': tokenId,
             },
             errors: {
+                403: `Current user is not admin`,
                 404: `Token not found`,
             },
         });
@@ -180,6 +196,7 @@ export class AdminService {
                 'token_id': tokenId,
             },
             errors: {
+                403: `Current user is not admin`,
                 404: `Token not found`,
             },
         });
@@ -258,6 +275,7 @@ export class AdminService {
                 'delete_workspaces': deleteWorkspaces,
             },
             errors: {
+                403: `Current user is not admin`,
                 404: `User not found`,
             },
         });
@@ -329,6 +347,9 @@ export class AdminService {
             path: {
                 'user_id': userId,
             },
+            errors: {
+                403: `Current user is not admin`,
+            },
         });
     }
     /**
@@ -363,6 +384,7 @@ export class AdminService {
                 'limit': limit,
             },
             errors: {
+                403: `Current user is not admin`,
                 404: `User not found`,
             },
         });
@@ -386,6 +408,9 @@ export class AdminService {
             },
             body: requestBody,
             mediaType: 'application/json',
+            errors: {
+                403: `Current user is not admin`,
+            },
         });
     }
     /**
@@ -412,6 +437,7 @@ export class AdminService {
                 'backup': backup,
             },
             errors: {
+                403: `Current user is not admin`,
                 404: `Not found`,
             },
         });
@@ -443,6 +469,7 @@ export class AdminService {
                 'Prefer': prefer,
             },
             errors: {
+                403: `Current user is not admin`,
                 404: `User or instance not found`,
             },
         });
@@ -467,6 +494,7 @@ export class AdminService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
+                403: `Current user is not admin`,
                 404: `User not found`,
             },
         });
@@ -487,6 +515,7 @@ export class AdminService {
                 'user_id': userId,
             },
             errors: {
+                403: `Current user is not admin`,
                 404: `User not found`,
             },
         });
@@ -507,6 +536,7 @@ export class AdminService {
                 'user_id': userId,
             },
             errors: {
+                403: `Current user is not admin`,
                 404: `User not found`,
             },
         });
@@ -553,6 +583,7 @@ export class AdminService {
                 'last_seen_to': lastSeenTo,
             },
             errors: {
+                403: `Current user is not admin`,
                 404: `User not found`,
             },
         });
@@ -576,6 +607,7 @@ export class AdminService {
                 'token_id': tokenId,
             },
             errors: {
+                403: `Current user is not admin`,
                 404: `User or Token not found`,
             },
         });
@@ -599,6 +631,7 @@ export class AdminService {
                 'token_id': tokenId,
             },
             errors: {
+                403: `Current user is not admin`,
                 404: `User or Token not found`,
             },
         });
@@ -649,6 +682,9 @@ export class AdminService {
                 'skip': skip,
                 'limit': limit,
             },
+            errors: {
+                403: `Current user is not admin`,
+            },
         });
     }
     /**
@@ -674,6 +710,9 @@ export class AdminService {
             query: {
                 'force': force,
             },
+            errors: {
+                403: `Current user is not admin`,
+            },
         });
     }
     /**
@@ -692,6 +731,7 @@ export class AdminService {
                 'workspace_id': workspaceId,
             },
             errors: {
+                403: `Current user is not admin`,
                 404: `Not found`,
             },
         });
@@ -716,6 +756,7 @@ export class AdminService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
+                403: `Current user is not admin`,
                 404: `Not found`,
             },
         });
@@ -768,6 +809,9 @@ export class AdminService {
                 'skip': skip,
                 'limit': limit,
             },
+            errors: {
+                403: `Current user is not admin`,
+            },
         });
     }
     /**
@@ -798,6 +842,7 @@ export class AdminService {
             mediaType: 'application/json',
             errors: {
                 400: `Invalid workspace details`,
+                403: `Current user is not admin`,
             },
         });
     }

@@ -1,0 +1,141 @@
+{
+  "allOf": [
+    {
+      "$ref": "Coverage.json",
+      "x-scope": [
+        "",
+        "#/components/schemas/CoverageDetails"
+      ]
+    },
+    {
+      "properties": {
+        "conditions": {
+          "description": "Coverage calculation conditions",
+          "properties": {
+            "cell_mode": {
+              "default": "SA",
+              "description": "Standalone or Both. For now, only standalone is available.\n",
+              "enum": [
+                "SA",
+                "Both"
+              ],
+              "type": "string"
+            },
+            "cell_types": {
+              "description": "[NOT IMPLEMENTED] Chosen coverage type will validate possible cell types.\n",
+              "properties": {
+                "primary": {
+                  "description": "Is primary cell considered",
+                  "type": "boolean"
+                },
+                "secondary_index": {
+                  "description": "Secondary cell index",
+                  "maximum": 15,
+                  "minimum": 0,
+                  "type": "integer"
+                }
+              },
+              "type": "object"
+            },
+            "rat_interferences": {
+              "$ref": "RatInterferences.json",
+              "x-scope": [
+                "",
+                "#/components/schemas/CoverageDetails"
+              ]
+            },
+            "server_channels": {
+              "description": "[NOT IMPLEMENTED] Server channel filtering",
+              "items": {
+                "$ref": "Reference.json",
+                "x-scope": [
+                  "",
+                  "#/components/schemas/CoverageDetails"
+                ]
+              },
+              "nullable": true,
+              "type": "array"
+            },
+            "server_layers": {
+              "description": "[NOT IMPLEMENTED] Server layer filtering",
+              "items": {
+                "$ref": "Reference.json",
+                "x-scope": [
+                  "",
+                  "#/components/schemas/CoverageDetails"
+                ]
+              },
+              "nullable": true,
+              "type": "array"
+            },
+            "server_mode": {
+              "description": "Server selection method",
+              "enum": [
+                "all",
+                "best"
+              ],
+              "type": "string"
+            },
+            "traffic": {
+              "description": "Traffic characteristics",
+              "properties": {
+                "mobility": {
+                  "$ref": "Reference.json",
+                  "x-scope": [
+                    "",
+                    "#/components/schemas/CoverageDetails"
+                  ]
+                },
+                "service": {
+                  "$ref": "Reference.json",
+                  "x-scope": [
+                    "",
+                    "#/components/schemas/CoverageDetails"
+                  ]
+                },
+                "terminal": {
+                  "$ref": "Reference.json",
+                  "x-scope": [
+                    "",
+                    "#/components/schemas/CoverageDetails"
+                  ]
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "filters": {
+          "nullable": true,
+          "properties": {
+            "data": {
+              "description": "Data filter using the DAS filtering syntax, ie `<column>.<operator>.<value>`.\nFor now, it is only possible to filter on installed antennas base & custom fields or sites & ttansmitters lists:\n- fband.eq.my_value\n- custom_field.eq.my_value\n- sites_lists.eq.site_list1\n- txs_lists.eq.tx_list1\n",
+              "type": "string"
+            },
+            "geometry": {
+              "description": "GeoJSON geometry object (https://tools.ietf.org/html/rfc7946).\n",
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "last_result": {
+          "$ref": "CoverageResult.json",
+          "x-scope": [
+            "",
+            "#/components/schemas/CoverageDetails"
+          ]
+        },
+        "max_results": {
+          "description": "Keep older results of the coverage",
+          "type": "integer"
+        }
+      },
+      "title": "CoverageMeta",
+      "type": "object"
+    }
+  ],
+  "type": "object",
+  "$schema": "http://json-schema.org/schema#"
+}

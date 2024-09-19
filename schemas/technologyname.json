@@ -1,0 +1,12 @@
+{
+  "enum": [
+    "5G_NR",
+    "LTE",
+    "NB_IOT",
+    "UMTS",
+    "1XRTT",
+    "GSM"
+  ],
+  "type": "string",
+  "$schema": "http://json-schema.org/schema#"
+}

@@ -53,7 +53,7 @@ export class JobsProvider implements vscode.TreeDataProvider<SchedulingUnit> {
 						command: "vscode.open",
 						title: "Open Call",
 						arguments: [
-							vscode.Uri.parse(`naos:/job/${item.id}.json`),
+							vscode.Uri.parse(`naos:${item.id}.job.naos`),
 							<vscode.TextDocumentShowOptions>{},
 						]
 					}
@@ -72,7 +72,7 @@ export class JobsProvider implements vscode.TreeDataProvider<SchedulingUnit> {
 						command: "vscode.open",
 						title: "Open Call",
 						arguments: [
-							vscode.Uri.parse(`naos:/run/${item.job_id}/${item.id}.json`),
+							vscode.Uri.parse(`naos:${item.job_id}/${item.id}.run.naos`),
 							<vscode.TextDocumentShowOptions>{},
 						]
 					}
@@ -90,7 +90,7 @@ export class JobsProvider implements vscode.TreeDataProvider<SchedulingUnit> {
 						command: "vscode.open",
 						title: "Open Call",
 						arguments: [
-							vscode.Uri.parse(`naos:/task/${item.job_id}/${item.run_id}/${item.id}.json`),
+							vscode.Uri.parse(`naos:${item.job_id}/${item.run_id}/${item.id}.task.naos`),
 							<vscode.TextDocumentShowOptions>{},
 						]
 					}

@@ -16,7 +16,7 @@ export class WorkareasProvider implements vscode.TreeDataProvider<Project | Work
 		if (!element) {
 			return await this.api.projects.getProjects() as Project[];
 		}
-		const proj = element as Project
+		const proj = element as Project;
 		return await this.api.admin.getAllWorkspaces(undefined, undefined, undefined, undefined, undefined, undefined, undefined, proj.id) as Workspace[];
 	}
 
@@ -34,7 +34,7 @@ export class WorkareasProvider implements vscode.TreeDataProvider<Project | Work
 					command: "vscode.open",
 					title: "Open Call",
 					arguments: [
-						vscode.Uri.parse(`naos:/workspace/${work_area.id}.json`),
+						vscode.Uri.parse(`naos:${work_area.id}.workspace.naos`),
 						<vscode.TextDocumentShowOptions>{},
 					]
 				}
@@ -53,7 +53,7 @@ export class WorkareasProvider implements vscode.TreeDataProvider<Project | Work
 					command: "vscode.open",
 					title: "Open Call",
 					arguments: [
-						vscode.Uri.parse(`naos:/project/${project.id}.json`),
+						vscode.Uri.parse(`naos:${project.id}.project.naos`),
 						<vscode.TextDocumentShowOptions>{},
 					]
 				}
@@ -67,3 +67,13 @@ export class WorkareasProvider implements vscode.TreeDataProvider<Project | Work
 	}
 
 }
+
+export async function sendProject(editorText: string, apiClient: NaosClient) {
+	const project: Project = JSON.parse(editorText!);
+	if (project.id) {
+		await apiClient.projects.editProject(project.id, undefined, true, project);
+	} else {
+		await apiClient.projects.createProject(true, project);
+	}
+}
+

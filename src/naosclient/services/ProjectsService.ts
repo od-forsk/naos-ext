@@ -87,7 +87,7 @@ export class ProjectsService {
         });
     }
     /**
-     * ADMIN. Delete a project
+     * Delete a project
      * @param projectId Project identifier.
      * @returns any OK
      * @throws ApiError

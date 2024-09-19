@@ -34,7 +34,7 @@ export class InstancesProvider implements vscode.TreeDataProvider<NaosInstance> 
 				command: "vscode.open",
 				title: "Open Call",
 				arguments: [
-					vscode.Uri.parse(`naos:/instance/${instance.id}.json`),
+					vscode.Uri.parse(`naos:${instance.id}.instance.naos`),
 					<vscode.TextDocumentShowOptions>{},
 				]
 			}

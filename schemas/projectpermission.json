@@ -1,0 +1,53 @@
+{
+  "properties": {
+    "created": {
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "id": {
+      "format": "uuid",
+      "readOnly": true,
+      "type": "string"
+    },
+    "modified": {
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "project_id": {
+      "format": "uuid",
+      "readOnly": true,
+      "type": "string"
+    },
+    "read": {
+      "type": "boolean"
+    },
+    "team_id": {
+      "format": "uuid",
+      "type": "string"
+    },
+    "team_name": {
+      "readOnly": true,
+      "type": "string"
+    },
+    "user_id": {
+      "format": "uuid",
+      "type": "string"
+    },
+    "user_login": {
+      "readOnly": true,
+      "type": "string"
+    },
+    "user_name": {
+      "readOnly": true,
+      "type": "string"
+    },
+    "write": {
+      "type": "boolean"
+    }
+  },
+  "title": "Project permissions.",
+  "type": "object",
+  "$schema": "http://json-schema.org/schema#"
+}

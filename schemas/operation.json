@@ -1,0 +1,25 @@
+{
+  "properties": {
+    "detail": {
+      "description": "Operation current detail",
+      "type": "string",
+      "x-nullable": true
+    },
+    "error": {
+      "description": "Operation error",
+      "type": "string",
+      "x-nullable": true
+    },
+    "id": {
+      "description": "Internal operation id",
+      "type": "string"
+    },
+    "title": {
+      "description": "Operation title",
+      "type": "string",
+      "x-nullable": true
+    }
+  },
+  "type": "object",
+  "$schema": "http://json-schema.org/schema#"
+}

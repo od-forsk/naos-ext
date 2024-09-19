@@ -34,13 +34,6 @@ export class ServicesProvider implements vscode.TreeDataProvider<Service> {
 			iconPath: icon,
 			contextValue: "naos.service",
 			id: service.name,
-			// command: {
-			// 	command: "vscode.open",
-			// 	title: "Display NAOS service status",
-			// 	arguments: [
-			// 		vscode.Uri.parse(`naos:/service/${}.json`)
-			// 	]
-			// }
 		};
 	}
 
@@ -49,70 +42,3 @@ export class ServicesProvider implements vscode.TreeDataProvider<Service> {
 	}
 
 }
-
-// {
-// 	"naos_data_access_service": {
-// 	  "connections": {
-// 		"naos_explorer": "healthy",
-// 		"naos_gateway": "healthy",
-// 		"naos_workflow_manager": "healthy"
-// 	  },
-// 	  "mongo": "healthy",
-// 	  "status": "healthy",
-// 	  "version": "1.3.0",
-// 	  "volumes": {
-// 		"file:///mnt/c/naos_share": "healthy"
-// 	  }
-// 	},
-// 	"naos_explorer": {
-// 	  "connections": {
-// 		"naos_data_access_service": "healthy",
-// 		"naos_gateway": "healthy",
-// 		"naos_workflow_manager": "healthy"
-// 	  },
-// 	  "mongo": "healthy",
-// 	  "status": "healthy",
-// 	  "version": "1.7.0",
-// 	  "volumes": {
-// 		"file:///mnt/c/naos_share": "healthy"
-// 	  },
-// 	  "workers": {
-// 		"count": 1,
-// 		"status": "healthy"
-// 	  }
-// 	},
-// 	"naos_gateway": {
-// 	  "connections": {
-// 		"naos_data_access_service": "healthy",
-// 		"naos_explorer": "healthy",
-// 		"naos_workflow_manager": "healthy"
-// 	  },
-// 	  "mongo": "healthy",
-// 	  "status": "healthy",
-// 	  "version": "1.8.0",
-// 	  "volumes": {
-// 		"file:///mnt/c/naos_share": "healthy"
-// 	  },
-// 	  "workers": {
-// 		"count": 1,
-// 		"status": "healthy"
-// 	  }
-// 	},
-// 	"naos_workflow_manager": {
-// 	  "connections": {
-// 		"naos_data_access_service": "healthy",
-// 		"naos_explorer": "healthy",
-// 		"naos_gateway": "healthy"
-// 	  },
-// 	  "mongo": "healthy",
-// 	  "status": "healthy",
-// 	  "version": "1.3.0",
-// 	  "volumes": {
-// 		"file:///mnt/c/naos_share": "healthy"
-// 	  },
-// 	  "workers": {
-// 		"count": 1,
-// 		"status": "healthy"
-// 	  }
-// 	}
-//   }

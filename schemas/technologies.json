@@ -1,0 +1,12 @@
+{
+  "items": {
+    "$ref": "TechnologyName.json",
+    "x-scope": [
+      "",
+      "#/components/schemas/Coverage",
+      "#/components/schemas/Technologies"
+    ]
+  },
+  "type": "array",
+  "$schema": "http://json-schema.org/schema#"
+}

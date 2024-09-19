@@ -1,0 +1,74 @@
+{
+  "description": "Job scheduling update payload.",
+  "properties": {
+    "default_priority": {
+      "default": 5,
+      "description": "default priority for this job",
+      "maximum": 9,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "job_version": {
+      "example": "1",
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "tasks": {
+      "description": "List of input and ID of unit task definition.",
+      "items": {
+        "properties": {
+          "function_name": {
+            "type": "string"
+          },
+          "input": {
+            "$ref": "Input.json",
+            "x-scope": [
+              "",
+              "#/components/schemas/JobEdit"
+            ]
+          },
+          "link": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "function_name",
+          "link",
+          "name",
+          "input"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "trigger": {
+      "$ref": "Trigger.json",
+      "x-scope": [
+        "",
+        "#/components/schemas/JobEdit"
+      ]
+    },
+    "work_area_id": {
+      "description": "Unique identifier of the work area where job will be launched.",
+      "example": "15c61933-0b06-442c-8bab-723b2b41f570",
+      "format": "uuid",
+      "type": "string"
+    },
+    "work_area_type": {
+      "description": "Type of the work area where job will be launched.",
+      "enum": [
+        "project",
+        "workspace"
+      ],
+      "example": "project",
+      "type": "string"
+    }
+  },
+  "type": "object",
+  "$schema": "http://json-schema.org/schema#"
+}

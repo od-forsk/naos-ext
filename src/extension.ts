@@ -7,6 +7,7 @@ import { GatewayTeam } from './naosclient/models/GatewayTeam';
 import { GatewayTeamUser } from './naosclient/models/GatewayTeamUser';
 import { JobDescribe } from './naosclient/models/JobDescribe';
 import { NaosInstance } from './naosclient/models/NaosInstance';
+import { Project } from './naosclient/models/Project';
 import { UserInfo } from './naosclient/models/UserInfo';
 import { ArtifactsProvider } from './treeProviders/ArtifactsProvider';
 import { CoveragesProvider } from './treeProviders/CoveragesProvider';
@@ -16,8 +17,10 @@ import { JobsProvider } from './treeProviders/JobsProvider';
 import { ServicesProvider } from './treeProviders/ServicesProvider';
 import { TeamsProvider, TeamUser } from './treeProviders/TeamsProvider';
 import { UsersProvider } from './treeProviders/UsersProvider';
-import { WorkareasProvider } from './treeProviders/WorkareasProvider';
-import { uuidValidateV4 } from './utils';
+import { sendProject, WorkareasProvider } from './treeProviders/WorkareasProvider';
+import { getActiveEditorText, parseNaosURI, uuidValidateV4 } from './utils';
+
+export let consoleNAOS = vscode.window.createOutputChannel("NAOS-ext", { log: true });
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -175,13 +178,18 @@ export function activate(context: vscode.ExtensionContext) {
 		// TODO multiple step QuickPick
 		// vscode.window.createQuickPick()
 
-		await apiClient.naos.addInstance({parameters: {}});
+		await apiClient.naos.addInstance({ parameters: {} });
 		await vscode.commands.executeCommand("naos.refresh");
 	});
 
 	registerNaosCommand("naos.instance.delete", async (instance: NaosInstance) => {
 		// await apiClient.admin.freeGlobalInstance(instance.id);
 		await apiClient.naos.freeInstance(instance.id);
+		await vscode.commands.executeCommand("naos.refresh");
+	});
+
+	registerNaosCommand("naos.project.delete", async (project: Project) => {
+		await apiClient.projects.deleteProject(project.id!);
 		await vscode.commands.executeCommand("naos.refresh");
 	});
 
@@ -201,7 +209,7 @@ export function activate(context: vscode.ExtensionContext) {
 	registerNaosCommand("naos.task.getMessages", async (task: TaskDescribe) => {
 		await vscode.commands.executeCommand(
 			"vscode.open",
-			vscode.Uri.parse(`naos:/messages/${task.job_id}/${task.run_id}/${task.id}.json`),
+			vscode.Uri.parse(`naos:${task.job_id}/${task.run_id}/${task.id}.messages.naos`),
 			<vscode.TextDocumentShowOptions>{},
 		);
 	});
@@ -210,6 +218,24 @@ export function activate(context: vscode.ExtensionContext) {
 		if (e.id !== undefined) {
 			await vscode.env.clipboard.writeText(e.id);
 			await vscode.window.showInformationMessage(`Copied UUID ${e.id}`);
+		}
+	});
+
+	registerNaosCommand("naos.publish", async (uri: vscode.Uri) => {
+		// TODO avoid usage with command palette.
+		try {
+			const [resourceKind, resourceIds] = parseNaosURI(uri);
+			let editorText = getActiveEditorText();
+			switch (resourceKind) {
+				case "project":
+					await sendProject(editorText, apiClient);
+					break;
+				default:
+					vscode.window.showErrorMessage("Unknown NAOS resource kind.");
+			}
+			vscode.commands.executeCommand("naos.refresh");
+		} catch (error) {
+			consoleNAOS.error(error as Error);
 		}
 	});
 

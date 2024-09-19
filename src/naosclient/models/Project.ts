@@ -15,5 +15,6 @@ export type Project = (ProjectBase & {
         id?: string;
         name?: string;
     };
+    net_bounding_box?: BoundingBox;
 });
 

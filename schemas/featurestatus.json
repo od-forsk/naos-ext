@@ -1,0 +1,36 @@
+{
+  "allOf": [
+    {
+      "$ref": "Feature.json",
+      "x-scope": [
+        "",
+        "#/components/schemas/LicenseKey",
+        "#/components/schemas/FeatureStatus"
+      ]
+    },
+    {
+      "properties": {
+        "isExpired": {
+          "description": "True if the license has expired False otherwise",
+          "example": false,
+          "type": "boolean"
+        },
+        "tokenLimit": {
+          "description": "Maximum number of token available",
+          "example": 50,
+          "type": "integer"
+        },
+        "usedTokens": {
+          "description": "Number of license tokens currently in use",
+          "example": 30,
+          "type": "integer"
+        }
+      },
+      "title": "FeatureStatusMeta",
+      "type": "object"
+    }
+  ],
+  "title": "Details about a feature",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object"
+}

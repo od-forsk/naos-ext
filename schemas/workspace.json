@@ -1,0 +1,56 @@
+{
+  "allOf": [
+    {
+      "$ref": "ProjectBase.json",
+      "x-scope": [
+        "",
+        "#/components/schemas/Workspace"
+      ]
+    },
+    {
+      "properties": {
+        "bounding_box": {
+          "$ref": "BoundingBox.json",
+          "x-scope": [
+            "",
+            "#/components/schemas/Workspace"
+          ]
+        },
+        "geo_bounding_box": {
+          "$ref": "BoundingBox.json",
+          "x-scope": [
+            "",
+            "#/components/schemas/Workspace"
+          ]
+        },
+        "net_bounding_box": {
+          "$ref": "BoundingBox.json",
+          "x-scope": [
+            "",
+            "#/components/schemas/Workspace"
+          ]
+        },
+        "project_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "project_name": {
+          "readOnly": true,
+          "type": "string"
+        },
+        "user": {
+          "type": "string"
+        },
+        "user_id": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "title": "WorkspaceMeta",
+      "type": "object"
+    }
+  ],
+  "title": "Workspace",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object"
+}

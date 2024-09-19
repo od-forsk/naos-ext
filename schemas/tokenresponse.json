@@ -1,0 +1,24 @@
+{
+  "properties": {
+    "access_token": {
+      "readOnly": true,
+      "type": "string"
+    },
+    "access_token_expires_in": {
+      "description": "access token expiration time in secondes",
+      "readOnly": true,
+      "type": "integer"
+    },
+    "refresh_token": {
+      "readOnly": true,
+      "type": "string"
+    }
+  },
+  "required": [
+    "access_token",
+    "access_token_expires_in"
+  ],
+  "title": "Token response",
+  "type": "object",
+  "$schema": "http://json-schema.org/schema#"
+}

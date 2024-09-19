@@ -1,0 +1,62 @@
+{
+  "properties": {
+    "created": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "description": {
+      "nullable": true,
+      "type": "string"
+    },
+    "id": {
+      "format": "uuid",
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "modified": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "receiver_heights": {
+      "description": "[NOT IMPLEMENTED] Planned for a later version.\nFor now, uses project default receiver height.\n",
+      "items": {
+        "type": "number"
+      },
+      "nullable": true,
+      "type": "array"
+    },
+    "resolution": {
+      "description": "Must be a multiple of project resolution",
+      "type": "integer"
+    },
+    "technologies": {
+      "$ref": "Technologies.json",
+      "x-scope": [
+        "",
+        "#/components/schemas/Coverage"
+      ]
+    },
+    "type": {
+      "enum": [
+        "Signal Level",
+        "RSRP"
+      ],
+      "type": "string"
+    },
+    "unit": {
+      "readOnly": true,
+      "type": "string"
+    },
+    "work_area": {
+      "readOnly": true,
+      "type": "object"
+    }
+  },
+  "type": "object",
+  "$schema": "http://json-schema.org/schema#"
+}

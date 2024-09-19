@@ -1,0 +1,21 @@
+{
+  "allOf": [
+    {
+      "$ref": "SimpleId.json",
+      "x-scope": [
+        "",
+        "#/components/schemas/GeoFileAssociationInput"
+      ]
+    },
+    {
+      "$ref": "ProjectAssociationData.json",
+      "x-scope": [
+        "",
+        "#/components/schemas/GeoFileAssociationInput"
+      ]
+    }
+  ],
+  "title": "Geo data association input",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object"
+}

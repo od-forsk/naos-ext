@@ -54,7 +54,7 @@ export class TeamsProvider implements vscode.TreeDataProvider<AdminItem> {
 			command: {
 				command: "vscode.open",
 				title: "Open NAOS Team description.",
-				arguments: [vscode.Uri.parse(`naos:/team/${team.id}.json`)]
+				arguments: [vscode.Uri.parse(`naos:${team.id}.team.naos`)]
 			}
 		};
 	}

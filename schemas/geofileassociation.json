@@ -1,0 +1,26 @@
+{
+  "allOf": [
+    {
+      "$ref": "GeoFile.json",
+      "x-scope": [
+        "",
+        "#/components/schemas/Workspace",
+        "#/components/schemas/ProjectBase",
+        "#/components/schemas/GeoFileAssociation"
+      ]
+    },
+    {
+      "$ref": "ProjectAssociationData.json",
+      "x-scope": [
+        "",
+        "#/components/schemas/Workspace",
+        "#/components/schemas/ProjectBase",
+        "#/components/schemas/GeoFileAssociation"
+      ]
+    }
+  ],
+  "description": "Association between geo file and a work area.",
+  "title": "GeoFileAssociation.",
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object"
+}

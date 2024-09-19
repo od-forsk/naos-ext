@@ -1,0 +1,192 @@
+{
+  "properties": {
+    "configuration_files": {
+      "properties": {
+        "append": {
+          "description": "Secondary configuration files, meant to append to existing configurations (applicable to geographic files).",
+          "items": {
+            "format": "uri",
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "replace": {
+          "description": "Main configuration files, meant to replace existing configurations. Applied in array order.",
+          "items": {
+            "format": "uri",
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "title": "ProjectConfigurationFiles",
+      "type": "object"
+    },
+    "created": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "filters": {
+      "$ref": "NaosFilter.json",
+      "x-scope": [
+        "",
+        "#/components/schemas/Workspace",
+        "#/components/schemas/ProjectBase"
+      ]
+    },
+    "geographic_data": {
+      "description": "List of geographic files associated to this Project/Workspace.",
+      "items": {
+        "$ref": "GeoFileAssociation.json",
+        "x-scope": [
+          "",
+          "#/components/schemas/Workspace",
+          "#/components/schemas/ProjectBase"
+        ]
+      },
+      "readOnly": true,
+      "type": "array"
+    },
+    "history": {
+      "properties": {
+        "entries": {
+          "items": {
+            "properties": {
+              "date": {
+                "format": "date-time",
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "user": {
+                "type": "string"
+              },
+              "user_id": {
+                "format": "uuid",
+                "type": "string"
+              }
+            },
+            "title": "ProjectHistoryEntry",
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "readOnly": true,
+      "title": "ProjectHistory",
+      "type": "object"
+    },
+    "id": {
+      "format": "uuid",
+      "readOnly": true,
+      "type": "string"
+    },
+    "info": {
+      "properties": {
+        "bounding_box": {
+          "$ref": "BoundingBox.json",
+          "x-scope": [
+            "",
+            "#/components/schemas/Workspace",
+            "#/components/schemas/ProjectBase"
+          ]
+        },
+        "coordinate_system": {
+          "properties": {
+            "code": {
+              "type": "integer"
+            }
+          },
+          "title": "ProjectInfoCoordinateSystem",
+          "type": "object"
+        },
+        "shared_pathloss": {
+          "type": "string"
+        },
+        "sites": {
+          "type": "integer"
+        },
+        "studies": {
+          "items": {
+            "properties": {
+              "id": {
+                "format": "uuid",
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            },
+            "title": "ProjectInfoStudies",
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "technologies": {
+          "items": {
+            "properties": {
+              "cells": {
+                "type": "integer"
+              },
+              "name": {
+                "enum": [
+                  "5G_NR",
+                  "LTE",
+                  "NB_IOT",
+                  "UMTS",
+                  "1XRTT",
+                  "GSM"
+                ],
+                "type": "string"
+              }
+            },
+            "title": "ProjectInfoTechnologies",
+            "type": "object"
+          },
+          "type": "array"
+        }
+      },
+      "title": "ProjectInfo",
+      "type": "object"
+    },
+    "modified": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "name": {
+      "example": "Name",
+      "type": "string"
+    },
+    "source": {
+      "$ref": "SourceInfo.json",
+      "x-scope": [
+        "",
+        "#/components/schemas/Workspace",
+        "#/components/schemas/ProjectBase"
+      ]
+    },
+    "status": {
+      "readOnly": true,
+      "type": "object"
+    },
+    "storage": {
+      "$ref": "StorageInfo.json",
+      "x-scope": [
+        "",
+        "#/components/schemas/Workspace",
+        "#/components/schemas/ProjectBase"
+      ]
+    },
+    "technologies": {
+      "items": {
+        "type": "string"
+      },
+      "readOnly": true,
+      "type": "array"
+    }
+  },
+  "title": "ProjectBase",
+  "type": "object",
+  "$schema": "http://json-schema.org/schema#"
+}

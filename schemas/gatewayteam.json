@@ -1,0 +1,49 @@
+{
+  "description": "Information related to a Gateway team.",
+  "properties": {
+    "allocated_naos_tokens": {
+      "description": "Number of Naos license tokens that are allocated to the team",
+      "example": 20,
+      "type": "integer"
+    },
+    "created": {
+      "description": "Timestamp of when the team was created",
+      "example": "2022-03-25T14:33:08.021000Z",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "id": {
+      "description": "Unique team identifier",
+      "example": "9c32d8de-f3af-460b-8300-e9ad5f26026b",
+      "format": "uuid",
+      "readOnly": true,
+      "type": "string"
+    },
+    "modified": {
+      "description": "Timestamp of when the team was last modified",
+      "example": "2022-03-25T14:33:08.021000Z",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "name": {
+      "description": "Name of the team",
+      "example": "My team",
+      "type": "string"
+    },
+    "used_naos_tokens": {
+      "description": "Number of Naos license tokens that are currently in use by the team members",
+      "example": 10,
+      "readOnly": true,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "id",
+    "name"
+  ],
+  "title": "Gateway team",
+  "type": "object",
+  "$schema": "http://json-schema.org/schema#"
+}

@@ -7,6 +7,7 @@ import type { ProjectBase } from './ProjectBase';
 export type Workspace = (ProjectBase & {
     bounding_box?: BoundingBox;
     geo_bounding_box?: BoundingBox;
+    net_bounding_box?: BoundingBox;
     project_id?: string;
     readonly project_name?: string;
     user?: string;

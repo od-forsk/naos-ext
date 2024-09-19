@@ -1,0 +1,63 @@
+{
+  "description": "Job scheduling input payload.",
+  "format": "application/json",
+  "properties": {
+    "default_priority": {
+      "default": 5,
+      "description": "default priority for this job",
+      "maximum": 9,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "job_version": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "tasks": {
+      "description": "List of input and ID of unit task definition.",
+      "items": {
+        "properties": {
+          "function_name": {
+            "type": "string"
+          },
+          "input": {
+            "$ref": "Input.json",
+            "x-scope": [
+              "",
+              "#/components/schemas/JobRequestInput"
+            ]
+          },
+          "link": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "function_name",
+          "link",
+          "name",
+          "input"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "trigger": {
+      "$ref": "Trigger.json",
+      "x-scope": [
+        "",
+        "#/components/schemas/JobRequestInput"
+      ]
+    }
+  },
+  "required": [
+    "tasks",
+    "name"
+  ],
+  "type": "object",
+  "$schema": "http://json-schema.org/schema#"
+}

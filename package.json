@@ -71,6 +71,12 @@
         "icon": "$(trash)"
       },
       {
+        "command": "naos.project.delete",
+        "category": "NAOS",
+        "title": "Delete NAOS Project.",
+        "icon": "$(trash)"
+      },
+      {
         "command": "naos.job.delete",
         "category": "NAOS",
         "title": "Remove a NAOS Job.",
@@ -99,6 +105,13 @@
         "category": "NAOS",
         "title": "Retrieve Task messages",
         "icon": "$(comment-discussion)"
+      },
+      {
+        "command": "naos.publish",
+        "category": "NAOS",
+        "title": "POST or PUT to NAOS",
+        "icon": "$(cloud-upload)",
+        "when": "resourceLangId == json &&  resourceFilename =~ /\\.naos$/"
       }
     ],
     "viewsContainers": {
@@ -219,6 +232,11 @@
           "when": "view == naos.instances"
         },
         {
+          "command": "naos.project.delete",
+          "group": "inline",
+          "when": "view == naos.workareas && viewItem == naos.project"
+        },
+        {
           "command": "naos.job.delete",
           "group": "inline",
           "when": "view == naos.jobs && viewItem === naos.job"
@@ -232,6 +250,13 @@
           "command": "naos.task.getMessages",
           "group": "inline",
           "when": "view == naos.jobs && viewItem === naos.task"
+        }
+      ],
+      "editor/title/run": [
+        {
+          "command": "naos.publish",
+          "group": "inline",
+          "when": "resourceLangId == json && resourceFilename =~ /\\.project\\.naos$/"
         }
       ]
     },
@@ -351,6 +376,52 @@
           "highContrast": "#ff0000"
         }
       }
+    ],
+    "jsonValidation": [
+      {
+        "fileMatch": "*.user.naos",
+        "url": "./schemas/userinfo.json"
+      },
+      {
+        "fileMatch": "*.team.naos",
+        "url": "./schemas/gatewayteam.json"
+      },
+      {
+        "fileMatch": "*.instance.naos",
+        "url": "./schemas/naosinstance.json"
+      },
+      {
+        "fileMatch": "*.job.naos",
+        "url": "./schemas/jobdescribe.json"
+      },
+      {
+        "fileMatch": "*.project.naos",
+        "url": "./schemas/project.json"
+      },
+      {
+        "fileMatch": "*.workspace.naos",
+        "url": "./schemas/workspace.json"
+      },
+      {
+        "fileMatch": "*.geofile.naos",
+        "url": "./schemas/geofilejson"
+      },
+      {
+        "fileMatch": "*.coverage.naos",
+        "url": "./schemas/coveragejson"
+      },
+      {
+        "fileMatch": "*.artifact.naos",
+        "url": "./schemas/artifact.json"
+      }
+    ],
+    "languages": [
+      {
+        "id": "json",
+        "extensions": [
+          ".naos"
+        ]
+      }
     ]
   },
   "scripts": {
@@ -361,6 +432,7 @@
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js",
     "genclient": "sh scripts/genclient.sh",
+    "genvalidators": "openapi2jsonschema.exe http://localhost:9090/v1/openapi.json",
     "package": "rm -Rf out/ && vsce package"
   },
   "devDependencies": {

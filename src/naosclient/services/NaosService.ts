@@ -186,6 +186,7 @@ export class NaosService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
+                400: `Bad request`,
                 403: `Current user has no access to this instance`,
             },
         });
@@ -389,6 +390,7 @@ export class NaosService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
+                400: `Bad request`,
                 403: `Current user has no access to this instance`,
             },
         });

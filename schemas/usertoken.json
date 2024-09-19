@@ -1,0 +1,54 @@
+{
+  "properties": {
+    "client_ip": {
+      "readOnly": true,
+      "type": "string"
+    },
+    "created": {
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "expires": {
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "id": {
+      "format": "uuid",
+      "readOnly": true,
+      "type": "string"
+    },
+    "last_seen_at": {
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "token": {
+      "readOnly": true,
+      "type": "string"
+    },
+    "user_agent": {
+      "readOnly": true,
+      "type": "string"
+    },
+    "user_id": {
+      "format": "uuid",
+      "readOnly": true,
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "token",
+    "client_ip",
+    "user_agent",
+    "created",
+    "expires",
+    "last_seen_at",
+    "user_id"
+  ],
+  "title": "An API token",
+  "type": "object",
+  "$schema": "http://json-schema.org/schema#"
+}

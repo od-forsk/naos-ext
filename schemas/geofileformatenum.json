@@ -1,0 +1,19 @@
+{
+  "description": "Geo file format extension.",
+  "enum": [
+    "SHP",
+    "MIF",
+    "TAB",
+    "BIL",
+    "TIFF",
+    "BMP",
+    "IMG",
+    "GRD",
+    "GRC",
+    "ECW",
+    "PNG",
+    "JPEG"
+  ],
+  "type": "string",
+  "$schema": "http://json-schema.org/schema#"
+}

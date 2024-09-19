@@ -1,0 +1,54 @@
+{
+  "properties": {
+    "artifacts": {
+      "items": {
+        "$ref": "CoverageArtifact.json",
+        "x-scope": [
+          "",
+          "#/components/schemas/CoverageDetails",
+          "#/components/schemas/CoverageResult"
+        ]
+      },
+      "type": "array"
+    },
+    "created": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "job_id": {
+      "description": "Workflow manager job id",
+      "format": "uuid",
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "retain": {
+      "properties": {
+        "comment": {
+          "type": "string"
+        },
+        "created": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "owner": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "readOnly": true,
+      "type": "object"
+    },
+    "run_id": {
+      "description": "Workflow manager run id",
+      "format": "uuid",
+      "type": "string"
+    }
+  },
+  "type": "object",
+  "$schema": "http://json-schema.org/schema#"
+}

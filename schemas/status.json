@@ -1,0 +1,37 @@
+{
+  "description": "Status of a run execution.",
+  "properties": {
+    "modified_at": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "progress": {
+      "description": "Progress in % of this execution.",
+      "example": 100,
+      "type": "integer"
+    },
+    "status": {
+      "default": "PENDING",
+      "description": "Status of this execution.",
+      "enum": [
+        "PENDING",
+        "RUNNING",
+        "RETRYING",
+        "FAILED",
+        "COMPLETED",
+        "ABORTED",
+        "CANCELLED",
+        "PAUSED"
+      ],
+      "example": "COMPLETED",
+      "type": "string"
+    }
+  },
+  "required": [
+    "status",
+    "progress",
+    "modified_at"
+  ],
+  "type": "object",
+  "$schema": "http://json-schema.org/schema#"
+}

@@ -68,6 +68,7 @@ export class GeoService {
             },
             errors: {
                 400: `Bad request`,
+                403: `Current user is not admin`,
             },
         });
     }
@@ -98,6 +99,7 @@ export class GeoService {
             mediaType: 'multipart/form-data',
             errors: {
                 400: `Invalid geo file details`,
+                403: `Current user is not admin`,
             },
         });
     }
@@ -123,6 +125,7 @@ export class GeoService {
             mediaType: 'application/json',
             errors: {
                 400: `Bad request.`,
+                403: `Current user is not admin`,
             },
         });
     }
@@ -148,6 +151,7 @@ export class GeoService {
                 'erase_file': eraseFile,
             },
             errors: {
+                403: `Current user is not admin`,
                 404: `Not found`,
             },
         });
@@ -174,6 +178,7 @@ export class GeoService {
                 'Naos-Filepath-Mode': naosFilepathMode,
             },
             errors: {
+                403: `Current user is not admin`,
                 404: `Not found`,
             },
         });
@@ -200,6 +205,7 @@ export class GeoService {
             mediaType: 'application/json',
             errors: {
                 400: `Bad request`,
+                403: `Current user is not admin`,
                 404: `Not found`,
             },
         });

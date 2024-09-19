@@ -1,0 +1,56 @@
+{
+  "properties": {
+    "confirm": {
+      "description": "Confirmed user password.",
+      "example": "aligator!33",
+      "type": "string"
+    },
+    "email": {
+      "description": "Email of the user",
+      "example": "sample@mail.com",
+      "format": "email",
+      "type": "string"
+    },
+    "id": {
+      "description": "Unique user identifier.",
+      "example": "d17ecc23-7b9d-409a-b987-adcbb3f5d400",
+      "format": "uuid",
+      "type": "string"
+    },
+    "is_admin": {
+      "default": false,
+      "description": "User has administrator privileges.",
+      "type": "boolean"
+    },
+    "last_login": {
+      "description": "Timestamp of the last login.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "last_seen_at": {
+      "description": "Timestamp of the last activity.",
+      "format": "date-time",
+      "readOnly": true,
+      "type": "string"
+    },
+    "login": {
+      "description": "User login",
+      "example": "login",
+      "type": "string"
+    },
+    "name": {
+      "description": "Full name of the user.",
+      "example": "Name",
+      "type": "string"
+    },
+    "password": {
+      "description": "User password",
+      "example": "aligator!33",
+      "type": "string"
+    }
+  },
+  "title": "User information",
+  "type": "object",
+  "$schema": "http://json-schema.org/schema#"
+}

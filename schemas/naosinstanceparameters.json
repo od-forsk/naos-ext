@@ -1,0 +1,28 @@
+{
+  "properties": {
+    "name": {
+      "example": "prudent-armadillo",
+      "type": "string"
+    },
+    "parameters": {
+      "$ref": "InstanceParameters.json",
+      "x-scope": [
+        "",
+        "#/components/schemas/NaosInstanceParameters"
+      ]
+    },
+    "team_id": {
+      "example": "38096dc9-6a62-43c6-865a-377ea0ebe4b3",
+      "format": "uuid",
+      "type": "string"
+    },
+    "user_id": {
+      "example": "9c32d8de-f3af-460b-8300-e9ad5f26026b",
+      "format": "uuid",
+      "type": "string"
+    }
+  },
+  "title": "A Naos instance creation parameter",
+  "type": "object",
+  "$schema": "http://json-schema.org/schema#"
+}

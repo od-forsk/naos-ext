@@ -1,0 +1,22 @@
+{
+  "allOf": [
+    {
+      "$ref": "IdResponse.json",
+      "x-scope": [
+        "",
+        "#/components/schemas/JobIdResponse"
+      ]
+    },
+    {
+      "properties": {
+        "run_id": {
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  ],
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object"
+}

@@ -1,0 +1,31 @@
+{
+  "nullable": true,
+  "properties": {
+    "timezone": {
+      "description": "Timezone to use with the cron value.",
+      "example": "Europe/Paris",
+      "type": "string"
+    },
+    "type": {
+      "default": "DATE",
+      "description": "Type of trigger.",
+      "enum": [
+        "DATE",
+        "CRON",
+        "EVENT"
+      ],
+      "type": "string"
+    },
+    "value": {
+      "description": "Value of the trigger.",
+      "example": "2021-11-01T23:41:54Z",
+      "type": "string"
+    }
+  },
+  "required": [
+    "type",
+    "value"
+  ],
+  "type": "object",
+  "$schema": "http://json-schema.org/schema#"
+}

@@ -1,0 +1,19 @@
+{
+  "properties": {
+    "created": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "uri": {
+      "type": "string"
+    }
+  },
+  "type": "object",
+  "$schema": "http://json-schema.org/schema#"
+}

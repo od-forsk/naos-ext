@@ -30,7 +30,7 @@ export class CoveragesProvider implements vscode.TreeDataProvider<Coverage> {
 				command: "vscode.open",
 				title: "Open Call",
 				arguments: [
-					vscode.Uri.parse(`naos:/coverage/${coverage.id}.json`),
+					vscode.Uri.parse(`naos:${coverage.id}.coverage.naos`),
 					<vscode.TextDocumentShowOptions>{}
 				]
 			}

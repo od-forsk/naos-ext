@@ -1,0 +1,33 @@
+{
+  "allOf": [
+    {
+      "$ref": "Artifact.json",
+      "x-scope": [
+        "",
+        "#/components/schemas/CoverageDetails",
+        "#/components/schemas/CoverageResult",
+        "#/components/schemas/CoverageArtifact"
+      ]
+    },
+    {
+      "properties": {
+        "receiver_heights": {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "type": {
+          "enum": [
+            "raw",
+            "tiled"
+          ],
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  ],
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object"
+}

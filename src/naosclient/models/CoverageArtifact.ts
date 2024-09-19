@@ -11,7 +11,6 @@ export namespace CoverageArtifact {
     export enum type {
         RAW = 'raw',
         TILED = 'tiled',
-        H3 = 'h3',
     }
 }
 

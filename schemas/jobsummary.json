@@ -1,0 +1,93 @@
+{
+  "properties": {
+    "creation_date": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "default_priority": {
+      "default": 5,
+      "description": "default priority for this job",
+      "maximum": 9,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "id": {
+      "example": "15c61933-0b06-442c-8bab-723b2b41f570",
+      "format": "uuid",
+      "type": "string"
+    },
+    "job_version": {
+      "example": "1",
+      "type": "string"
+    },
+    "last_run_date": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "last_run_status": {
+      "$ref": "Status.json",
+      "x-scope": [
+        "",
+        "#/components/schemas/JobSummary"
+      ]
+    },
+    "modification_date": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "name": {
+      "description": "Name of the job.",
+      "example": "Pathloss-Calcul-Export Chicago",
+      "type": "string"
+    },
+    "nb_tasks": {
+      "description": "Number of tasks in the job.",
+      "type": "integer"
+    },
+    "next_run_date": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "run_now": {
+      "type": "boolean"
+    },
+    "trigger": {
+      "$ref": "Trigger.json",
+      "x-scope": [
+        "",
+        "#/components/schemas/JobSummary"
+      ]
+    },
+    "user_id": {
+      "description": "ID of the creator of the job.",
+      "example": "1234",
+      "type": "string"
+    },
+    "work_area_id": {
+      "description": "Unique identifier of the work area where the job will be launched.",
+      "example": "15c61933-0b06-442c-8bab-723b2b41f570",
+      "format": "uuid",
+      "type": "string"
+    },
+    "work_area_type": {
+      "description": "Type of work area where the job will be launched.",
+      "enum": [
+        "project",
+        "workspace"
+      ],
+      "example": "project",
+      "type": "string"
+    }
+  },
+  "required": [
+    "creation_date",
+    "id",
+    "name",
+    "work_area_type",
+    "work_area_id",
+    "run_now",
+    "nb_tasks"
+  ],
+  "type": "object",
+  "$schema": "http://json-schema.org/schema#"
+}

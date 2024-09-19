@@ -31,7 +31,7 @@ export class UsersProvider implements vscode.TreeDataProvider<UserInfo> {
 				command: "vscode.open",
 				title: "Open Call",
 				arguments: [
-					vscode.Uri.parse(`naos:/user/${user.id}.json`),
+					vscode.Uri.parse(`naos:${user.id}.user.naos`),
 					<vscode.TextDocumentShowOptions>{}
 				]
 			}

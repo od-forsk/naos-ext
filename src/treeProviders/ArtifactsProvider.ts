@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import { NaosClient } from '../naosclient';
-import { UserInfo } from '../naosclient/models/UserInfo';
 import { Artifact } from '../naosclient/models/Artifact';
 
 export class ArtifactsProvider implements vscode.TreeDataProvider<Artifact> {
@@ -34,7 +33,7 @@ export class ArtifactsProvider implements vscode.TreeDataProvider<Artifact> {
 				command: "vscode.open",
 				title: "Open Call",
 				arguments: [
-					vscode.Uri.parse(`naos:/artifact/${artifact.id}.json`),
+					vscode.Uri.parse(`naos:${artifact.id}.artifact.naos`),
 					<vscode.TextDocumentShowOptions>{},
 				]
 			}

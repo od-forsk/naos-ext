@@ -30,7 +30,7 @@ export class GeofilesProvider implements vscode.TreeDataProvider<GeoFile> {
 				command: "vscode.open",
 				title: "Open Call",
 				arguments: [
-					vscode.Uri.parse(`naos:/geofile/${geofile.id}.json`),
+					vscode.Uri.parse(`naos:${geofile.id}.geofile.naos`),
 					<vscode.TextDocumentShowOptions>{}
 				]
 			}

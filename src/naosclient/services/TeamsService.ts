@@ -30,6 +30,9 @@ export class TeamsService {
                 'limit': limit,
                 'match_pattern': matchPattern,
             },
+            errors: {
+                403: `Current user is not admin`,
+            },
         });
     }
     /**
@@ -46,6 +49,9 @@ export class TeamsService {
             url: '/teams',
             body: requestBody,
             mediaType: 'application/json',
+            errors: {
+                403: `Current user is not admin`,
+            },
         });
     }
     /**
@@ -64,6 +70,7 @@ export class TeamsService {
                 'team_id': teamId,
             },
             errors: {
+                403: `Current user is not admin`,
                 404: `Team not found`,
             },
         });
@@ -84,6 +91,7 @@ export class TeamsService {
                 'team_id': teamId,
             },
             errors: {
+                403: `Current user is not admin`,
                 404: `Team not found`,
             },
         });
@@ -108,6 +116,7 @@ export class TeamsService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
+                403: `Current user is not admin`,
                 404: `Team not found`,
             },
         });
@@ -136,6 +145,7 @@ export class TeamsService {
                 'limit': limit,
             },
             errors: {
+                403: `Current user is not admin`,
                 404: `Team not found`,
             },
         });
@@ -161,6 +171,7 @@ export class TeamsService {
             mediaType: 'application/json',
             errors: {
                 400: `User not found`,
+                403: `Current user is not admin`,
                 404: `Team not found`,
             },
         });
@@ -184,6 +195,7 @@ export class TeamsService {
                 'user_id': userId,
             },
             errors: {
+                403: `Current user is not admin`,
                 404: `Team/User not found`,
             },
         });
@@ -211,6 +223,7 @@ export class TeamsService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
+                403: `Current user is not admin`,
                 404: `Team/User not found`,
             },
         });
@@ -240,6 +253,7 @@ export class TeamsService {
             },
             errors: {
                 400: `User already exists in the team`,
+                403: `Current user is not admin`,
                 404: `Team/User not found`,
             },
         });

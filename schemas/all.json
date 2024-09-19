@@ -1,0 +1,166 @@
+{
+  "oneOf": [
+    {
+      "$ref": "ApiError.json"
+    },
+    {
+      "$ref": "Artifact.json"
+    },
+    {
+      "$ref": "AtollCoverage.json"
+    },
+    {
+      "$ref": "BoundingBox.json"
+    },
+    {
+      "$ref": "ChangePasswordObject.json"
+    },
+    {
+      "$ref": "Coverage.json"
+    },
+    {
+      "$ref": "CoverageArtifact.json"
+    },
+    {
+      "$ref": "CoverageDetails.json"
+    },
+    {
+      "$ref": "CoverageResult.json"
+    },
+    {
+      "$ref": "Feature.json"
+    },
+    {
+      "$ref": "FeatureStatus.json"
+    },
+    {
+      "$ref": "GatewayTeam.json"
+    },
+    {
+      "$ref": "GatewayTeamUser.json"
+    },
+    {
+      "$ref": "GeoFile.json"
+    },
+    {
+      "$ref": "GeoFileAssociation.json"
+    },
+    {
+      "$ref": "GeoFileAssociationInput.json"
+    },
+    {
+      "$ref": "GeoFileForm.json"
+    },
+    {
+      "$ref": "GeoFileFormatEnum.json"
+    },
+    {
+      "$ref": "GeoGraphicsTypeEnum.json"
+    },
+    {
+      "$ref": "GeoTypeEnum.json"
+    },
+    {
+      "$ref": "IdResponse.json"
+    },
+    {
+      "$ref": "Input.json"
+    },
+    {
+      "$ref": "InstanceParameters.json"
+    },
+    {
+      "$ref": "JobDescribe.json"
+    },
+    {
+      "$ref": "JobEdit.json"
+    },
+    {
+      "$ref": "JobIdResponse.json"
+    },
+    {
+      "$ref": "JobRequestInput.json"
+    },
+    {
+      "$ref": "JobSummary.json"
+    },
+    {
+      "$ref": "LicenseKey.json"
+    },
+    {
+      "$ref": "LicenseSession.json"
+    },
+    {
+      "$ref": "Link.json"
+    },
+    {
+      "$ref": "NaosFilter.json"
+    },
+    {
+      "$ref": "NaosInstance.json"
+    },
+    {
+      "$ref": "NaosInstanceParameters.json"
+    },
+    {
+      "$ref": "Operation.json"
+    },
+    {
+      "$ref": "Project.json"
+    },
+    {
+      "$ref": "ProjectAssociationData.json"
+    },
+    {
+      "$ref": "ProjectBase.json"
+    },
+    {
+      "$ref": "ProjectPermission.json"
+    },
+    {
+      "$ref": "RatInterferences.json"
+    },
+    {
+      "$ref": "Reference.json"
+    },
+    {
+      "$ref": "Result.json"
+    },
+    {
+      "$ref": "SetPasswordObject.json"
+    },
+    {
+      "$ref": "SimpleId.json"
+    },
+    {
+      "$ref": "SourceInfo.json"
+    },
+    {
+      "$ref": "Status.json"
+    },
+    {
+      "$ref": "StorageInfo.json"
+    },
+    {
+      "$ref": "Technologies.json"
+    },
+    {
+      "$ref": "TechnologyName.json"
+    },
+    {
+      "$ref": "TokenResponse.json"
+    },
+    {
+      "$ref": "Trigger.json"
+    },
+    {
+      "$ref": "UserInfo.json"
+    },
+    {
+      "$ref": "UserToken.json"
+    },
+    {
+      "$ref": "Workspace.json"
+    }
+  ]
+}

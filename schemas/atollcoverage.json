@@ -1,0 +1,37 @@
+{
+  "properties": {
+    "atoll_id": {
+      "format": "uuid",
+      "type": "string"
+    },
+    "atoll_xml_data": {
+      "type": "object"
+    },
+    "created": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "id": {
+      "format": "uuid",
+      "type": "string"
+    },
+    "modified": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "work_area": {
+      "readOnly": true,
+      "type": "object"
+    },
+    "work_area_id": {
+      "format": "uuid",
+      "type": "string"
+    }
+  },
+  "type": "object",
+  "x-hidden": true,
+  "$schema": "http://json-schema.org/schema#"
+}

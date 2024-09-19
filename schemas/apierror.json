@@ -1,0 +1,29 @@
+{
+  "description": "Error object",
+  "properties": {
+    "detail": {
+      "description": "Detail concerning encountered error",
+      "readOnly": true,
+      "type": "string"
+    },
+    "status": {
+      "description": "HTTP error code",
+      "readOnly": true,
+      "type": "integer"
+    },
+    "title": {
+      "readOnly": true,
+      "type": "string"
+    },
+    "type": {
+      "readOnly": true,
+      "type": "string"
+    }
+  },
+  "required": [
+    "status",
+    "detail"
+  ],
+  "type": "object",
+  "$schema": "http://json-schema.org/schema#"
+}

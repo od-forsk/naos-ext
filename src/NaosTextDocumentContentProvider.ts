@@ -1,5 +1,7 @@
 import * as vscode from "vscode";
+import { consoleNAOS } from "./extension";
 import { NaosClient } from "./naosclient";
+import { parseNaosURI } from "./utils";
 
 export class NaosTextDocumentContentProvider implements vscode.TextDocumentContentProvider {
 
@@ -11,9 +13,9 @@ export class NaosTextDocumentContentProvider implements vscode.TextDocumentConte
     onDidChange = this.onDidChangeEmitter.event;
 
     async provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken) {
-        let path = uri.path;
-        path = path.endsWith(".json") ? path.slice(0,-5) : path;
-        let [_, resourceKind, ...resourceIds] = path.split('/');
+        consoleNAOS.debug("Opening API Document", uri);
+        const [resourceKind, resourceIds] = parseNaosURI(uri);
+
         let content: object | undefined = undefined;
         if (resourceKind === "user") {
             content = await this.apiClient.admin.getUser(resourceIds[0]);
@@ -28,10 +30,10 @@ export class NaosTextDocumentContentProvider implements vscode.TextDocumentConte
             content = await this.apiClient.scheduler.schedulerProxyGet(`jobs/${resourceIds[0]}`);
         }
         if (resourceKind === "run") {
-            content = await this.apiClient.scheduler.schedulerProxyGet(`jobs/${resourceIds[0]}/runs/${resourceIds[1]}`);
+            content = await this.apiClient.scheduler.schedulerProxyGet(`jobs/${resourceIds[1]}/runs/${resourceIds[0]}`);
         }
         if (resourceKind === "task") {
-            content = await this.apiClient.scheduler.schedulerProxyGet(`jobs/${resourceIds[0]}/runs/${resourceIds[1]}/tasks/${resourceIds[2]}`);
+            content = await this.apiClient.scheduler.schedulerProxyGet(`jobs/${resourceIds[2]}/runs/${resourceIds[1]}/tasks/${resourceIds[0]}`);
         }
         if (resourceKind === "project") {
             content = await this.apiClient.projects.getProject(resourceIds[0]);
@@ -49,7 +51,7 @@ export class NaosTextDocumentContentProvider implements vscode.TextDocumentConte
             content = await this.apiClient.artifacts.getArtifact(resourceIds[0]);
         }
         if (resourceKind === "messages") {
-            content = await this.apiClient.scheduler.schedulerProxyGet(`jobs/${resourceIds[0]}/runs/${resourceIds[1]}/tasks/${resourceIds[2]}/_messages`);
+            content = await this.apiClient.scheduler.schedulerProxyGet(`jobs/${resourceIds[2]}/runs/${resourceIds[1]}/tasks/${resourceIds[0]}/_messages`);
         }
         if (content) {
             return JSON.stringify(content, null, 2);

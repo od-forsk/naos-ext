@@ -1,0 +1,15 @@
+{
+  "nullable": true,
+  "properties": {
+    "data": {
+      "description": "Data filter using the DAS filtering syntax, ie `<column>.<operator>.<value>`\n",
+      "type": "string"
+    },
+    "geometry": {
+      "description": "GeoJSON geometry object (https://tools.ietf.org/html/rfc7946).\n",
+      "type": "string"
+    }
+  },
+  "type": "object",
+  "$schema": "http://json-schema.org/schema#"
+}

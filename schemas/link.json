@@ -1,0 +1,29 @@
+{
+  "description": "HATEOAS link",
+  "example": {
+    "href": "hreference",
+    "rel": "relation",
+    "type": "GET"
+  },
+  "properties": {
+    "href": {
+      "readOnly": true,
+      "type": "string"
+    },
+    "rel": {
+      "readOnly": true,
+      "type": "string"
+    },
+    "type": {
+      "readOnly": true,
+      "type": "string"
+    }
+  },
+  "required": [
+    "href",
+    "rel",
+    "type"
+  ],
+  "type": "object",
+  "$schema": "http://json-schema.org/schema#"
+}
