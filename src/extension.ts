@@ -5,10 +5,12 @@ import { TaskDescribe } from './models/TaskDescribe';
 import { ApiError, NaosClient } from './naosclient';
 import { GatewayTeam } from './naosclient/models/GatewayTeam';
 import { GatewayTeamUser } from './naosclient/models/GatewayTeamUser';
+import { GeoFile } from './naosclient/models/GeoFile';
 import { JobDescribe } from './naosclient/models/JobDescribe';
 import { NaosInstance } from './naosclient/models/NaosInstance';
 import { Project } from './naosclient/models/Project';
 import { UserInfo } from './naosclient/models/UserInfo';
+import { Workspace } from './naosclient/models/Workspace';
 import { ArtifactsProvider } from './treeProviders/ArtifactsProvider';
 import { CoveragesProvider } from './treeProviders/CoveragesProvider';
 import { GeofilesProvider } from './treeProviders/GeofilesProvider';
@@ -193,6 +195,11 @@ export function activate(context: vscode.ExtensionContext) {
 		await vscode.commands.executeCommand("naos.refresh");
 	});
 
+	registerNaosCommand("naos.workspace.delete", async (workspace: Workspace) => {
+		await apiClient.workspaces.deleteWorkspace(workspace.id!, true);
+		await vscode.commands.executeCommand("naos.refresh");
+	});
+
 	registerNaosCommand("naos.job.delete", async (job: JobDescribe) => {
 		await apiClient.scheduler.schedulerProxyDelete(`jobs/${job.id}`);
 		await vscode.commands.executeCommand("naos.refresh");
@@ -203,6 +210,11 @@ export function activate(context: vscode.ExtensionContext) {
 			type: NaosTaskProvider.taskType,
 			jobId: job.id,
 		});
+		await vscode.commands.executeCommand("naos.refresh");
+	});
+
+	registerNaosCommand("naos.geofile.delete", async (geofile: GeoFile) => {
+		await apiClient.geo.deleteGeoFile(geofile.id!, true);
 		await vscode.commands.executeCommand("naos.refresh");
 	});
 
@@ -227,9 +239,16 @@ export function activate(context: vscode.ExtensionContext) {
 			const [resourceKind, resourceIds] = parseNaosURI(uri);
 			let editorText = getActiveEditorText();
 			switch (resourceKind) {
+				// TODO case "user":
+				// TODO case "team":
+				// TODO case "instance":
+				// TODO case "job":
 				case "project":
 					await sendProject(editorText, apiClient);
 					break;
+				// TODO case "workspace":
+				// TODO case "geofile":
+				// TODO case "coverage":
 				default:
 					vscode.window.showErrorMessage("Unknown NAOS resource kind.");
 			}

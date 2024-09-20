@@ -5,6 +5,11 @@
 - Utiliser une [output channel](https://code.visualstudio.com/api/references/vscode-api#OutputChannel)
   - loglevel as configuration
 - [snippets](https://code.visualstudio.com/api/language-extensions/snippet-guide) ! 
+- editor command : "filter edit fields"
+  - ctrl + S
+  - filter edit fields
+  - real modifs
+  - POST / PATCH
 - fonctions de filtrage des views
 - creation de **filtres** et **stockage** (où?)
 

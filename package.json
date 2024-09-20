@@ -77,6 +77,12 @@
         "icon": "$(trash)"
       },
       {
+        "command": "naos.workspace.delete",
+        "category": "NAOS",
+        "title": "Delete NAOS Workspace.",
+        "icon": "$(trash)"
+      },
+      {
         "command": "naos.job.delete",
         "category": "NAOS",
         "title": "Remove a NAOS Job.",
@@ -87,6 +93,12 @@
         "category": "NAOS",
         "title": "Run a NAOS Job.",
         "icon": "$(run)"
+      },
+      {
+        "command": "naos.geofile.delete",
+        "category": "NAOS",
+        "title": "Delete NAOS Geofile.",
+        "icon": "$(trash)"
       },
       {
         "command": "naos.copyid",
@@ -237,6 +249,11 @@
           "when": "view == naos.workareas && viewItem == naos.project"
         },
         {
+          "command": "naos.workspace.delete",
+          "group": "inline",
+          "when": "view == naos.workareas && viewItem == naos.workspace"
+        },
+        {
           "command": "naos.job.delete",
           "group": "inline",
           "when": "view == naos.jobs && viewItem === naos.job"
@@ -245,6 +262,11 @@
           "command": "naos.job.run",
           "group": "inline",
           "when": "view == naos.jobs && viewItem === naos.job"
+        },
+        {
+          "command": "naos.geofile.delete",
+          "group": "inline",
+          "when": "view == naos.geofiles"
         },
         {
           "command": "naos.task.getMessages",
