@@ -8,6 +8,7 @@ import { GatewayTeamUser } from './naosclient/models/GatewayTeamUser';
 import { GeoFile } from './naosclient/models/GeoFile';
 import { JobDescribe } from './naosclient/models/JobDescribe';
 import { NaosInstance } from './naosclient/models/NaosInstance';
+import { NaosInstanceParameters } from './naosclient/models/NaosInstanceParameters';
 import { Project } from './naosclient/models/Project';
 import { UserInfo } from './naosclient/models/UserInfo';
 import { Workspace } from './naosclient/models/Workspace';
@@ -21,7 +22,6 @@ import { TeamsProvider, TeamUser } from './treeProviders/TeamsProvider';
 import { UsersProvider } from './treeProviders/UsersProvider';
 import { sendProject, WorkareasProvider } from './treeProviders/WorkareasProvider';
 import { getActiveEditorText, parseNaosURI, uuidValidateV4 } from './utils';
-import { NaosInstanceParameters } from './naosclient/models/NaosInstanceParameters';
 
 export let consoleNAOS = vscode.window.createOutputChannel("NAOS-ext", { log: true });
 
@@ -243,38 +243,60 @@ export function activate(context: vscode.ExtensionContext) {
 			switch (resourceKind) {
 				case "user":
 					const user = JSON.parse(editorText) as UserInfo;
-					if (user.id){
+					if (user.id) {
 						await apiClient.admin.editUser(user.id, user);
 					} else {
 						await apiClient.admin.createUser(user);
 					}
 					break;
+
 				case "team":
 					const team = JSON.parse(editorText) as GatewayTeam;
-					if (team.id){
+					if (team.id) {
 						await apiClient.teams.editTeam(team.id, team);
 					} else {
 						await apiClient.teams.createTeam(team);
 					}
 					break;
+
 				case "instance":
 					const instance = JSON.parse(editorText) as NaosInstanceParameters;
 					await apiClient.naos.addInstance(instance);
 					break;
-				// TODO case "job":
+
+				case "job":
+					const job = JSON.parse(editorText);
+					if (job.id && job.work_area_type && job.work_area_id) {
+						if (job.work_area_type === "project") {
+							await apiClient.jobs.updateProjectJob(job.work_area_id, job.id, job);
+						} else if (job.work_area_type === "workspace") {
+							await apiClient.jobs.updateWorkspaceJob(job.work_area_id, job.id, job);
+						}
+					} else {
+						if (job.work_area_type === "project") {
+							await apiClient.jobs.createProjectJob(job.work_area_id, job);
+						} else if (job.work_area_type === "workspace") {
+							await apiClient.jobs.createWorkspaceJob(job.work_area_id, job);
+						}
+					}
+					break;
+
 				case "project":
 					await sendProject(editorText, apiClient);
 					break;
+
 				case "workspace":
 					const workspace = JSON.parse(editorText) as Workspace;
-					if (workspace.id){
+					if (workspace.id) {
 						await apiClient.workspaces.editWorkspace(workspace.id, undefined, workspace);
 					} else {
 						await apiClient.workspaces.createWorkspace(true, workspace);
 					}
 					break;
+
 				// TODO case "geofile":
 				// TODO case "coverage":
+
 				default:
 					vscode.window.showErrorMessage("Unknown NAOS resource kind.");
 			}

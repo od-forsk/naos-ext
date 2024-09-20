@@ -1,7 +1,7 @@
 
+- walkthrough
+- readme
 - jsonValidation for Run, Task and TaskMessage
-- envoi de POST PATCH selon selection / contenu de l'editeur?
-- custom editor basé sur JSON? (ou yaml?)
 - Utiliser une [output channel](https://code.visualstudio.com/api/references/vscode-api#OutputChannel)
   - loglevel as configuration
 - [snippets](https://code.visualstudio.com/api/language-extensions/snippet-guide) ! 
@@ -10,6 +10,7 @@
   - filter edit fields
   - real modifs
   - POST / PATCH
+  - 
 - fonctions de filtrage des views
 - creation de **filtres** et **stockage** (où?)
 

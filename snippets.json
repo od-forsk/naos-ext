@@ -9,7 +9,7 @@
             "    \"is_admin\": ${4|false,true|}$0",
             "}"
         ],
-        "description": "NAOS User template"
+        "description": "NAOS User"
     },
     "NAOS Team": {
         "prefix": "team",
@@ -19,7 +19,7 @@
             "    \"allocated_naos_tokens\": ${2}$0",
             "}"
         ],
-        "description": "NAOS Team template"
+        "description": "NAOS Team"
     },
     "NAOS Instance": {
         "prefix": "instance",
@@ -29,7 +29,7 @@
             "  \"name\": \"${2:notneeded}\"$0",
             "}"
         ],
-        "description": "NAOS instance template"
+        "description": "NAOS Instance"
     },
     "NAOS Project": {
         "prefix": "project",
@@ -45,7 +45,7 @@
             "  }$0",
             "}"
         ],
-        "description": "NAOS Project template"
+        "description": "NAOS Project"
     },
     "NAOS Workspace": {
         "prefix": "workspace",
@@ -55,21 +55,35 @@
             "  \"project_id\": \"${2:project}\"$0",
             "}"
         ],
-        "description": "NAOS workspace template"
+        "description": "NAOS Workspace"
     },
     "NAOS Job": {
         "prefix": "job",
-        "body": [],
-        "description": "NAOS job template"
+        "body": [
+            "{",
+            "  \"name\": \"${1}\",",
+            "  \"work_area_type\": \"${2|project,workspace|}\",",
+            "  \"work_area_id\": \"${3}\",",
+            "  \"tasks\": [",
+            "    {",
+            "      \"task_definition_id\": \"${4}\",",
+            "      \"function_name\": \"${5}\",",
+            "      \"name\": \"${5}\",",
+            "      \"input\": {$0}",
+            "    }",
+            "  ]",
+            "}"
+        ],
+        "description": "NAOS Job"
     },
     "NAOS Geofile": {
         "prefix": "geofile",
         "body": [],
-        "description": "NAOS Geofile template"
+        "description": "NAOS Geofile"
     },
     "NAOS Coverage": {
         "prefix": "coverage",
         "body": [],
-        "description": "NAOS Coverage template"
+        "description": "NAOS Coverage"
     }
 }
