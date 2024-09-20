@@ -278,7 +278,7 @@
         {
           "command": "naos.publish",
           "group": "inline",
-          "when": "resourceLangId == json && resourceFilename =~ /\\.project\\.naos$/"
+          "when": "resourceLangId == json && resourceFilename =~ /\\.(user|team|instance|job|project|workspace|geofile|coverage)\\.naos$/"
         }
       ]
     },
@@ -443,6 +443,12 @@
         "extensions": [
           ".naos"
         ]
+      }
+    ],
+    "snippets": [
+      {
+        "language": "json",
+        "path": "./snippets.json"
       }
     ]
   },

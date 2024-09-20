@@ -21,6 +21,7 @@ import { TeamsProvider, TeamUser } from './treeProviders/TeamsProvider';
 import { UsersProvider } from './treeProviders/UsersProvider';
 import { sendProject, WorkareasProvider } from './treeProviders/WorkareasProvider';
 import { getActiveEditorText, parseNaosURI, uuidValidateV4 } from './utils';
+import { NaosInstanceParameters } from './naosclient/models/NaosInstanceParameters';
 
 export let consoleNAOS = vscode.window.createOutputChannel("NAOS-ext", { log: true });
 
@@ -233,20 +234,45 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	});
 
-	registerNaosCommand("naos.publish", async (uri: vscode.Uri) => {
+	registerNaosCommand("naos.publish", async () => {
 		// TODO avoid usage with command palette.
+		const uri = vscode.window.activeTextEditor?.document.uri;
 		try {
-			const [resourceKind, resourceIds] = parseNaosURI(uri);
+			const [resourceKind, resourceIds] = parseNaosURI(uri!);
 			let editorText = getActiveEditorText();
 			switch (resourceKind) {
-				// TODO case "user":
-				// TODO case "team":
-				// TODO case "instance":
+				case "user":
+					const user = JSON.parse(editorText) as UserInfo;
+					if (user.id){
+						await apiClient.admin.editUser(user.id, user);
+					} else {
+						await apiClient.admin.createUser(user);
+					}
+					break;
+				case "team":
+					const team = JSON.parse(editorText) as GatewayTeam;
+					if (team.id){
+						await apiClient.teams.editTeam(team.id, team);
+					} else {
+						await apiClient.teams.createTeam(team);
+					}
+					break;
+				case "instance":
+					const instance = JSON.parse(editorText) as NaosInstanceParameters;
+					await apiClient.naos.addInstance(instance);
+					break;
 				// TODO case "job":
 				case "project":
 					await sendProject(editorText, apiClient);
 					break;
-				// TODO case "workspace":
+				case "workspace":
+					const workspace = JSON.parse(editorText) as Workspace;
+					if (workspace.id){
+						await apiClient.workspaces.editWorkspace(workspace.id, undefined, workspace);
+					} else {
+						await apiClient.workspaces.createWorkspace(true, workspace);
+					}
+					break;
 				// TODO case "geofile":
 				// TODO case "coverage":
 				default:

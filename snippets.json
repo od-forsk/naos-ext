@@ -1,0 +1,75 @@
+{
+    "NAOS User": {
+        "prefix": "user",
+        "body": [
+            "{",
+            "    \"login\": \"${1}\",",
+            "    \"name\": \"${2}\",",
+            "    \"email\": \"${3}\",",
+            "    \"is_admin\": ${4|false,true|}$0",
+            "}"
+        ],
+        "description": "NAOS User template"
+    },
+    "NAOS Team": {
+        "prefix": "team",
+        "body": [
+            "{",
+            "    \"name\": \"${1}\",",
+            "    \"allocated_naos_tokens\": ${2}$0",
+            "}"
+        ],
+        "description": "NAOS Team template"
+    },
+    "NAOS Instance": {
+        "prefix": "instance",
+        "body": [
+            "{",
+            "  \"parameters\": {${1}},",
+            "  \"name\": \"${2:notneeded}\"$0",
+            "}"
+        ],
+        "description": "NAOS instance template"
+    },
+    "NAOS Project": {
+        "prefix": "project",
+        "body": [
+            "{",
+            "  \"name\": \"${1:name}\",",
+            "  \"source\": {",
+            "    \"dbname\": \"${2:dbname}\",",
+            "    \"host\": \"${3:host}\",",
+            "    \"port\": ${4:5432},",
+            "    \"schema\": \"${5:public}\",",
+            "    \"type\": \"${6|PostgreSQL,Oracle,MS_SQL_Server,Atl|}\"",
+            "  }$0",
+            "}"
+        ],
+        "description": "NAOS Project template"
+    },
+    "NAOS Workspace": {
+        "prefix": "workspace",
+        "body": [
+            "{",
+            "  \"name\": \"${1:name}\",",
+            "  \"project_id\": \"${2:project}\"$0",
+            "}"
+        ],
+        "description": "NAOS workspace template"
+    },
+    "NAOS Job": {
+        "prefix": "job",
+        "body": [],
+        "description": "NAOS job template"
+    },
+    "NAOS Geofile": {
+        "prefix": "geofile",
+        "body": [],
+        "description": "NAOS Geofile template"
+    },
+    "NAOS Coverage": {
+        "prefix": "coverage",
+        "body": [],
+        "description": "NAOS Coverage template"
+    }
+}
