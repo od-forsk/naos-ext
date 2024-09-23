@@ -402,39 +402,39 @@
     "jsonValidation": [
       {
         "fileMatch": "*.user.naos",
-        "url": "./schemas/userinfo.json"
+        "url": "./schemas/UserInfo.json"
       },
       {
         "fileMatch": "*.team.naos",
-        "url": "./schemas/gatewayteam.json"
+        "url": "./schemas/GatewayTeam.json"
       },
       {
         "fileMatch": "*.instance.naos",
-        "url": "./schemas/naosinstance.json"
+        "url": "./schemas/NaosInstance.json"
       },
       {
         "fileMatch": "*.job.naos",
-        "url": "./schemas/jobdescribe.json"
+        "url": "./schemas/JobDescribe.json"
       },
       {
         "fileMatch": "*.project.naos",
-        "url": "./schemas/project.json"
+        "url": "./schemas/Project.json"
       },
       {
         "fileMatch": "*.workspace.naos",
-        "url": "./schemas/workspace.json"
+        "url": "./schemas/Workspace.json"
       },
       {
         "fileMatch": "*.geofile.naos",
-        "url": "./schemas/geofilejson"
+        "url": "./schemas/GeoFile.json"
       },
       {
         "fileMatch": "*.coverage.naos",
-        "url": "./schemas/coveragejson"
+        "url": "./schemas/Coverage.json"
       },
       {
         "fileMatch": "*.artifact.naos",
-        "url": "./schemas/artifact.json"
+        "url": "./schemas/Artifact.json"
       }
     ],
     "languages": [

@@ -1,6 +1,7 @@
 
-- walkthrough
 - readme
+- walkthrough
+
 - jsonValidation for Run, Task and TaskMessage
 - Utiliser une [output channel](https://code.visualstudio.com/api/references/vscode-api#OutputChannel)
   - loglevel as configuration

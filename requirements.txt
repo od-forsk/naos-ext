@@ -1,7 +1,6 @@
-click==8.1.7
+click==7.1.2
 colorama==0.4.6
-Cython==0.29.37
-jsonref==1.1.0
-openapi2jsonschema==0.9.0
-PyYAML==6.0.1
+jsonref==0.2
+openapi2jsonschema @ git+https://github.com/od-forsk/openapi2jsonschema.git@aca93464003dea8e68f9019995fbf80f92e5b131
+PyYAML==6.0.2
 setuptools==75.1.0
