@@ -6,7 +6,7 @@ NAOS Extension to manage your **NAOS** deployments.
 
 - View container and **views** for monitoring services, users, teams, instances, projects, workspaces, jobs, geofiles, coverages, artifacts
 - **Copy ID** command available on NAOS views items.
-- **Delete** commands for user, team, instance, project, workspace, job, geofile
+- **Delete** commands for user, team, instance, project, workspace, job, geofile, coverage, artifact
 - **TextDocumentContentProvider** for user, team, instance, job, run, task, project, workspace, geofile, coverage, artifact, messages
   - click on a NAOS view item opens its API JSON representation.
 - **Create / Update** command for user, team, instance, job, project, workspace

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Delete commands for coverage, artifact
+
 ## [1.0.1] - 2024-09-23
 
 ### Fixed

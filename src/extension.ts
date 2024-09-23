@@ -3,6 +3,8 @@ import { NaosTaskProvider } from './NaosTaskProvider';
 import { NaosTextDocumentContentProvider } from './NaosTextDocumentContentProvider';
 import { TaskDescribe } from './models/TaskDescribe';
 import { ApiError, NaosClient } from './naosclient';
+import { Artifact } from './naosclient/models/Artifact';
+import { Coverage } from './naosclient/models/Coverage';
 import { GatewayTeam } from './naosclient/models/GatewayTeam';
 import { GatewayTeamUser } from './naosclient/models/GatewayTeamUser';
 import { GeoFile } from './naosclient/models/GeoFile';
@@ -216,6 +218,20 @@ export function activate(context: vscode.ExtensionContext) {
 
 	registerNaosCommand("naos.geofile.delete", async (geofile: GeoFile) => {
 		await apiClient.geo.deleteGeoFile(geofile.id!, true);
+		await vscode.commands.executeCommand("naos.refresh");
+	});
+
+	registerNaosCommand("naos.coverage.delete", async (coverage: Coverage) => {
+		if (coverage.work_area?.type === "project") {
+			await apiClient.coverages.deleteProjectCoverage(coverage.work_area?.id, coverage.id!);
+		} else {
+			await apiClient.coverages.deleteWorkspaceCoverage(coverage.work_area?.id, coverage.id!);
+		}
+		await vscode.commands.executeCommand("naos.refresh");
+	});
+
+	registerNaosCommand("naos.artifact.delete", async (artifact: Artifact) => {
+		await apiClient.artifacts.deleteArtifact(artifact.id!, true);
 		await vscode.commands.executeCommand("naos.refresh");
 	});
 

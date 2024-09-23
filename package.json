@@ -101,6 +101,18 @@
         "icon": "$(trash)"
       },
       {
+        "command": "naos.coverage.delete",
+        "category": "NAOS",
+        "title": "Delete Coverage",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "naos.artifact.delete",
+        "category": "NAOS",
+        "title": "Delete Artifact",
+        "icon": "$(trash)"
+      },
+      {
         "command": "naos.copyid",
         "category": "NAOS",
         "title": "Copy the item UUID.",
@@ -267,6 +279,16 @@
           "command": "naos.geofile.delete",
           "group": "inline",
           "when": "view == naos.geofiles"
+        },
+        {
+          "command": "naos.coverage.delete",
+          "group": "inline",
+          "when": "view == naos.coverages"
+        },
+        {
+          "command": "naos.artifact.delete",
+          "group": "inline",
+          "when": "view == naos.artifacts"
         },
         {
           "command": "naos.task.getMessages",
