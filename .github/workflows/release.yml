@@ -38,7 +38,7 @@ jobs:
       # 5. Compiler le projet (si nécessaire)
       # Si ton projet nécessite une compilation TypeScript ou autre
       - name: Build project
-        run: npm run build # Remplace cette ligne si le processus de build est différent.
+        run: npm run compile # Remplace cette ligne si le processus de build est différent.
 
       # 6. Installer vsce (VS Code Extension Manager)
       - name: Install vsce

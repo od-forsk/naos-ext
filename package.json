@@ -1,6 +1,6 @@
 {
   "name": "naos",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "publisher": "forsk-sas",
   "displayName": "NAOS",
   "description": "NAOS extension for VSCode.",
