@@ -4,6 +4,7 @@
   "publisher": "forsk-sas",
   "displayName": "NAOS",
   "description": "NAOS extension for VSCode.",
+  "repository": {"url": "https://github.com/od-forsk/naos-ext"},
   "icon": "resources/naos.png",
   "engines": {
     "vscode": "^1.79.0"

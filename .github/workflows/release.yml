@@ -1,0 +1,61 @@
+name: Package and Release VS Code Extension
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # Exécuter le workflow lorsque des tags de version sont poussés (v1.0.0, v2.1.0, etc.)
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout du code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Configurer Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+
+      # 3. Restaurer le cache des dépendances
+      - name: Restore npm cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      # 4. Installer les dépendances du projet
+      - name: Install dependencies
+        run: npm install
+
+      # 5. Compiler le projet (si nécessaire)
+      # Si ton projet nécessite une compilation TypeScript ou autre
+      - name: Build project
+        run: npm run build # Remplace cette ligne si le processus de build est différent.
+
+      # 6. Installer vsce (VS Code Extension Manager)
+      - name: Install vsce
+        run: npm install -g @vscode/vsce
+
+      # 7. Packager l'extension VS Code
+      - name: Package VS Code Extension
+        run: npm run package
+
+      # 8. Créer une release GitHub et attacher le fichier VSIX
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: "*.vsix"  # Inclure le fichier VSIX packagé
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Utilise le token GitHub par défaut
+
+      # 9. Nettoyer les fichiers temporaires (optionnel)
+      - name: Clean up
+        run: rm -f *.vsix
