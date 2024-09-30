@@ -382,17 +382,65 @@
     "walkthroughs": [
       {
         "id": "naos.tuto",
-        "title": "Get Started with NAOS!",
-        "description": "Get Started with NAOS!",
+        "title": "Get Started with NAOS",
+        "description": "Learn how to use the NAOS extension.",
         "icon": "resources/naos.svg",
         "steps": [
           {
-            "id": "runcommand",
-            "title": "Run command",
-            "description": "This step will run a command and check off once it has been run.\n[Run Command](command:naos.user.add)",
+            "id": "naos.settings",
+            "title": "Configure NAOS Gateway URL",
+            "description": "Change the [naos.gatewayURL](command:workbench.action.openSettings?%22naos.gatewayURL%22) setting to your deployment.\nUse basic authentication by formatting your URL like: ``http://admin:admin@127.0.0.1:9090/v1/``.",
             "completionEvents": [
-              "onCommand:naos.user.add"
+              "onSettingChanged:naos.gatewayURL"
             ],
+            "media": {
+              "image": "resources/naos.svg",
+              "altText": "NAOS Logo"
+            }
+          },
+          {
+            "id": "naos.views",
+            "title": "Spot the NAOS views",
+            "description": "Open the NAOS view container on the primary bar side to see the monitored resources.",
+            "completionEvents": [
+              "onView:naos.workareas"
+            ],
+            "media": {
+              "image": "resources/naos.svg",
+              "altText": "NAOS Logo"
+            }
+          },
+          {
+            "id": "naos.documents",
+            "title": "Open a NAOS Item",
+            "description": "Click a view item (User, Project, Job...) to see the matching API Document.",
+            "media": {
+              "image": "resources/naos.svg",
+              "altText": "NAOS Logo"
+            }
+          },
+          {
+            "id": "naos.snippets",
+            "title": "Create a file named ``myself.user.naos`` ",
+            "description": "TODO ",
+            "media": {
+              "image": "resources/naos.svg",
+              "altText": "NAOS Logo"
+            }
+          },
+          {
+            "id": "naos.publish",
+            "title": "Publish ",
+            "description": "TODO ",
+            "media": {
+              "image": "resources/naos.svg",
+              "altText": "NAOS Logo"
+            }
+          },
+          {
+            "id": "naos.tasks",
+            "title": "Open a NAOS Item",
+            "description": "TODO ",
             "media": {
               "image": "resources/naos.svg",
               "altText": "NAOS Logo"

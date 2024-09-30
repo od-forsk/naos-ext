@@ -1,6 +1,6 @@
 
-- readme
 - walkthrough
+- use [contexts](https://code.visualstudio.com/api/references/when-clause-contexts)
 
 - jsonValidation for Run, Task and TaskMessage
 - Utiliser une [output channel](https://code.visualstudio.com/api/references/vscode-api#OutputChannel)

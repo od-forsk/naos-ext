@@ -16,7 +16,7 @@ NAOS Extension to manage your **NAOS** deployments.
   - embeded documentation on mouse hover
 - **Task Provider** for "naos-job" vscode tasks
 - Display of Task messages during naos-job task execution. (via websockets)
-- **Configuration** auto reload
+- [**Configuration**](vscode://settings/naos.gatewayURL) auto reload
 - NAOS-ext output log channel
 
 <!-- \!\[feature X\]\(images/feature-x.png\) -->
