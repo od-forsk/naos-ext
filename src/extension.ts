@@ -12,6 +12,7 @@ import { JobDescribe } from './naosclient/models/JobDescribe';
 import { NaosInstance } from './naosclient/models/NaosInstance';
 import { NaosInstanceParameters } from './naosclient/models/NaosInstanceParameters';
 import { Project } from './naosclient/models/Project';
+import { TokenResponse } from './naosclient/models/TokenResponse';
 import { UserInfo } from './naosclient/models/UserInfo';
 import { Workspace } from './naosclient/models/Workspace';
 import { ArtifactsProvider } from './treeProviders/ArtifactsProvider';
@@ -31,8 +32,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// API client
 	const config = vscode.workspace.getConfiguration("naos");
-	const baseURL = config.get<string>("gatewayURL");
-	const apiClient = new NaosClient({ BASE: baseURL });
+	const apiClient = new NaosClient({ BASE: config.get<string>("gatewayURL") });
 
 	// Config listening
 	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(async e => {
@@ -133,6 +133,19 @@ export function activate(context: vscode.ExtensionContext) {
 			await apiClient.admin.deleteUser(user.id!);
 			await vscode.commands.executeCommand("naos.refresh");
 		}
+	});
+
+	registerNaosCommand("naos.user.token", async (user: UserInfo) => {
+		const password = await vscode.window.showInputBox({
+			title: "User password",
+			prompt: "Enter the user password.",
+			password: true,
+		});
+		if (!password) { return; }
+		const impersonateClient = impersonate(apiClient, user, password);
+		const { access_token } = await impersonateClient.auth.login() as TokenResponse;
+		await vscode.env.clipboard.writeText(access_token);
+		await vscode.window.showInformationMessage(`Copied access token.`);
 	});
 
 	registerNaosCommand("naos.team.add", async () => {
@@ -350,4 +363,18 @@ async function getUUID(arg: any, prompt: vscode.InputBoxOptions): Promise<string
 		return arg;
 	}
 	throw new Error("Impossible to get the UUID");
+}
+
+function impersonate(apiClient: NaosClient, user: UserInfo, password: string) {
+	const config = vscode.workspace.getConfiguration("naos");
+	const gatewayURL = vscode.Uri.parse(config.get<string>("gatewayURL")!);
+	const impersonateClient = new NaosClient({
+		...apiClient.request.config,
+		BASE: gatewayURL.with({
+			authority: gatewayURL.authority.split("@").at(-1)
+		}).toString(),
+		USERNAME: user.login,
+		PASSWORD: password,
+	});
+	return impersonateClient;
 }

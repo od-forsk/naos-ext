@@ -36,6 +36,12 @@
         "icon": "$(trash)"
       },
       {
+        "command": "naos.user.token",
+        "category": "NAOS",
+        "title": "Retrieve an access token for this user",
+        "icon": "$(log-in)"
+      },
+      {
         "command": "naos.team.add",
         "category": "NAOS",
         "title": "Add team",
@@ -228,6 +234,11 @@
         },
         {
           "command": "naos.user.delete",
+          "group": "inline",
+          "when": "view == naos.users"
+        },
+        {
+          "command": "naos.user.token",
           "group": "inline",
           "when": "view == naos.users"
         },
