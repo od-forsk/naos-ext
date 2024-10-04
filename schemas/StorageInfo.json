@@ -1,30 +1,30 @@
 {
   "description": "Object describing external data location.",
+  "type": "object",
   "properties": {
-    "best_resolution": {
-      "description": "Required if using MongoDB pathloss storage.\nRepresents the best possible resolution (in meters) for pathlosses, and by extension the best reachable resolution for coverages.\nIndividual pathlosses can use higher resolution.\n",
-      "minimum": 1,
-      "type": "number"
+    "root": {
+      "type": "string",
+      "format": "uri"
     },
     "pathloss": {
+      "type": "object",
       "properties": {
         "private": {
-          "format": "uri",
-          "type": "string"
+          "type": "string",
+          "format": "uri"
         },
         "shared": {
           "description": "A folder file URI for legacy pathloss storage (.los files) or a MongoDB URI for Naos coverages calculations.\nSee Naos documentation for more info.\n",
-          "format": "uri",
-          "type": "string"
+          "type": "string",
+          "format": "uri"
         }
-      },
-      "type": "object"
+      }
     },
-    "root": {
-      "format": "uri",
-      "type": "string"
+    "best_resolution": {
+      "description": "Required if using MongoDB pathloss storage.\nRepresents the best possible resolution (in meters) for pathlosses, and by extension the best reachable resolution for coverages.\nIndividual pathlosses can use higher resolution.\n",
+      "type": "number",
+      "minimum": 1
     }
   },
-  "type": "object",
   "$schema": "http://json-schema.org/schema#"
 }

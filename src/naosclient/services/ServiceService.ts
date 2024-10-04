@@ -18,17 +18,6 @@ export class ServiceService {
         });
     }
     /**
-     * Gateway release notes
-     * @returns string Release notes
-     * @throws ApiError
-     */
-    public getReleaseNotes(): CancelablePromise<string> {
-        return this.httpRequest.request({
-            method: 'GET',
-            url: '/release-notes',
-        });
-    }
-    /**
      * Get the status of the gateway and each naos service
      * @returns any Services status
      * @throws ApiError
@@ -37,6 +26,17 @@ export class ServiceService {
         return this.httpRequest.request({
             method: 'GET',
             url: '/status',
+        });
+    }
+    /**
+     * Gateway release notes
+     * @returns string Release notes
+     * @throws ApiError
+     */
+    public getReleaseNotes(): CancelablePromise<string> {
+        return this.httpRequest.request({
+            method: 'GET',
+            url: '/release-notes',
         });
     }
 }

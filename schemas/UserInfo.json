@@ -1,56 +1,59 @@
 {
+  "title": "User information",
+  "type": "object",
   "properties": {
-    "confirm": {
-      "description": "Confirmed user password.",
-      "example": "aligator!33",
-      "type": "string"
-    },
-    "email": {
-      "description": "Email of the user",
-      "example": "sample@mail.com",
-      "format": "email",
-      "type": "string"
-    },
     "id": {
       "description": "Unique user identifier.",
-      "example": "d17ecc23-7b9d-409a-b987-adcbb3f5d400",
+      "type": "string",
       "format": "uuid",
-      "type": "string"
-    },
-    "is_admin": {
-      "default": false,
-      "description": "User has administrator privileges.",
-      "type": "boolean"
-    },
-    "last_login": {
-      "description": "Timestamp of the last login.",
-      "format": "date-time",
-      "readOnly": true,
-      "type": "string"
-    },
-    "last_seen_at": {
-      "description": "Timestamp of the last activity.",
-      "format": "date-time",
-      "readOnly": true,
-      "type": "string"
-    },
-    "login": {
-      "description": "User login",
-      "example": "login",
-      "type": "string"
+      "example": "d17ecc23-7b9d-409a-b987-adcbb3f5d400"
     },
     "name": {
       "description": "Full name of the user.",
-      "example": "Name",
-      "type": "string"
+      "type": "string",
+      "example": "Name"
+    },
+    "login": {
+      "description": "User login",
+      "type": "string",
+      "example": "login"
     },
     "password": {
       "description": "User password",
+      "type": "string",
       "example": "aligator!33",
-      "type": "string"
+      "nullable": true
+    },
+    "confirm": {
+      "description": "Confirmed user password.",
+      "type": "string",
+      "example": "aligator!33",
+      "nullable": true
+    },
+    "email": {
+      "description": "Email of the user",
+      "type": "string",
+      "format": "email",
+      "example": "sample@mail.com"
+    },
+    "is_admin": {
+      "description": "User has administrator privileges.",
+      "type": "boolean",
+      "default": false,
+      "nullable": true
+    },
+    "last_login": {
+      "description": "Timestamp of the last login.",
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
+    },
+    "last_seen_at": {
+      "description": "Timestamp of the last activity.",
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
     }
   },
-  "title": "User information",
-  "type": "object",
   "$schema": "http://json-schema.org/schema#"
 }

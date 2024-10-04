@@ -5,26 +5,17 @@
 import type { Status } from './Status';
 import type { Trigger } from './Trigger';
 export type JobSummary = {
-    creation_date: string;
-    /**
-     * default priority for this job
-     */
-    default_priority?: number;
     id: string;
     job_version?: string;
-    last_run_date?: string;
-    last_run_status?: Status;
-    modification_date?: string;
     /**
      * Name of the job.
      */
     name: string;
-    /**
-     * Number of tasks in the job.
-     */
-    nb_tasks: number;
+    creation_date: string;
+    modification_date?: string;
     next_run_date?: string;
-    run_now: boolean;
+    last_run_date?: string;
+    last_run_status?: Status;
     trigger?: Trigger;
     /**
      * ID of the creator of the job.
@@ -38,6 +29,15 @@ export type JobSummary = {
      * Type of work area where the job will be launched.
      */
     work_area_type: JobSummary.work_area_type;
+    /**
+     * default priority for this job
+     */
+    default_priority?: number;
+    /**
+     * Number of tasks in the job.
+     */
+    nb_tasks: number;
+    run_now: boolean;
 };
 export namespace JobSummary {
     /**

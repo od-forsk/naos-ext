@@ -1,5 +1,6 @@
 {
   "description": "A reference to an external object",
+  "type": "object",
   "properties": {
     "id": {
       "type": "string"
@@ -11,6 +12,5 @@
   "required": [
     "id"
   ],
-  "type": "object",
   "$schema": "http://json-schema.org/schema#"
 }

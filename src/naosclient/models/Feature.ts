@@ -4,14 +4,6 @@
 /* eslint-disable */
 export type Feature = {
     /**
-     * Feature identifier
-     */
-    featureId?: number;
-    /**
-     * Feature Name
-     */
-    featureName?: string;
-    /**
      * Product identifier
      */
     productId?: number;
@@ -19,5 +11,13 @@ export type Feature = {
      * Product Name
      */
     productName?: string;
+    /**
+     * Feature identifier
+     */
+    featureId?: number;
+    /**
+     * Feature Name
+     */
+    featureName?: string;
 };
 

@@ -87,268 +87,24 @@ export class ProjectsService {
         });
     }
     /**
-     * Delete a project
+     * ADMIN. Add geo files to an existing project
      * @param projectId Project identifier.
-     * @returns any OK
-     * @throws ApiError
-     */
-    public deleteProject(
-        projectId: string,
-    ): CancelablePromise<any> {
-        return this.httpRequest.request({
-            method: 'DELETE',
-            url: '/projects/{project_id}',
-            path: {
-                'project_id': projectId,
-            },
-            errors: {
-                404: `Not found`,
-            },
-        });
-    }
-    /**
-     * Get details concerning a specific project
-     * @param projectId Project identifier.
-     * @param naosFilepathMode Map URI values in the response to the desired context
-     * @param prefer Prefer header according to RFC 7240.
-     * Supported preferences:
-     * - details: minimal/normal/full <br>Level of details on the targeted resource response. Defaults to 'normal' on listing APIs, and 'full' on single resources.
-     *
+     * @param requestBody
      * @returns Project Project details
      * @throws ApiError
      */
-    public getProject(
+    public addGeoFilesToProject(
         projectId: string,
-        naosFilepathMode?: 'atoll' | 'naos-service-win' | 'naos-service-linux',
-        prefer?: string,
+        requestBody?: Array<GeoFileAssociationInput>,
     ): CancelablePromise<Project> {
-        return this.httpRequest.request({
-            method: 'GET',
-            url: '/projects/{project_id}',
-            path: {
-                'project_id': projectId,
-            },
-            headers: {
-                'Naos-Filepath-Mode': naosFilepathMode,
-                'Prefer': prefer,
-            },
-            errors: {
-                404: `Not found`,
-            },
-        });
-    }
-    /**
-     * ADMIN. Edit a project
-     * @param projectId Project identifier.
-     * @param historyMessage An optional message indicating the changes that were made to the document. If omitted, a default meaningful message will be generated.
-     * @param force Forces an open or edit of a project. This opens or edits the project even if:
-     * - the parsing of the geo files did not finish or finished with errors.
-     * - the automatic scanning did not finished or finished with errors.
-     *
-     * @param requestBody
-     * @returns Project OK
-     * @throws ApiError
-     */
-    public editProject(
-        projectId: string,
-        historyMessage?: string,
-        force: boolean = false,
-        requestBody?: Project,
-    ): CancelablePromise<Project> {
-        return this.httpRequest.request({
-            method: 'PATCH',
-            url: '/projects/{project_id}',
-            path: {
-                'project_id': projectId,
-            },
-            query: {
-                'history_message': historyMessage,
-                'force': force,
-            },
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                404: `Not found`,
-            },
-        });
-    }
-    /**
-     * Proxy DELETE to Data Access Service
-     * [Preview]
-     * Forwards a DELETE request to the Naos Data Access Service.
-     * The service along with its query parameters are specified in the 'route' parameter.
-     *
-     * @param projectId Project identifier.
-     * @param route
-     * @returns any OK
-     * @throws ApiError
-     */
-    public dasProjectProxyDelete(
-        projectId: string,
-        route: string,
-    ): CancelablePromise<any> {
-        return this.httpRequest.request({
-            method: 'DELETE',
-            url: '/projects/{project_id}/data/{route}',
-            path: {
-                'project_id': projectId,
-                'route': route,
-            },
-            errors: {
-                404: `Not found`,
-                502: `Naos Data Access Service is unhealthy`,
-                503: `Connection timeout trying to communicate with the Naos Data Access Service`,
-                504: `Read timeout trying to communicate with the Naos Data Access Service`,
-            },
-        });
-    }
-    /**
-     * Proxy GET to Data Access Service
-     * [Preview]
-     * Forwards a GET request to the Naos Data Access Service.
-     * The service along with its query parameters are specified in the 'route' parameter.
-     *
-     * @param projectId Project identifier.
-     * @param route
-     * @returns any OK
-     * @throws ApiError
-     */
-    public dasProjectProxyGet(
-        projectId: string,
-        route: string,
-    ): CancelablePromise<any> {
-        return this.httpRequest.request({
-            method: 'GET',
-            url: '/projects/{project_id}/data/{route}',
-            path: {
-                'project_id': projectId,
-                'route': route,
-            },
-            errors: {
-                404: `Not found`,
-                502: `Naos Data Access Service is unhealthy`,
-                503: `Connection timeout trying to communicate with the Naos Data Access Service`,
-                504: `Read timeout trying to communicate with the Naos Data Access Service`,
-            },
-        });
-    }
-    /**
-     * Proxy PATCH to Data Access Service
-     * [Preview]
-     * Forwards a PATCH request to the Naos Data Access Service.
-     * The service along with its query parameters are specified in the 'route' parameter.
-     *
-     * @param projectId Project identifier.
-     * @param route
-     * @param requestBody Any value.
-     * @returns any OK
-     * @throws ApiError
-     */
-    public dasProjectProxyPatch(
-        projectId: string,
-        route: string,
-        requestBody?: (string | Record<string, any> | null),
-    ): CancelablePromise<any> {
-        return this.httpRequest.request({
-            method: 'PATCH',
-            url: '/projects/{project_id}/data/{route}',
-            path: {
-                'project_id': projectId,
-                'route': route,
-            },
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                404: `Not found`,
-                502: `Naos Data Access Service is unhealthy`,
-                503: `Connection timeout trying to communicate with the Naos Data Access Service`,
-                504: `Read timeout trying to communicate with the Naos Data Access Service`,
-            },
-        });
-    }
-    /**
-     * Proxy POST to Data Access Service
-     * [Preview]
-     * Forwards a POST request to the Naos Data Access Service.
-     * The service along with its query parameters are specified in the 'route' parameter.
-     *
-     * @param projectId Project identifier.
-     * @param route
-     * @param requestBody Any value.
-     * @returns any OK
-     * @throws ApiError
-     */
-    public dasProjectProxyPost(
-        projectId: string,
-        route: string,
-        requestBody?: (string | Record<string, any> | null),
-    ): CancelablePromise<any> {
         return this.httpRequest.request({
             method: 'POST',
-            url: '/projects/{project_id}/data/{route}',
-            path: {
-                'project_id': projectId,
-                'route': route,
-            },
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                404: `Not found`,
-                502: `Naos Data Access Service is unhealthy`,
-                503: `Connection timeout trying to communicate with the Naos Data Access Service`,
-                504: `Read timeout trying to communicate with the Naos Data Access Service`,
-            },
-        });
-    }
-    /**
-     * Proxy PUT to Data Access Service
-     * [Preview]
-     * Forwards a PUT request to the Naos Data Access Service.
-     * The service along with its query parameters are specified in the 'route' parameter.
-     *
-     * @param projectId Project identifier.
-     * @param route
-     * @param requestBody Any value.
-     * @returns any OK
-     * @throws ApiError
-     */
-    public dasProjectProxyPut(
-        projectId: string,
-        route: string,
-        requestBody?: (string | Record<string, any> | null),
-    ): CancelablePromise<any> {
-        return this.httpRequest.request({
-            method: 'PUT',
-            url: '/projects/{project_id}/data/{route}',
-            path: {
-                'project_id': projectId,
-                'route': route,
-            },
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                404: `Not found`,
-                502: `Naos Data Access Service is unhealthy`,
-                503: `Connection timeout trying to communicate with the Naos Data Access Service`,
-                504: `Read timeout trying to communicate with the Naos Data Access Service`,
-            },
-        });
-    }
-    /**
-     * ADMIN. Removes all geo files from a project
-     * @param projectId Project identifier.
-     * @returns Project Project details
-     * @throws ApiError
-     */
-    public deleteGeoFilesFromProject(
-        projectId: string,
-    ): CancelablePromise<Project> {
-        return this.httpRequest.request({
-            method: 'DELETE',
             url: '/projects/{project_id}/geofiles',
             path: {
                 'project_id': projectId,
             },
+            body: requestBody,
+            mediaType: 'application/json',
             errors: {
                 400: `Bad request`,
                 404: `Not found.`,
@@ -382,51 +138,22 @@ export class ProjectsService {
         });
     }
     /**
-     * ADMIN. Add geo files to an existing project
+     * ADMIN. Removes all geo files from a project
      * @param projectId Project identifier.
-     * @param requestBody
      * @returns Project Project details
      * @throws ApiError
      */
-    public addGeoFilesToProject(
+    public deleteGeoFilesFromProject(
         projectId: string,
-        requestBody?: Array<GeoFileAssociationInput>,
     ): CancelablePromise<Project> {
         return this.httpRequest.request({
-            method: 'POST',
+            method: 'DELETE',
             url: '/projects/{project_id}/geofiles',
             path: {
                 'project_id': projectId,
             },
-            body: requestBody,
-            mediaType: 'application/json',
             errors: {
                 400: `Bad request`,
-                404: `Not found.`,
-            },
-        });
-    }
-    /**
-     * ADMIN. Deletes a geo file from a project
-     * Deletes a single geo file from an existing project.
-     * @param projectId Project identifier.
-     * @param geoFileId Geo file identifier.
-     * @returns Project Project details.
-     * @throws ApiError
-     */
-    public deleteGeoFileFromProject(
-        projectId: string,
-        geoFileId: string,
-    ): CancelablePromise<Project> {
-        return this.httpRequest.request({
-            method: 'DELETE',
-            url: '/projects/{project_id}/geofiles/{geo_file_id}',
-            path: {
-                'project_id': projectId,
-                'geo_file_id': geoFileId,
-            },
-            errors: {
-                400: `Bad request.`,
                 404: `Not found.`,
             },
         });
@@ -457,6 +184,31 @@ export class ProjectsService {
             },
             errors: {
                 400: `Bad request`,
+                404: `Not found.`,
+            },
+        });
+    }
+    /**
+     * ADMIN. Deletes a geo file from a project
+     * Deletes a single geo file from an existing project.
+     * @param projectId Project identifier.
+     * @param geoFileId Geo file identifier.
+     * @returns Project Project details.
+     * @throws ApiError
+     */
+    public deleteGeoFileFromProject(
+        projectId: string,
+        geoFileId: string,
+    ): CancelablePromise<Project> {
+        return this.httpRequest.request({
+            method: 'DELETE',
+            url: '/projects/{project_id}/geofiles/{geo_file_id}',
+            path: {
+                'project_id': projectId,
+                'geo_file_id': geoFileId,
+            },
+            errors: {
+                400: `Bad request.`,
                 404: `Not found.`,
             },
         });
@@ -514,29 +266,6 @@ export class ProjectsService {
         });
     }
     /**
-     * ADMIN. Remove a permission for a project
-     * @param projectId Project identifier.
-     * @param permissionId Permission Id
-     * @returns any Ok
-     * @throws ApiError
-     */
-    public deletePermission(
-        projectId: string,
-        permissionId: string,
-    ): CancelablePromise<any> {
-        return this.httpRequest.request({
-            method: 'DELETE',
-            url: '/projects/{project_id}/permissions/{permission_id}',
-            path: {
-                'project_id': projectId,
-                'permission_id': permissionId,
-            },
-            errors: {
-                404: `Permission not found`,
-            },
-        });
-    }
-    /**
      * ADMIN. Get permission details
      * @param projectId Project identifier.
      * @param permissionId Permission Id
@@ -549,6 +278,29 @@ export class ProjectsService {
     ): CancelablePromise<ProjectPermission> {
         return this.httpRequest.request({
             method: 'GET',
+            url: '/projects/{project_id}/permissions/{permission_id}',
+            path: {
+                'project_id': projectId,
+                'permission_id': permissionId,
+            },
+            errors: {
+                404: `Permission not found`,
+            },
+        });
+    }
+    /**
+     * ADMIN. Remove a permission for a project
+     * @param projectId Project identifier.
+     * @param permissionId Permission Id
+     * @returns any Ok
+     * @throws ApiError
+     */
+    public deletePermission(
+        projectId: string,
+        permissionId: string,
+    ): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'DELETE',
             url: '/projects/{project_id}/permissions/{permission_id}',
             path: {
                 'project_id': projectId,
@@ -583,6 +335,254 @@ export class ProjectsService {
             mediaType: 'application/json',
             errors: {
                 404: `Permission not found`,
+            },
+        });
+    }
+    /**
+     * Proxy GET to Data Access Service
+     * [Preview]
+     * Forwards a GET request to the Naos Data Access Service.
+     * The service along with its query parameters are specified in the 'route' parameter.
+     *
+     * @param projectId Project identifier.
+     * @param route
+     * @returns any OK
+     * @throws ApiError
+     */
+    public dasProjectProxyGet(
+        projectId: string,
+        route: string,
+    ): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'GET',
+            url: '/projects/{project_id}/data/{route}',
+            path: {
+                'project_id': projectId,
+                'route': route,
+            },
+            errors: {
+                404: `Not found`,
+                502: `Naos Data Access Service is unhealthy`,
+                503: `Connection timeout trying to communicate with the Naos Data Access Service`,
+                504: `Read timeout trying to communicate with the Naos Data Access Service`,
+            },
+        });
+    }
+    /**
+     * Proxy POST to Data Access Service
+     * [Preview]
+     * Forwards a POST request to the Naos Data Access Service.
+     * The service along with its query parameters are specified in the 'route' parameter.
+     *
+     * @param projectId Project identifier.
+     * @param route
+     * @param requestBody Any value.
+     * @returns any OK
+     * @throws ApiError
+     */
+    public dasProjectProxyPost(
+        projectId: string,
+        route: string,
+        requestBody?: (string | Record<string, any>) | null,
+    ): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'POST',
+            url: '/projects/{project_id}/data/{route}',
+            path: {
+                'project_id': projectId,
+                'route': route,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: `Not found`,
+                502: `Naos Data Access Service is unhealthy`,
+                503: `Connection timeout trying to communicate with the Naos Data Access Service`,
+                504: `Read timeout trying to communicate with the Naos Data Access Service`,
+            },
+        });
+    }
+    /**
+     * Proxy PUT to Data Access Service
+     * [Preview]
+     * Forwards a PUT request to the Naos Data Access Service.
+     * The service along with its query parameters are specified in the 'route' parameter.
+     *
+     * @param projectId Project identifier.
+     * @param route
+     * @param requestBody Any value.
+     * @returns any OK
+     * @throws ApiError
+     */
+    public dasProjectProxyPut(
+        projectId: string,
+        route: string,
+        requestBody?: (string | Record<string, any>) | null,
+    ): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'PUT',
+            url: '/projects/{project_id}/data/{route}',
+            path: {
+                'project_id': projectId,
+                'route': route,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: `Not found`,
+                502: `Naos Data Access Service is unhealthy`,
+                503: `Connection timeout trying to communicate with the Naos Data Access Service`,
+                504: `Read timeout trying to communicate with the Naos Data Access Service`,
+            },
+        });
+    }
+    /**
+     * Proxy PATCH to Data Access Service
+     * [Preview]
+     * Forwards a PATCH request to the Naos Data Access Service.
+     * The service along with its query parameters are specified in the 'route' parameter.
+     *
+     * @param projectId Project identifier.
+     * @param route
+     * @param requestBody Any value.
+     * @returns any OK
+     * @throws ApiError
+     */
+    public dasProjectProxyPatch(
+        projectId: string,
+        route: string,
+        requestBody?: (string | Record<string, any>) | null,
+    ): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'PATCH',
+            url: '/projects/{project_id}/data/{route}',
+            path: {
+                'project_id': projectId,
+                'route': route,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: `Not found`,
+                502: `Naos Data Access Service is unhealthy`,
+                503: `Connection timeout trying to communicate with the Naos Data Access Service`,
+                504: `Read timeout trying to communicate with the Naos Data Access Service`,
+            },
+        });
+    }
+    /**
+     * Proxy DELETE to Data Access Service
+     * [Preview]
+     * Forwards a DELETE request to the Naos Data Access Service.
+     * The service along with its query parameters are specified in the 'route' parameter.
+     *
+     * @param projectId Project identifier.
+     * @param route
+     * @returns any OK
+     * @throws ApiError
+     */
+    public dasProjectProxyDelete(
+        projectId: string,
+        route: string,
+    ): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'DELETE',
+            url: '/projects/{project_id}/data/{route}',
+            path: {
+                'project_id': projectId,
+                'route': route,
+            },
+            errors: {
+                404: `Not found`,
+                502: `Naos Data Access Service is unhealthy`,
+                503: `Connection timeout trying to communicate with the Naos Data Access Service`,
+                504: `Read timeout trying to communicate with the Naos Data Access Service`,
+            },
+        });
+    }
+    /**
+     * Get details concerning a specific project
+     * @param projectId Project identifier.
+     * @param naosFilepathMode Map URI values in the response to the desired context
+     * @param prefer Prefer header according to RFC 7240.
+     * Supported preferences:
+     * - details: minimal/normal/full <br>Level of details on the targeted resource response. Defaults to 'normal' on listing APIs, and 'full' on single resources.
+     *
+     * @returns Project Project details
+     * @throws ApiError
+     */
+    public getProject(
+        projectId: string,
+        naosFilepathMode?: 'atoll' | 'naos-service-win' | 'naos-service-linux',
+        prefer?: string,
+    ): CancelablePromise<Project> {
+        return this.httpRequest.request({
+            method: 'GET',
+            url: '/projects/{project_id}',
+            path: {
+                'project_id': projectId,
+            },
+            headers: {
+                'Naos-Filepath-Mode': naosFilepathMode,
+                'Prefer': prefer,
+            },
+            errors: {
+                404: `Not found`,
+            },
+        });
+    }
+    /**
+     * Delete a project
+     * @param projectId Project identifier.
+     * @returns any OK
+     * @throws ApiError
+     */
+    public deleteProject(
+        projectId: string,
+    ): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'DELETE',
+            url: '/projects/{project_id}',
+            path: {
+                'project_id': projectId,
+            },
+            errors: {
+                404: `Not found`,
+            },
+        });
+    }
+    /**
+     * ADMIN. Edit a project
+     * @param projectId Project identifier.
+     * @param historyMessage An optional message indicating the changes that were made to the document. If omitted, a default meaningful message will be generated.
+     * @param force Forces an open or edit of a project. This opens or edits the project even if:
+     * - the parsing of the geo files did not finish or finished with errors.
+     * - the automatic scanning did not finished or finished with errors.
+     *
+     * @param requestBody
+     * @returns Project OK
+     * @throws ApiError
+     */
+    public editProject(
+        projectId: string,
+        historyMessage?: string,
+        force: boolean = false,
+        requestBody?: Project,
+    ): CancelablePromise<Project> {
+        return this.httpRequest.request({
+            method: 'PATCH',
+            url: '/projects/{project_id}',
+            path: {
+                'project_id': projectId,
+            },
+            query: {
+                'history_message': historyMessage,
+                'force': force,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: `Not found`,
             },
         });
     }

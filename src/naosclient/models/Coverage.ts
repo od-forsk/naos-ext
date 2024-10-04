@@ -4,26 +4,26 @@
 /* eslint-disable */
 import type { Technologies } from './Technologies';
 export type Coverage = {
-    created?: string;
-    description?: string | null;
     id?: string;
-    metadata?: Record<string, any>;
-    modified?: string;
+    readonly work_area?: Record<string, any>;
     name?: string;
+    created?: string;
+    modified?: string;
+    type?: Coverage.type;
+    description?: string | null;
+    readonly unit?: string;
+    technologies?: Technologies;
+    /**
+     * Must be a multiple of project resolution
+     */
+    resolution?: number;
     /**
      * [NOT IMPLEMENTED] Planned for a later version.
      * For now, uses project default receiver height.
      *
      */
     receiver_heights?: Array<number> | null;
-    /**
-     * Must be a multiple of project resolution
-     */
-    resolution?: number;
-    technologies?: Technologies;
-    type?: Coverage.type;
-    readonly unit?: string;
-    readonly work_area?: Record<string, any>;
+    metadata?: Record<string, any>;
 };
 export namespace Coverage {
     export enum type {

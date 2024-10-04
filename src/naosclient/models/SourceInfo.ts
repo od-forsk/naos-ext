@@ -7,9 +7,9 @@
  */
 export type SourceInfo = {
     /**
-     * For hostname connections (MS SQL Server, Oracle, PostgreSQL, etc.).
+     * Source provider.
      */
-    dbname?: string;
+    type: SourceInfo.type;
     /**
      * For file-based sources (MS Access, SQLite, Atl, etc.).
      */
@@ -19,21 +19,21 @@ export type SourceInfo = {
      */
     host?: string;
     /**
-     * Naos database connection string.
+     * For hostname connections (MS SQL Server, Oracle, PostgreSQL, etc.).
      */
-    readonly naos_connection_string?: string;
+    port?: number;
     /**
-     * Naos database schema.
+     * For hostname connections (MS SQL Server, Oracle, PostgreSQL, etc.).
      */
-    naos_schema?: string;
+    dbname?: string;
+    /**
+     * Database schema (MS SQL Server, PostgreSQL, etc.).
+     */
+    schema?: string;
     /**
      * Driver specific extra options.
      */
     options?: Record<string, any>;
-    /**
-     * For hostname connections (MS SQL Server, Oracle, PostgreSQL, etc.).
-     */
-    port?: number;
     /**
      * For **Scenario Manager** managed databases.
      */
@@ -43,13 +43,13 @@ export type SourceInfo = {
      */
     scenario_geodata?: string;
     /**
-     * Database schema (MS SQL Server, PostgreSQL, etc.).
+     * Naos database connection string.
      */
-    schema?: string;
+    readonly naos_connection_string?: string;
     /**
-     * Source provider.
+     * Naos database schema.
      */
-    type: SourceInfo.type;
+    naos_schema?: string;
 };
 export namespace SourceInfo {
     /**

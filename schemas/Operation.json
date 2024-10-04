@@ -1,5 +1,15 @@
 {
+  "type": "object",
   "properties": {
+    "id": {
+      "description": "Internal operation id",
+      "type": "string"
+    },
+    "title": {
+      "description": "Operation title",
+      "type": "string",
+      "x-nullable": true
+    },
     "detail": {
       "description": "Operation current detail",
       "type": "string",
@@ -9,17 +19,7 @@
       "description": "Operation error",
       "type": "string",
       "x-nullable": true
-    },
-    "id": {
-      "description": "Internal operation id",
-      "type": "string"
-    },
-    "title": {
-      "description": "Operation title",
-      "type": "string",
-      "x-nullable": true
     }
   },
-  "type": "object",
   "$schema": "http://json-schema.org/schema#"
 }

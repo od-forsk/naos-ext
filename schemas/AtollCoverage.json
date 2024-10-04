@@ -1,37 +1,37 @@
 {
+  "x-hidden": true,
+  "type": "object",
   "properties": {
-    "atoll_id": {
-      "format": "uuid",
-      "type": "string"
-    },
-    "atoll_xml_data": {
-      "type": "object"
-    },
-    "created": {
-      "format": "date-time",
-      "type": "string"
-    },
     "id": {
-      "format": "uuid",
-      "type": "string"
+      "type": "string",
+      "format": "uuid"
     },
-    "modified": {
-      "format": "date-time",
-      "type": "string"
+    "work_area_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "work_area": {
+      "type": "object",
+      "readOnly": true
     },
     "name": {
       "type": "string"
     },
-    "work_area": {
-      "readOnly": true,
-      "type": "object"
+    "created": {
+      "type": "string",
+      "format": "date-time"
     },
-    "work_area_id": {
-      "format": "uuid",
-      "type": "string"
+    "modified": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "atoll_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "atoll_xml_data": {
+      "type": "object"
     }
   },
-  "type": "object",
-  "x-hidden": true,
   "$schema": "http://json-schema.org/schema#"
 }

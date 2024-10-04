@@ -13,17 +13,6 @@ import type { BaseHttpRequest } from '../core/BaseHttpRequest';
 export class NaosService {
     constructor(public readonly httpRequest: BaseHttpRequest) {}
     /**
-     * Free all user instances
-     * @returns any OK
-     * @throws ApiError
-     */
-    public freeInstances(): CancelablePromise<any> {
-        return this.httpRequest.request({
-            method: 'DELETE',
-            url: '/naos',
-        });
-    }
-    /**
      * List user active instances
      * @param skip Number of items to skip.
      * @param limit Maximum number of items to return.
@@ -72,6 +61,17 @@ export class NaosService {
         });
     }
     /**
+     * Free all user instances
+     * @returns any OK
+     * @throws ApiError
+     */
+    public freeInstances(): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'DELETE',
+            url: '/naos',
+        });
+    }
+    /**
      * Get accepted naos flavors
      * @returns string Ok
      * @throws ApiError
@@ -80,135 +80,6 @@ export class NaosService {
         return this.httpRequest.request({
             method: 'GET',
             url: '/naos/flavors',
-        });
-    }
-    /**
-     * Free user instance
-     * @param instanceId Instance identifier.
-     * @param backup Backup instance project if available
-     * @returns any OK
-     * @throws ApiError
-     */
-    public freeInstance(
-        instanceId: string,
-        backup: boolean = false,
-    ): CancelablePromise<any> {
-        return this.httpRequest.request({
-            method: 'DELETE',
-            url: '/naos/{instance_id}',
-            path: {
-                'instance_id': instanceId,
-            },
-            query: {
-                'backup': backup,
-            },
-            errors: {
-                403: `Current user has no access to this instance`,
-                404: `Not found`,
-            },
-        });
-    }
-    /**
-     * Get user active instance details
-     * @param instanceId Instance identifier.
-     * @param prefer Prefer header according to RFC 7240.
-     * Supported preferences:
-     * - details: minimal/normal/full <br>Level of details on the targeted resource response. Defaults to 'normal' on listing APIs, and 'full' on single resources.
-     *
-     * @returns NaosInstance Ok
-     * @throws ApiError
-     */
-    public getInstance(
-        instanceId: string,
-        prefer?: string,
-    ): CancelablePromise<NaosInstance> {
-        return this.httpRequest.request({
-            method: 'GET',
-            url: '/naos/{instance_id}',
-            path: {
-                'instance_id': instanceId,
-            },
-            headers: {
-                'Prefer': prefer,
-            },
-            errors: {
-                403: `Current user has no access to this instance`,
-                404: `Not found`,
-            },
-        });
-    }
-    /**
-     * Force backup creation. <b>Warning</b> this API may change without notice
-     * @param instanceId Instance identifier.
-     * @returns IdResponse OK
-     * @throws ApiError
-     */
-    public createBackup(
-        instanceId: string,
-    ): CancelablePromise<IdResponse> {
-        return this.httpRequest.request({
-            method: 'POST',
-            url: '/naos/{instance_id}',
-            path: {
-                'instance_id': instanceId,
-            },
-            errors: {
-                403: `Current user has no access to this instance`,
-                404: `Not found`,
-            },
-        });
-    }
-    /**
-     * Create a workspace from an opened project or raw Naos document.
-     * When creating a workspace from project, it is strongly recommended to use the POST /workspaces route that is more efficient.
-     * @param instanceId Instance identifier.
-     * @param requestBody Simple JSON body that contains a name.
-     * @param userId ADMIN. Id of the user that will own the workspace. If none is provided, the owner will be the sender of the request.
-     * @returns IdResponse Ok
-     * @throws ApiError
-     */
-    public createWorkspaceFromInstance(
-        instanceId: string,
-        requestBody: {
-            name: string;
-        },
-        userId?: string,
-    ): CancelablePromise<IdResponse> {
-        return this.httpRequest.request({
-            method: 'POST',
-            url: '/naos/{instance_id}/create_workspace',
-            path: {
-                'instance_id': instanceId,
-            },
-            query: {
-                'user_id': userId,
-            },
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                400: `Bad request`,
-                403: `Current user has no access to this instance`,
-            },
-        });
-    }
-    /**
-     * Closes a project. Has no effect if a workspace is attached to the instance.
-     * @param instanceId Instance identifier.
-     * @returns any Ok
-     * @throws ApiError
-     */
-    public closeProject(
-        instanceId: string,
-    ): CancelablePromise<any> {
-        return this.httpRequest.request({
-            method: 'DELETE',
-            url: '/naos/{instance_id}/project',
-            path: {
-                'instance_id': instanceId,
-            },
-            errors: {
-                403: `Current user has no access to this instance`,
-            },
         });
     }
     /**
@@ -225,33 +96,6 @@ export class NaosService {
             url: '/naos/{instance_id}/project',
             path: {
                 'instance_id': instanceId,
-            },
-            errors: {
-                403: `Current user has no access to this instance`,
-            },
-        });
-    }
-    /**
-     * Save the changes made to the project
-     * Only available for projects whose source type is Atl
-     * @param instanceId Instance identifier.
-     * @param historyMessage An optional message indicating the changes that were made to the document. If omitted, a default meaningful message will be generated.
-     * @returns Project Ok
-     * @returns any Accepted
-     * @throws ApiError
-     */
-    public saveProject(
-        instanceId: string,
-        historyMessage?: string,
-    ): CancelablePromise<Project | any> {
-        return this.httpRequest.request({
-            method: 'PATCH',
-            url: '/naos/{instance_id}/project',
-            path: {
-                'instance_id': instanceId,
-            },
-            query: {
-                'history_message': historyMessage,
             },
             errors: {
                 403: `Current user has no access to this instance`,
@@ -293,10 +137,57 @@ export class NaosService {
         });
     }
     /**
+     * Closes a project. Has no effect if a workspace is attached to the instance.
+     * @param instanceId Instance identifier.
+     * @returns any Ok
+     * @throws ApiError
+     */
+    public closeProject(
+        instanceId: string,
+    ): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'DELETE',
+            url: '/naos/{instance_id}/project',
+            path: {
+                'instance_id': instanceId,
+            },
+            errors: {
+                403: `Current user has no access to this instance`,
+            },
+        });
+    }
+    /**
+     * Save the changes made to the project
+     * Only available for projects whose source type is Atl
+     * @param instanceId Instance identifier.
+     * @param historyMessage An optional message indicating the changes that were made to the document. If omitted, a default meaningful message will be generated.
+     * @returns Project Ok
+     * @returns any Accepted
+     * @throws ApiError
+     */
+    public saveProject(
+        instanceId: string,
+        historyMessage?: string,
+    ): CancelablePromise<Project | any> {
+        return this.httpRequest.request({
+            method: 'PATCH',
+            url: '/naos/{instance_id}/project',
+            path: {
+                'instance_id': instanceId,
+            },
+            query: {
+                'history_message': historyMessage,
+            },
+            errors: {
+                403: `Current user has no access to this instance`,
+            },
+        });
+    }
+    /**
      * Archive the changes made to the project
      * The project's source type must be a db type or an Atl connected to a db.
      * @param instanceId Instance identifier.
-     * @param historyMessage A message indicating the changes to the project
+     * @param historyMessage An optional message indicating the changes that were made to the document. If omitted, a default meaningful message will be generated.
      * @returns Project Ok
      * @returns any Accepted
      * @throws ApiError
@@ -320,26 +211,6 @@ export class NaosService {
         });
     }
     /**
-     * Closes a workspace. Has no effect if no workspace is attached to the instance.
-     * @param instanceId Instance identifier.
-     * @returns any Ok
-     * @throws ApiError
-     */
-    public closeWorkspace(
-        instanceId: string,
-    ): CancelablePromise<any> {
-        return this.httpRequest.request({
-            method: 'DELETE',
-            url: '/naos/{instance_id}/workspace',
-            path: {
-                'instance_id': instanceId,
-            },
-            errors: {
-                403: `Current user has no access to this instance`,
-            },
-        });
-    }
-    /**
      * Get instance workspace
      * @param instanceId Instance identifier.
      * @returns Workspace Ok
@@ -350,6 +221,52 @@ export class NaosService {
     ): CancelablePromise<Workspace> {
         return this.httpRequest.request({
             method: 'GET',
+            url: '/naos/{instance_id}/workspace',
+            path: {
+                'instance_id': instanceId,
+            },
+            errors: {
+                403: `Current user has no access to this instance`,
+            },
+        });
+    }
+    /**
+     * Opens a workspace
+     * @param instanceId Instance identifier.
+     * @param requestBody Simple JSON body that contains an identifier.
+     * @returns any Ok
+     * @throws ApiError
+     */
+    public openWorkspace(
+        instanceId: string,
+        requestBody: {
+            id: string;
+        },
+    ): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'POST',
+            url: '/naos/{instance_id}/workspace',
+            path: {
+                'instance_id': instanceId,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                403: `Current user has no access to this instance`,
+            },
+        });
+    }
+    /**
+     * Closes a workspace. Has no effect if no workspace is attached to the instance.
+     * @param instanceId Instance identifier.
+     * @returns any Ok
+     * @throws ApiError
+     */
+    public closeWorkspace(
+        instanceId: string,
+    ): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'DELETE',
             url: '/naos/{instance_id}/workspace',
             path: {
                 'instance_id': instanceId,
@@ -396,32 +313,6 @@ export class NaosService {
         });
     }
     /**
-     * Opens a workspace
-     * @param instanceId Instance identifier.
-     * @param requestBody Simple JSON body that contains an identifier.
-     * @returns any Ok
-     * @throws ApiError
-     */
-    public openWorkspace(
-        instanceId: string,
-        requestBody: {
-            id: string;
-        },
-    ): CancelablePromise<any> {
-        return this.httpRequest.request({
-            method: 'POST',
-            url: '/naos/{instance_id}/workspace',
-            path: {
-                'instance_id': instanceId,
-            },
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                403: `Current user has no access to this instance`,
-            },
-        });
-    }
-    /**
      * Push the changes made to the workspace onto the parent project
      * The parent project's source must be a db type or an Atl connected to a db
      * @param instanceId Instance identifier.
@@ -449,29 +340,111 @@ export class NaosService {
         });
     }
     /**
-     * Forwards a DELETE request to a naos instance. The service along with its query parameters are specified in the 'route' parameter
+     * Create a workspace from an opened project or raw Naos document.
+     * When creating a workspace from project, it is strongly recommended to use the POST /workspaces route that is more efficient.
      * @param instanceId Instance identifier.
-     * @param route
-     * @returns any OK
+     * @param requestBody Simple JSON body that contains a name.
+     * @param userId ADMIN. Id of the user that will own the workspace. If none is provided, the owner will be the sender of the request.
+     * @returns IdResponse Ok
      * @throws ApiError
      */
-    public proxyDelete(
+    public createWorkspaceFromInstance(
         instanceId: string,
-        route: string,
-    ): CancelablePromise<any> {
+        requestBody: {
+            name: string;
+        },
+        userId?: string,
+    ): CancelablePromise<IdResponse> {
         return this.httpRequest.request({
-            method: 'DELETE',
-            url: '/naos/{instance_id}/{route}',
+            method: 'POST',
+            url: '/naos/{instance_id}/create_workspace',
             path: {
                 'instance_id': instanceId,
-                'route': route,
+            },
+            query: {
+                'user_id': userId,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `Bad request`,
+                403: `Current user has no access to this instance`,
+            },
+        });
+    }
+    /**
+     * Get user active instance details
+     * @param instanceId Instance identifier.
+     * @param prefer Prefer header according to RFC 7240.
+     * Supported preferences:
+     * - details: minimal/normal/full <br>Level of details on the targeted resource response. Defaults to 'normal' on listing APIs, and 'full' on single resources.
+     *
+     * @returns NaosInstance Ok
+     * @throws ApiError
+     */
+    public getInstance(
+        instanceId: string,
+        prefer?: string,
+    ): CancelablePromise<NaosInstance> {
+        return this.httpRequest.request({
+            method: 'GET',
+            url: '/naos/{instance_id}',
+            path: {
+                'instance_id': instanceId,
+            },
+            headers: {
+                'Prefer': prefer,
             },
             errors: {
                 403: `Current user has no access to this instance`,
                 404: `Not found`,
-                502: `Naos service is unhealthy`,
-                503: `Connection timeout trying to communicate with the Naos service`,
-                504: `Read timeout trying to communicate with the Naos engine`,
+            },
+        });
+    }
+    /**
+     * Free user instance
+     * @param instanceId Instance identifier.
+     * @param backup Backup instance project if available
+     * @returns any OK
+     * @throws ApiError
+     */
+    public freeInstance(
+        instanceId: string,
+        backup: boolean = false,
+    ): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'DELETE',
+            url: '/naos/{instance_id}',
+            path: {
+                'instance_id': instanceId,
+            },
+            query: {
+                'backup': backup,
+            },
+            errors: {
+                403: `Current user has no access to this instance`,
+                404: `Not found`,
+            },
+        });
+    }
+    /**
+     * Force backup creation. <b>Warning</b> this API may change without notice
+     * @param instanceId Instance identifier.
+     * @returns IdResponse OK
+     * @throws ApiError
+     */
+    public createBackup(
+        instanceId: string,
+    ): CancelablePromise<IdResponse> {
+        return this.httpRequest.request({
+            method: 'POST',
+            url: '/naos/{instance_id}',
+            path: {
+                'instance_id': instanceId,
+            },
+            errors: {
+                403: `Current user has no access to this instance`,
+                404: `Not found`,
             },
         });
     }
@@ -503,37 +476,6 @@ export class NaosService {
         });
     }
     /**
-     * Forwards a PATCH request to a naos instance. The service along with its query parameters are specified in the 'route' parameter
-     * @param instanceId Instance identifier.
-     * @param route
-     * @param requestBody Any value.
-     * @returns any OK
-     * @throws ApiError
-     */
-    public proxyPatch(
-        instanceId: string,
-        route: string,
-        requestBody?: (string | Record<string, any> | null),
-    ): CancelablePromise<any> {
-        return this.httpRequest.request({
-            method: 'PATCH',
-            url: '/naos/{instance_id}/{route}',
-            path: {
-                'instance_id': instanceId,
-                'route': route,
-            },
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                403: `Current user has no access to this instance`,
-                404: `Not found`,
-                502: `Naos service is unhealthy`,
-                503: `Connection timeout trying to communicate with the Naos service`,
-                504: `Read timeout trying to communicate with the Naos engine`,
-            },
-        });
-    }
-    /**
      * Forwards a POST request to a naos instance. The service along with its query parameters are specified in the 'route' parameter
      * @param instanceId Instance identifier.
      * @param route
@@ -544,7 +486,7 @@ export class NaosService {
     public proxyPost(
         instanceId: string,
         route: string,
-        requestBody?: (string | Record<string, any> | null),
+        requestBody?: (string | Record<string, any>) | null,
     ): CancelablePromise<any> {
         return this.httpRequest.request({
             method: 'POST',
@@ -575,7 +517,7 @@ export class NaosService {
     public proxyPut(
         instanceId: string,
         route: string,
-        requestBody?: (string | Record<string, any> | null),
+        requestBody?: (string | Record<string, any>) | null,
     ): CancelablePromise<any> {
         return this.httpRequest.request({
             method: 'PUT',
@@ -586,6 +528,64 @@ export class NaosService {
             },
             body: requestBody,
             mediaType: 'application/json',
+            errors: {
+                403: `Current user has no access to this instance`,
+                404: `Not found`,
+                502: `Naos service is unhealthy`,
+                503: `Connection timeout trying to communicate with the Naos service`,
+                504: `Read timeout trying to communicate with the Naos engine`,
+            },
+        });
+    }
+    /**
+     * Forwards a PATCH request to a naos instance. The service along with its query parameters are specified in the 'route' parameter
+     * @param instanceId Instance identifier.
+     * @param route
+     * @param requestBody Any value.
+     * @returns any OK
+     * @throws ApiError
+     */
+    public proxyPatch(
+        instanceId: string,
+        route: string,
+        requestBody?: (string | Record<string, any>) | null,
+    ): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'PATCH',
+            url: '/naos/{instance_id}/{route}',
+            path: {
+                'instance_id': instanceId,
+                'route': route,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                403: `Current user has no access to this instance`,
+                404: `Not found`,
+                502: `Naos service is unhealthy`,
+                503: `Connection timeout trying to communicate with the Naos service`,
+                504: `Read timeout trying to communicate with the Naos engine`,
+            },
+        });
+    }
+    /**
+     * Forwards a DELETE request to a naos instance. The service along with its query parameters are specified in the 'route' parameter
+     * @param instanceId Instance identifier.
+     * @param route
+     * @returns any OK
+     * @throws ApiError
+     */
+    public proxyDelete(
+        instanceId: string,
+        route: string,
+    ): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'DELETE',
+            url: '/naos/{instance_id}/{route}',
+            path: {
+                'instance_id': instanceId,
+                'route': route,
+            },
             errors: {
                 403: `Current user has no access to this instance`,
                 404: `Not found`,

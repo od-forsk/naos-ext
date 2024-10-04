@@ -1,13 +1,13 @@
 {
   "allOf": [
     {
-      "$ref": "JobSummary.json",
-      "x-scope": [
-        "",
-        "#/components/schemas/JobDescribe"
-      ]
+      "$ref": "JobSummary.json"
     },
     {
+      "type": "object",
+      "required": [
+        "tasks"
+      ],
       "properties": {
         "run_id": {
           "description": "If `run_now` is set, this returns the `run_id`",
@@ -15,18 +15,17 @@
           "type": "string"
         },
         "tasks": {
+          "type": "array",
           "description": "List of input and ID of unit task definition.",
           "items": {
+            "type": "object",
             "properties": {
+              "task_definition_id": {
+                "type": "string",
+                "format": "uuid"
+              },
               "function_name": {
                 "type": "string"
-              },
-              "input": {
-                "$ref": "Input.json",
-                "x-scope": [
-                  "",
-                  "#/components/schemas/JobDescribe"
-                ]
               },
               "link": {
                 "type": "boolean"
@@ -34,20 +33,13 @@
               "name": {
                 "type": "string"
               },
-              "task_definition_id": {
-                "format": "uuid",
-                "type": "string"
+              "input": {
+                "$ref": "Input.json"
               }
-            },
-            "type": "object"
-          },
-          "type": "array"
+            }
+          }
         }
-      },
-      "required": [
-        "tasks"
-      ],
-      "type": "object"
+      }
     }
   ],
   "$schema": "http://json-schema.org/schema#",

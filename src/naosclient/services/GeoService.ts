@@ -13,6 +13,37 @@ import type { BaseHttpRequest } from '../core/BaseHttpRequest';
 export class GeoService {
     constructor(public readonly httpRequest: BaseHttpRequest) {}
     /**
+     *  ADMIN. Create geo file
+     * Uses the geo_file request body to create a geo file in a volume that is mapped to the explorer.
+     * Use the `zip_file` parameter in conjunction with the geo_file body to create and upload the geo file from a zip file.
+     * When a zip file is uploaded, the URI parameter in the request body is not necessary and is ignored.
+     *
+     * @param autoscan Automatic scanning of `bounding_box` and `crs`.
+     * This opens the geo file in an async task and extracts the info if present in the metadata.
+     *
+     * @param formData
+     * @returns IdResponse Ok
+     * @throws ApiError
+     */
+    public createGeoFile(
+        autoscan: boolean = false,
+        formData?: GeoFileForm,
+    ): CancelablePromise<IdResponse> {
+        return this.httpRequest.request({
+            method: 'POST',
+            url: '/geofiles',
+            query: {
+                'autoscan': autoscan,
+            },
+            formData: formData,
+            mediaType: 'multipart/form-data',
+            errors: {
+                400: `Invalid geo file details`,
+                403: `Current user is not admin`,
+            },
+        });
+    }
+    /**
      * ADMIN. Get geo file list
      * Lists all available geo files that match the query criteria.
      * @param name Filter by file name or regex. Logic AND.
@@ -73,37 +104,6 @@ export class GeoService {
         });
     }
     /**
-     *  ADMIN. Create geo file
-     * Uses the geo_file request body to create a geo file in a volume that is mapped to the explorer.
-     * Use the `zip_file` parameter in conjunction with the geo_file body to create and upload the geo file from a zip file.
-     * When a zip file is uploaded, the URI parameter in the request body is not necessary and is ignored.
-     *
-     * @param autoscan Automatic scanning of `bounding_box` and `crs`.
-     * This opens the geo file in an async task and extracts the info if present in the metadata.
-     *
-     * @param formData
-     * @returns IdResponse Ok
-     * @throws ApiError
-     */
-    public createGeoFile(
-        autoscan: boolean = false,
-        formData?: GeoFileForm,
-    ): CancelablePromise<IdResponse> {
-        return this.httpRequest.request({
-            method: 'POST',
-            url: '/geofiles',
-            query: {
-                'autoscan': autoscan,
-            },
-            formData: formData,
-            mediaType: 'multipart/form-data',
-            errors: {
-                400: `Invalid geo file details`,
-                403: `Current user is not admin`,
-            },
-        });
-    }
-    /**
      * ADMIN. Create geo files from XML
      * Parses an Atoll XML configuration file and extracts the geo files.
      * @param requestBody
@@ -126,33 +126,6 @@ export class GeoService {
             errors: {
                 400: `Bad request.`,
                 403: `Current user is not admin`,
-            },
-        });
-    }
-    /**
-     * ADMIN. Delete a geo file
-     * Deletes a specific geo file in the file system.
-     * @param geofileId Geo file identifier.
-     * @param eraseFile Deletes the file from the location referenced by its URI.
-     * @returns any OK
-     * @throws ApiError
-     */
-    public deleteGeoFile(
-        geofileId: string,
-        eraseFile: boolean = false,
-    ): CancelablePromise<any> {
-        return this.httpRequest.request({
-            method: 'DELETE',
-            url: '/geofiles/{geofile_id}',
-            path: {
-                'geofile_id': geofileId,
-            },
-            query: {
-                'erase_file': eraseFile,
-            },
-            errors: {
-                403: `Current user is not admin`,
-                404: `Not found`,
             },
         });
     }
@@ -205,6 +178,33 @@ export class GeoService {
             mediaType: 'application/json',
             errors: {
                 400: `Bad request`,
+                403: `Current user is not admin`,
+                404: `Not found`,
+            },
+        });
+    }
+    /**
+     * ADMIN. Delete a geo file
+     * Deletes a specific geo file in the file system.
+     * @param geofileId Geo file identifier.
+     * @param eraseFile Deletes the file from the location referenced by its URI.
+     * @returns any OK
+     * @throws ApiError
+     */
+    public deleteGeoFile(
+        geofileId: string,
+        eraseFile: boolean = false,
+    ): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'DELETE',
+            url: '/geofiles/{geofile_id}',
+            path: {
+                'geofile_id': geofileId,
+            },
+            query: {
+                'erase_file': eraseFile,
+            },
+            errors: {
                 403: `Current user is not admin`,
                 404: `Not found`,
             },

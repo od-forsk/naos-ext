@@ -4,22 +4,22 @@
 /* eslint-disable */
 import type { CoverageArtifact } from './CoverageArtifact';
 export type CoverageResult = {
-    artifacts?: Array<CoverageArtifact>;
-    created?: string;
     id?: string;
+    name?: string;
+    created?: string;
     /**
      * Workflow manager job id
      */
     job_id?: string;
-    name?: string;
-    readonly retain?: {
-        comment?: string;
-        created?: string;
-        owner?: string;
-    };
     /**
      * Workflow manager run id
      */
     run_id?: string;
+    readonly retain?: {
+        created?: string;
+        owner?: string;
+        comment?: string;
+    };
+    artifacts?: Array<CoverageArtifact>;
 };
 

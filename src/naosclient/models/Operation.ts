@@ -4,14 +4,6 @@
 /* eslint-disable */
 export type Operation = {
     /**
-     * Operation current detail
-     */
-    detail?: string;
-    /**
-     * Operation error
-     */
-    error?: string;
-    /**
      * Internal operation id
      */
     id?: string;
@@ -19,5 +11,13 @@ export type Operation = {
      * Operation title
      */
     title?: string;
+    /**
+     * Operation current detail
+     */
+    detail?: string;
+    /**
+     * Operation error
+     */
+    error?: string;
 };
 

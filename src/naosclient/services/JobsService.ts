@@ -78,28 +78,6 @@ export class JobsService {
         });
     }
     /**
-     * Delete job
-     * Removes any running job associated with this ID and delete execution details.
-     * @param projectId Project identifier.
-     * @param jobId job ID
-     * @returns ApiError Error
-     * @returns any Job marked for deletion
-     * @throws ApiError
-     */
-    public deleteProjectJob(
-        projectId: string,
-        jobId: string,
-    ): CancelablePromise<ApiError | any> {
-        return this.httpRequest.request({
-            method: 'DELETE',
-            url: '/projects/{project_id}/jobs/{job_id}',
-            path: {
-                'project_id': projectId,
-                'job_id': jobId,
-            },
-        });
-    }
-    /**
      * Get project job by ID
      * Returns a single job in the specified project.
      * @param projectId Project identifier.
@@ -150,6 +128,28 @@ export class JobsService {
             },
             body: requestBody,
             mediaType: 'application/json',
+        });
+    }
+    /**
+     * Delete job
+     * Removes any running job associated with this ID and delete execution details.
+     * @param projectId Project identifier.
+     * @param jobId job ID
+     * @returns ApiError Error
+     * @returns any Job marked for deletion
+     * @throws ApiError
+     */
+    public deleteProjectJob(
+        projectId: string,
+        jobId: string,
+    ): CancelablePromise<ApiError | any> {
+        return this.httpRequest.request({
+            method: 'DELETE',
+            url: '/projects/{project_id}/jobs/{job_id}',
+            path: {
+                'project_id': projectId,
+                'job_id': jobId,
+            },
         });
     }
     /**
@@ -218,28 +218,6 @@ export class JobsService {
         });
     }
     /**
-     * Delete workspace job
-     * Removes any running job associated with this ID and delete execution details.
-     * @param workspaceId Workspace identifier.
-     * @param jobId job ID
-     * @returns ApiError Error
-     * @returns any Job marked for deletion
-     * @throws ApiError
-     */
-    public deleteWorkspaceJob(
-        workspaceId: string,
-        jobId: string,
-    ): CancelablePromise<ApiError | any> {
-        return this.httpRequest.request({
-            method: 'DELETE',
-            url: '/workspaces/{workspace_id}/jobs/{job_id}',
-            path: {
-                'workspace_id': workspaceId,
-                'job_id': jobId,
-            },
-        });
-    }
-    /**
      * Get workspace job by ID
      * Returns a single job in the specified workspace.
      * @param workspaceId Workspace identifier.
@@ -290,6 +268,28 @@ export class JobsService {
             },
             body: requestBody,
             mediaType: 'application/json',
+        });
+    }
+    /**
+     * Delete workspace job
+     * Removes any running job associated with this ID and delete execution details.
+     * @param workspaceId Workspace identifier.
+     * @param jobId job ID
+     * @returns ApiError Error
+     * @returns any Job marked for deletion
+     * @throws ApiError
+     */
+    public deleteWorkspaceJob(
+        workspaceId: string,
+        jobId: string,
+    ): CancelablePromise<ApiError | any> {
+        return this.httpRequest.request({
+            method: 'DELETE',
+            url: '/workspaces/{workspace_id}/jobs/{job_id}',
+            path: {
+                'workspace_id': workspaceId,
+                'job_id': jobId,
+            },
         });
     }
 }

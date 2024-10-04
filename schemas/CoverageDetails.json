@@ -1,141 +1,109 @@
 {
+  "type": "object",
   "allOf": [
     {
-      "$ref": "Coverage.json",
-      "x-scope": [
-        "",
-        "#/components/schemas/CoverageDetails"
-      ]
+      "$ref": "Coverage.json"
     },
     {
+      "title": "CoverageMeta",
+      "type": "object",
       "properties": {
         "conditions": {
+          "type": "object",
           "description": "Coverage calculation conditions",
           "properties": {
+            "server_mode": {
+              "type": "string",
+              "description": "Server selection method",
+              "enum": [
+                "all",
+                "best"
+              ]
+            },
+            "server_layers": {
+              "type": "array",
+              "nullable": true,
+              "description": "[NOT IMPLEMENTED] Server layer filtering",
+              "items": {
+                "$ref": "Reference.json"
+              }
+            },
+            "server_channels": {
+              "type": "array",
+              "nullable": true,
+              "description": "[NOT IMPLEMENTED] Server channel filtering",
+              "items": {
+                "$ref": "Reference.json"
+              }
+            },
+            "cell_types": {
+              "type": "object",
+              "description": "[NOT IMPLEMENTED] Chosen coverage type will validate possible cell types.\n",
+              "properties": {
+                "primary": {
+                  "type": "boolean",
+                  "description": "Is primary cell considered"
+                },
+                "secondary_index": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 15,
+                  "description": "Secondary cell index"
+                }
+              }
+            },
             "cell_mode": {
-              "default": "SA",
+              "type": "string",
               "description": "Standalone or Both. For now, only standalone is available.\n",
               "enum": [
                 "SA",
                 "Both"
               ],
-              "type": "string"
-            },
-            "cell_types": {
-              "description": "[NOT IMPLEMENTED] Chosen coverage type will validate possible cell types.\n",
-              "properties": {
-                "primary": {
-                  "description": "Is primary cell considered",
-                  "type": "boolean"
-                },
-                "secondary_index": {
-                  "description": "Secondary cell index",
-                  "maximum": 15,
-                  "minimum": 0,
-                  "type": "integer"
-                }
-              },
-              "type": "object"
+              "default": "SA"
             },
             "rat_interferences": {
-              "$ref": "RatInterferences.json",
-              "x-scope": [
-                "",
-                "#/components/schemas/CoverageDetails"
-              ]
-            },
-            "server_channels": {
-              "description": "[NOT IMPLEMENTED] Server channel filtering",
-              "items": {
-                "$ref": "Reference.json",
-                "x-scope": [
-                  "",
-                  "#/components/schemas/CoverageDetails"
-                ]
-              },
-              "nullable": true,
-              "type": "array"
-            },
-            "server_layers": {
-              "description": "[NOT IMPLEMENTED] Server layer filtering",
-              "items": {
-                "$ref": "Reference.json",
-                "x-scope": [
-                  "",
-                  "#/components/schemas/CoverageDetails"
-                ]
-              },
-              "nullable": true,
-              "type": "array"
-            },
-            "server_mode": {
-              "description": "Server selection method",
-              "enum": [
-                "all",
-                "best"
-              ],
-              "type": "string"
+              "$ref": "RatInterferences.json"
             },
             "traffic": {
+              "type": "object",
               "description": "Traffic characteristics",
               "properties": {
-                "mobility": {
-                  "$ref": "Reference.json",
-                  "x-scope": [
-                    "",
-                    "#/components/schemas/CoverageDetails"
-                  ]
+                "terminal": {
+                  "$ref": "Reference.json"
                 },
                 "service": {
-                  "$ref": "Reference.json",
-                  "x-scope": [
-                    "",
-                    "#/components/schemas/CoverageDetails"
-                  ]
+                  "$ref": "Reference.json"
                 },
-                "terminal": {
-                  "$ref": "Reference.json",
-                  "x-scope": [
-                    "",
-                    "#/components/schemas/CoverageDetails"
-                  ]
+                "mobility": {
+                  "$ref": "Reference.json"
                 }
-              },
-              "type": "object"
+              }
             }
-          },
-          "type": "object"
+          }
         },
         "filters": {
+          "type": "object",
           "nullable": true,
           "properties": {
-            "data": {
-              "description": "Data filter using the DAS filtering syntax, ie `<column>.<operator>.<value>`.\nFor now, it is only possible to filter on installed antennas base & custom fields or sites & ttansmitters lists:\n- fband.eq.my_value\n- custom_field.eq.my_value\n- sites_lists.eq.site_list1\n- txs_lists.eq.tx_list1\n",
-              "type": "string"
-            },
             "geometry": {
               "description": "GeoJSON geometry object (https://tools.ietf.org/html/rfc7946).\n",
               "type": "string"
+            },
+            "data": {
+              "description": "Data filter using the DAS filtering syntax, ie `<column>.<operator>.<value>`.\nFor now, it is only possible to filter on installed antennas base & custom fields or sites & ttansmitters lists:\n- fband.eq.my_value\n- custom_field.eq.my_value\n- sites_lists.eq.site_list1\n- txs_lists.eq.tx_list1\n",
+              "type": "string"
             }
-          },
-          "type": "object"
-        },
-        "last_result": {
-          "$ref": "CoverageResult.json",
-          "x-scope": [
-            "",
-            "#/components/schemas/CoverageDetails"
-          ]
+          }
         },
         "max_results": {
           "description": "Keep older results of the coverage",
           "type": "integer"
+        },
+        "last_result": {
+          "$ref": "CoverageResult.json"
         }
-      },
-      "title": "CoverageMeta",
-      "type": "object"
+      }
     }
   ],
-  "type": "object",
   "$schema": "http://json-schema.org/schema#"
 }

@@ -1,35 +1,44 @@
 {
   "description": "Object describing a Naos/Atoll source top level information.",
+  "type": "object",
+  "required": [
+    "type"
+  ],
   "properties": {
-    "dbname": {
-      "description": "For hostname connections (MS SQL Server, Oracle, PostgreSQL, etc.).",
-      "type": "string"
+    "type": {
+      "description": "Source provider.",
+      "type": "string",
+      "enum": [
+        "MS_SQL_Server",
+        "Oracle",
+        "PostgreSQL",
+        "Atl"
+      ]
     },
     "filepath": {
       "description": "For file-based sources (MS Access, SQLite, Atl, etc.).",
-      "format": "uri",
-      "type": "string"
+      "type": "string",
+      "format": "uri"
     },
     "host": {
       "description": "For hostname connections (MS SQL Server, Oracle, PostgreSQL, etc.).",
       "type": "string"
     },
-    "naos_connection_string": {
-      "description": "Naos database connection string.",
-      "readOnly": true,
+    "port": {
+      "description": "For hostname connections (MS SQL Server, Oracle, PostgreSQL, etc.).",
+      "type": "integer"
+    },
+    "dbname": {
+      "description": "For hostname connections (MS SQL Server, Oracle, PostgreSQL, etc.).",
       "type": "string"
     },
-    "naos_schema": {
-      "description": "Naos database schema.",
+    "schema": {
+      "description": "Database schema (MS SQL Server, PostgreSQL, etc.).",
       "type": "string"
     },
     "options": {
       "description": "Driver specific extra options.",
       "type": "object"
-    },
-    "port": {
-      "description": "For hostname connections (MS SQL Server, Oracle, PostgreSQL, etc.).",
-      "type": "integer"
     },
     "scenario": {
       "description": "For **Scenario Manager** managed databases.",
@@ -39,24 +48,15 @@
       "description": "For **Scenario Manager** managed databases.",
       "type": "string"
     },
-    "schema": {
-      "description": "Database schema (MS SQL Server, PostgreSQL, etc.).",
-      "type": "string"
+    "naos_connection_string": {
+      "description": "Naos database connection string.",
+      "type": "string",
+      "readOnly": true
     },
-    "type": {
-      "description": "Source provider.",
-      "enum": [
-        "MS_SQL_Server",
-        "Oracle",
-        "PostgreSQL",
-        "Atl"
-      ],
+    "naos_schema": {
+      "description": "Naos database schema.",
       "type": "string"
     }
   },
-  "required": [
-    "type"
-  ],
-  "type": "object",
   "$schema": "http://json-schema.org/schema#"
 }

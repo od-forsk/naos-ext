@@ -4,14 +4,14 @@
 /* eslint-disable */
 import type { FeatureStatus } from './FeatureStatus';
 export type LicenseKey = {
-    features?: Array<FeatureStatus>;
-    /**
-     * License key identifier
-     */
-    readonly haspid?: string;
     /**
      * License server address
      */
     readonly serverAddress?: string;
+    /**
+     * License key identifier
+     */
+    readonly haspid?: string;
+    features?: Array<FeatureStatus>;
 };
 

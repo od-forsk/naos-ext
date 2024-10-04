@@ -5,16 +5,16 @@
 import type { Feature } from './Feature';
 export type FeatureStatus = (Feature & {
     /**
-     * True if the license has expired False otherwise
+     * Number of license tokens currently in use
      */
-    isExpired?: boolean;
+    usedTokens?: number;
     /**
      * Maximum number of token available
      */
     tokenLimit?: number;
     /**
-     * Number of license tokens currently in use
+     * True if the license has expired False otherwise
      */
-    usedTokens?: number;
+    isExpired?: boolean;
 });
 

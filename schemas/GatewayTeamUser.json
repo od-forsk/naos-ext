@@ -1,28 +1,28 @@
 {
+  "title": "Gateway team user",
+  "type": "object",
   "properties": {
+    "user_id": {
+      "type": "string",
+      "format": "uuid",
+      "example": "43d4f9b0-8395-4cc3-91c4-ae03b5d5e8ed"
+    },
+    "user_name": {
+      "type": "string",
+      "example": "Johnnie Walker",
+      "readOnly": true
+    },
     "role": {
+      "type": "string",
       "enum": [
         "MEMBER",
         "ADMIN"
       ],
-      "example": "MEMBER",
-      "type": "string"
-    },
-    "user_id": {
-      "example": "43d4f9b0-8395-4cc3-91c4-ae03b5d5e8ed",
-      "format": "uuid",
-      "type": "string"
-    },
-    "user_name": {
-      "example": "Johnnie Walker",
-      "readOnly": true,
-      "type": "string"
+      "example": "MEMBER"
     }
   },
   "required": [
     "role"
   ],
-  "title": "Gateway team user",
-  "type": "object",
   "$schema": "http://json-schema.org/schema#"
 }

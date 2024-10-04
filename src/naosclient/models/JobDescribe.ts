@@ -13,11 +13,11 @@ export type JobDescribe = (JobSummary & {
      * List of input and ID of unit task definition.
      */
     tasks: Array<{
+        task_definition_id?: string;
         function_name?: string;
-        input?: Input;
         link?: boolean;
         name?: string;
-        task_definition_id?: string;
+        input?: Input;
     }>;
 });
 

@@ -6,13 +6,7 @@
  * Object describing external data location.
  */
 export type StorageInfo = {
-    /**
-     * Required if using MongoDB pathloss storage.
-     * Represents the best possible resolution (in meters) for pathlosses, and by extension the best reachable resolution for coverages.
-     * Individual pathlosses can use higher resolution.
-     *
-     */
-    best_resolution?: number;
+    root?: string;
     pathloss?: {
         private?: string;
         /**
@@ -22,6 +16,12 @@ export type StorageInfo = {
          */
         shared?: string;
     };
-    root?: string;
+    /**
+     * Required if using MongoDB pathloss storage.
+     * Represents the best possible resolution (in meters) for pathlosses, and by extension the best reachable resolution for coverages.
+     * Individual pathlosses can use higher resolution.
+     *
+     */
+    best_resolution?: number;
 };
 

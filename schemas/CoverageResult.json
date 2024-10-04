@@ -1,54 +1,49 @@
 {
+  "type": "object",
   "properties": {
-    "artifacts": {
-      "items": {
-        "$ref": "CoverageArtifact.json",
-        "x-scope": [
-          "",
-          "#/components/schemas/CoverageDetails",
-          "#/components/schemas/CoverageResult"
-        ]
-      },
-      "type": "array"
-    },
-    "created": {
-      "format": "date-time",
-      "type": "string"
-    },
     "id": {
-      "type": "string"
-    },
-    "job_id": {
-      "description": "Workflow manager job id",
-      "format": "uuid",
       "type": "string"
     },
     "name": {
       "type": "string"
     },
-    "retain": {
-      "properties": {
-        "comment": {
-          "type": "string"
-        },
-        "created": {
-          "format": "date-time",
-          "type": "string"
-        },
-        "owner": {
-          "format": "uuid",
-          "type": "string"
-        }
-      },
-      "readOnly": true,
-      "type": "object"
+    "created": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "job_id": {
+      "description": "Workflow manager job id",
+      "type": "string",
+      "format": "uuid"
     },
     "run_id": {
       "description": "Workflow manager run id",
-      "format": "uuid",
-      "type": "string"
+      "type": "string",
+      "format": "uuid"
+    },
+    "retain": {
+      "type": "object",
+      "readOnly": true,
+      "properties": {
+        "created": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "owner": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "comment": {
+          "type": "string"
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "$ref": "CoverageArtifact.json"
+      }
     }
   },
-  "type": "object",
   "$schema": "http://json-schema.org/schema#"
 }

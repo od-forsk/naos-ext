@@ -1,11 +1,11 @@
 {
   "description": "Geo file type. Possible values are: CLUTTER_CLASSES, CLUTTER_HEIGHTS, DTM or OTHER.",
+  "type": "string",
   "enum": [
     "CLUTTER_CLASSES",
     "CLUTTER_HEIGHTS",
     "DTM",
     "OTHER"
   ],
-  "type": "string",
   "$schema": "http://json-schema.org/schema#"
 }

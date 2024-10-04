@@ -1,78 +1,70 @@
 {
+  "title": "License session information",
   "allOf": [
     {
-      "$ref": "Feature.json",
-      "x-scope": [
-        "",
-        "#/components/schemas/LicenseSession"
-      ]
+      "$ref": "Feature.json"
     },
     {
+      "title": "LicenseSessionMeta",
+      "type": "object",
       "properties": {
-        "address": {
-          "description": "Client IP address",
-          "example": "192.9.200.215",
-          "type": "string"
-        },
-        "count": {
-          "description": "Number of license tokens in use by the client",
-          "example": 4,
-          "type": "integer"
-        },
         "key": {
           "description": "License key identifier (haspId)",
-          "example": "954076454789058722",
-          "type": "string"
+          "type": "string",
+          "example": "954076454789058722"
         },
-        "links": {
-          "items": {
-            "$ref": "Link.json",
-            "x-scope": [
-              "",
-              "#/components/schemas/LicenseSession"
-            ]
-          },
-          "type": "array"
-        },
-        "loginDate": {
-          "description": "License login date",
-          "example": "2022-03-25T14:33:08.021000Z",
-          "format": "date-time",
-          "type": "string"
-        },
-        "machine": {
-          "description": "Client hostname",
-          "example": "naos_490b11e953634892a7dcbb7d4927c2d5_host",
-          "type": "string"
+        "address": {
+          "description": "Client IP address",
+          "type": "string",
+          "example": "192.9.200.215"
         },
         "systemUser": {
           "description": "System user running the client application",
-          "example": "ContainerAdministrator",
-          "type": "string"
+          "type": "string",
+          "example": "ContainerAdministrator"
         },
-        "teamId": {
-          "description": "Team identifier.",
-          "example": "e17c3211-5dc2-401d-ae94-45a8dab47c13",
-          "format": "uuid",
-          "type": "string"
+        "machine": {
+          "description": "Client hostname",
+          "type": "string",
+          "example": "naos_490b11e953634892a7dcbb7d4927c2d5_host"
+        },
+        "loginDate": {
+          "description": "License login date",
+          "type": "string",
+          "format": "date-time",
+          "example": "2022-03-25T14:33:08.021000Z"
         },
         "timeout": {
           "description": "License timeout in case of client inactivity",
-          "example": "11:58:11",
-          "type": "string"
+          "type": "string",
+          "example": "11:58:11"
+        },
+        "count": {
+          "description": "Number of license tokens in use by the client",
+          "type": "integer",
+          "example": 4
         },
         "userId": {
           "description": "User identifier.",
-          "example": "be881052-2eaa-42ef-976e-62bf4b91edc5",
+          "type": "string",
           "format": "uuid",
-          "type": "string"
+          "example": "be881052-2eaa-42ef-976e-62bf4b91edc5"
+        },
+        "teamId": {
+          "description": "Team identifier.",
+          "type": "string",
+          "format": "uuid",
+          "example": "e17c3211-5dc2-401d-ae94-45a8dab47c13"
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "$ref": "Link.json"
+          }
         }
-      },
-      "title": "LicenseSessionMeta",
-      "type": "object"
+      }
     }
   ],
-  "title": "License session information",
   "$schema": "http://json-schema.org/schema#",
   "type": "object"
 }

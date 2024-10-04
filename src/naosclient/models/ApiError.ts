@@ -7,14 +7,14 @@
  */
 export type ApiError = {
     /**
-     * Detail concerning encountered error
-     */
-    readonly detail: string;
-    /**
      * HTTP error code
      */
     readonly status: number;
     readonly title?: string;
+    /**
+     * Detail concerning encountered error
+     */
+    readonly detail: string;
     readonly type?: string;
 };
 

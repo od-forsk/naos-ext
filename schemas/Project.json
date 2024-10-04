@@ -1,69 +1,53 @@
 {
+  "title": "Project",
   "allOf": [
     {
-      "$ref": "ProjectBase.json",
-      "x-scope": [
-        "",
-        "#/components/schemas/Project"
-      ]
+      "$ref": "ProjectBase.json"
     },
     {
+      "title": "ProjectMeta",
+      "type": "object",
       "properties": {
-        "bounding_box": {
-          "$ref": "BoundingBox.json",
-          "x-scope": [
-            "",
-            "#/components/schemas/Project"
-          ]
-        },
         "created_by": {
+          "title": "CreatedBy",
+          "readOnly": true,
+          "type": "object",
           "properties": {
             "id": {
-              "format": "uuid",
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             },
             "name": {
               "type": "string"
             }
-          },
-          "readOnly": true,
-          "title": "CreatedBy",
-          "type": "object"
-        },
-        "geo_bounding_box": {
-          "$ref": "BoundingBox.json",
-          "x-scope": [
-            "",
-            "#/components/schemas/Project"
-          ]
+          }
         },
         "modified_by": {
+          "title": "ModifiedBy",
+          "readOnly": true,
+          "type": "object",
           "properties": {
             "id": {
-              "format": "uuid",
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             },
             "name": {
               "type": "string"
             }
-          },
-          "readOnly": true,
-          "title": "ModifiedBy",
-          "type": "object"
+          }
+        },
+        "geo_bounding_box": {
+          "$ref": "BoundingBox.json"
         },
         "net_bounding_box": {
-          "$ref": "BoundingBox.json",
-          "x-scope": [
-            "",
-            "#/components/schemas/Project"
-          ]
+          "$ref": "BoundingBox.json"
+        },
+        "bounding_box": {
+          "$ref": "BoundingBox.json"
         }
-      },
-      "title": "ProjectMeta",
-      "type": "object"
+      }
     }
   ],
-  "title": "Project",
   "$schema": "http://json-schema.org/schema#",
   "type": "object"
 }

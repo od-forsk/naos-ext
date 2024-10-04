@@ -1,14 +1,14 @@
 {
-  "properties": {
-    "id": {
-      "example": "046b6c7f-0b8a-43b9-b35d-6489e6daee91",
-      "format": "uuid",
-      "type": "string"
-    }
-  },
+  "type": "object",
   "required": [
     "id"
   ],
-  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "example": "046b6c7f-0b8a-43b9-b35d-6489e6daee91"
+    }
+  },
   "$schema": "http://json-schema.org/schema#"
 }

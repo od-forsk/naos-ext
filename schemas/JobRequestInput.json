@@ -1,63 +1,55 @@
 {
   "description": "Job scheduling input payload.",
+  "type": "object",
   "format": "application/json",
+  "required": [
+    "tasks",
+    "name"
+  ],
   "properties": {
-    "default_priority": {
-      "default": 5,
-      "description": "default priority for this job",
-      "maximum": 9,
-      "minimum": 1,
-      "type": "integer"
-    },
     "job_version": {
       "type": "string"
     },
     "name": {
       "type": "string"
     },
+    "default_priority": {
+      "description": "default priority for this job",
+      "type": "integer",
+      "default": 5,
+      "minimum": 1,
+      "maximum": 9
+    },
     "tasks": {
+      "type": "array",
       "description": "List of input and ID of unit task definition.",
       "items": {
-        "properties": {
-          "function_name": {
-            "type": "string"
-          },
-          "input": {
-            "$ref": "Input.json",
-            "x-scope": [
-              "",
-              "#/components/schemas/JobRequestInput"
-            ]
-          },
-          "link": {
-            "type": "boolean"
-          },
-          "name": {
-            "type": "string"
-          }
-        },
+        "type": "object",
         "required": [
           "function_name",
           "link",
           "name",
           "input"
         ],
-        "type": "object"
-      },
-      "type": "array"
+        "properties": {
+          "function_name": {
+            "type": "string"
+          },
+          "link": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          },
+          "input": {
+            "$ref": "Input.json"
+          }
+        }
+      }
     },
     "trigger": {
-      "$ref": "Trigger.json",
-      "x-scope": [
-        "",
-        "#/components/schemas/JobRequestInput"
-      ]
+      "$ref": "Trigger.json"
     }
   },
-  "required": [
-    "tasks",
-    "name"
-  ],
-  "type": "object",
   "$schema": "http://json-schema.org/schema#"
 }

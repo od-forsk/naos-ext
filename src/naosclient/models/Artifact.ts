@@ -3,9 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 export type Artifact = {
-    created?: string;
     id?: string;
-    metadata?: Record<string, any>;
     uri?: string;
+    created?: string;
+    metadata?: Record<string, any>;
 };
 

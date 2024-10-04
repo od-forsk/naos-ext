@@ -1,43 +1,6 @@
 {
-  "properties": {
-    "client_ip": {
-      "readOnly": true,
-      "type": "string"
-    },
-    "created": {
-      "format": "date-time",
-      "readOnly": true,
-      "type": "string"
-    },
-    "expires": {
-      "format": "date-time",
-      "readOnly": true,
-      "type": "string"
-    },
-    "id": {
-      "format": "uuid",
-      "readOnly": true,
-      "type": "string"
-    },
-    "last_seen_at": {
-      "format": "date-time",
-      "readOnly": true,
-      "type": "string"
-    },
-    "token": {
-      "readOnly": true,
-      "type": "string"
-    },
-    "user_agent": {
-      "readOnly": true,
-      "type": "string"
-    },
-    "user_id": {
-      "format": "uuid",
-      "readOnly": true,
-      "type": "string"
-    }
-  },
+  "title": "An API token",
+  "type": "object",
   "required": [
     "id",
     "token",
@@ -48,7 +11,44 @@
     "last_seen_at",
     "user_id"
   ],
-  "title": "An API token",
-  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "readOnly": true
+    },
+    "token": {
+      "type": "string",
+      "readOnly": true
+    },
+    "client_ip": {
+      "type": "string",
+      "readOnly": true
+    },
+    "user_agent": {
+      "type": "string",
+      "readOnly": true
+    },
+    "created": {
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
+    },
+    "expires": {
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
+    },
+    "last_seen_at": {
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
+    },
+    "user_id": {
+      "type": "string",
+      "format": "uuid",
+      "readOnly": true
+    }
+  },
   "$schema": "http://json-schema.org/schema#"
 }

@@ -1,15 +1,15 @@
 {
+  "type": "array",
+  "items": {
+    "type": "number"
+  },
+  "minItems": 4,
+  "maxItems": 4,
   "example": [
     0,
     0,
     0,
     0
   ],
-  "items": {
-    "type": "number"
-  },
-  "maxItems": 4,
-  "minItems": 4,
-  "type": "array",
   "$schema": "http://json-schema.org/schema#"
 }

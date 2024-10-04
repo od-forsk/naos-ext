@@ -1,9 +1,9 @@
 {
   "description": "Geo spatial data type. Possible values are: RASTER or VECTOR.",
+  "type": "string",
   "enum": [
     "RASTER",
     "VECTOR"
   ],
-  "type": "string",
   "$schema": "http://json-schema.org/schema#"
 }

@@ -10,11 +10,6 @@ import type { GeoTypeEnum } from './GeoTypeEnum';
  * Object describing a Naos/Atoll geo file.
  */
 export type GeoFile = {
-    bounding_box?: BoundingBox;
-    crs?: number;
-    file_format?: GeoFileFormatEnum;
-    geo_type?: GeoTypeEnum;
-    graphics_type?: GeoGraphicsTypeEnum;
     /**
      * Geo file identifier.
      */
@@ -23,26 +18,31 @@ export type GeoFile = {
      * Geo file name.
      */
     name?: string;
-    raster_properties?: {
-        placeholder?: string;
-    };
-    /**
-     * Rasters only: pixel size as a pair.
-     */
-    resolution?: Array<number>;
-    tags?: Array<string>;
     /**
      * Geo file URI.
      */
     uri?: string;
+    geo_type?: GeoTypeEnum;
+    file_format?: GeoFileFormatEnum;
+    graphics_type?: GeoGraphicsTypeEnum;
+    tags?: Array<string>;
+    crs?: number;
+    bounding_box?: BoundingBox;
+    /**
+     * Rasters only: pixel size as a pair.
+     */
+    resolution?: Array<number>;
+    raster_properties?: {
+        placeholder?: string;
+    };
     vector_properties?: {
-        fixed_height?: number;
-        height_field?: string;
-        propagation_class?: string;
         /**
          * Propagation models in which the geo file can be used
          */
         scope?: Array<string>;
+        height_field?: string;
+        fixed_height?: number;
+        propagation_class?: string;
     };
 };
 

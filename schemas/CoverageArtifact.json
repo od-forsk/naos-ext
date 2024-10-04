@@ -1,31 +1,25 @@
 {
   "allOf": [
     {
-      "$ref": "Artifact.json",
-      "x-scope": [
-        "",
-        "#/components/schemas/CoverageDetails",
-        "#/components/schemas/CoverageResult",
-        "#/components/schemas/CoverageArtifact"
-      ]
+      "$ref": "Artifact.json"
     },
     {
+      "type": "object",
       "properties": {
-        "receiver_heights": {
-          "items": {
-            "type": "number"
-          },
-          "type": "array"
-        },
         "type": {
+          "type": "string",
           "enum": [
             "raw",
             "tiled"
-          ],
-          "type": "string"
+          ]
+        },
+        "receiver_heights": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
         }
-      },
-      "type": "object"
+      }
     }
   ],
   "$schema": "http://json-schema.org/schema#",

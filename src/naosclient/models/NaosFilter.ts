@@ -4,14 +4,14 @@
 /* eslint-disable */
 export type NaosFilter = {
     /**
-     * Data filter using the DAS filtering syntax, ie `<column>.<operator>.<value>`
-     *
-     */
-    data?: string;
-    /**
      * GeoJSON geometry object (https://tools.ietf.org/html/rfc7946).
      *
      */
     geometry?: string;
+    /**
+     * Data filter using the DAS filtering syntax, ie `<column>.<operator>.<value>`
+     *
+     */
+    data?: string;
 };
 

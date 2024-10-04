@@ -3,9 +3,9 @@
 /* tslint:disable */
 /* eslint-disable */
 export type GatewayTeamUser = {
-    role: GatewayTeamUser.role;
     user_id?: string;
     readonly user_name?: string;
+    role: GatewayTeamUser.role;
 };
 export namespace GatewayTeamUser {
     export enum role {

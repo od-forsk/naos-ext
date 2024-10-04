@@ -1,29 +1,21 @@
 {
+  "title": "Simple identifier response",
   "allOf": [
     {
-      "$ref": "SimpleId.json",
-      "x-scope": [
-        "",
-        "#/components/schemas/IdResponse"
-      ]
+      "$ref": "SimpleId.json"
     },
     {
+      "type": "object",
       "properties": {
         "links": {
+          "type": "array",
           "items": {
-            "$ref": "Link.json",
-            "x-scope": [
-              "",
-              "#/components/schemas/IdResponse"
-            ]
-          },
-          "type": "array"
+            "$ref": "Link.json"
+          }
         }
-      },
-      "type": "object"
+      }
     }
   ],
-  "title": "Simple identifier response",
   "$schema": "http://json-schema.org/schema#",
   "type": "object"
 }

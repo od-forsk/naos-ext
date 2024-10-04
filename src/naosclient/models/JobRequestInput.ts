@@ -8,20 +8,20 @@ import type { Trigger } from './Trigger';
  * Job scheduling input payload.
  */
 export type JobRequestInput = {
+    job_version?: string;
+    name: string;
     /**
      * default priority for this job
      */
     default_priority?: number;
-    job_version?: string;
-    name: string;
     /**
      * List of input and ID of unit task definition.
      */
     tasks: Array<{
         function_name: string;
-        input: Input;
         link: boolean;
         name: string;
+        input: Input;
     }>;
     trigger?: Trigger;
 };

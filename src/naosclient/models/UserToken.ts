@@ -3,13 +3,13 @@
 /* tslint:disable */
 /* eslint-disable */
 export type UserToken = {
+    readonly id: string;
+    readonly token: string;
     readonly client_ip: string;
+    readonly user_agent: string;
     readonly created: string;
     readonly expires: string;
-    readonly id: string;
     readonly last_seen_at: string;
-    readonly token: string;
-    readonly user_agent: string;
     readonly user_id: string;
 };
 

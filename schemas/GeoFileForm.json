@@ -1,18 +1,14 @@
 {
+  "type": "object",
   "properties": {
     "geo_file": {
-      "$ref": "GeoFile.json",
-      "x-scope": [
-        "",
-        "#/components/schemas/GeoFileForm"
-      ]
+      "$ref": "GeoFile.json"
     },
     "zip_file": {
       "description": "Content of the zip file.",
-      "format": "binary",
-      "type": "string"
+      "type": "string",
+      "format": "binary"
     }
   },
-  "type": "object",
   "$schema": "http://json-schema.org/schema#"
 }

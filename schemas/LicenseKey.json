@@ -1,29 +1,25 @@
 {
-  "properties": {
-    "features": {
-      "items": {
-        "$ref": "FeatureStatus.json",
-        "x-scope": [
-          "",
-          "#/components/schemas/LicenseKey"
-        ]
-      },
-      "type": "array"
-    },
-    "haspid": {
-      "description": "License key identifier",
-      "example": "954076454789058722",
-      "readOnly": true,
-      "type": "string"
-    },
-    "serverAddress": {
-      "description": "License server address",
-      "example": "server_host",
-      "readOnly": true,
-      "type": "string"
-    }
-  },
   "title": "License key information",
   "type": "object",
+  "properties": {
+    "serverAddress": {
+      "type": "string",
+      "description": "License server address",
+      "readOnly": true,
+      "example": "server_host"
+    },
+    "haspid": {
+      "type": "string",
+      "description": "License key identifier",
+      "readOnly": true,
+      "example": "954076454789058722"
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "$ref": "FeatureStatus.json"
+      }
+    }
+  },
   "$schema": "http://json-schema.org/schema#"
 }

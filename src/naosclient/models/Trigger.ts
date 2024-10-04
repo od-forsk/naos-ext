@@ -4,10 +4,6 @@
 /* eslint-disable */
 export type Trigger = {
     /**
-     * Timezone to use with the cron value.
-     */
-    timezone?: string;
-    /**
      * Type of trigger.
      */
     type: Trigger.type;
@@ -15,6 +11,10 @@ export type Trigger = {
      * Value of the trigger.
      */
     value: string;
+    /**
+     * Timezone to use with the cron value.
+     */
+    timezone?: string;
 };
 export namespace Trigger {
     /**

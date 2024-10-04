@@ -7,12 +7,12 @@
  */
 export type SetPasswordObject = {
     /**
-     * Confirmed new password. Must match 'password'.
-     */
-    confirm: string;
-    /**
      * New password
      */
     password: string;
+    /**
+     * Confirmed new password. Must match 'password'.
+     */
+    confirm: string;
 };
 

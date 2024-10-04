@@ -26,8 +26,8 @@ export class TeamsProvider implements vscode.TreeDataProvider<AdminItem> {
 			return await this.api.teams.getTeams();
 		}
 		const team = element as GatewayTeam;
-		const users = await this.api.teams.getTeamUsers(team.id);
-		return users.map(user => ({ ...user, id: user.user_id, team_id: team.id }));
+		const users = await this.api.teams.getTeamUsers(team.id!);
+		return users.map(user => ({ ...user, id: user.user_id, team_id: team.id! }));
 	}
 
 	getTreeItem(element: AdminItem): vscode.TreeItem {

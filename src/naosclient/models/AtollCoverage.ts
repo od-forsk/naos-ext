@@ -3,13 +3,13 @@
 /* tslint:disable */
 /* eslint-disable */
 export type AtollCoverage = {
+    id?: string;
+    work_area_id?: string;
+    readonly work_area?: Record<string, any>;
+    name?: string;
+    created?: string;
+    modified?: string;
     atoll_id?: string;
     atoll_xml_data?: Record<string, any>;
-    created?: string;
-    id?: string;
-    modified?: string;
-    name?: string;
-    readonly work_area?: Record<string, any>;
-    work_area_id?: string;
 };
 

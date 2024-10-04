@@ -1,57 +1,53 @@
 {
+  "type": "object",
   "properties": {
-    "artifacts": {
-      "items": {
-        "$ref": "Artifact.json",
-        "x-scope": [
-          "",
-          "#/components/schemas/Result"
-        ]
-      },
-      "type": "array"
-    },
-    "created": {
-      "format": "date-time",
-      "type": "string"
-    },
     "id": {
       "description": "result id",
       "type": "string"
     },
-    "job_id": {
-      "description": "Workflow manager job id",
-      "format": "uuid",
-      "type": "string"
-    },
-    "metadata": {
-      "type": "object"
-    },
     "name": {
       "type": "string"
     },
-    "retain": {
-      "nullable": true,
-      "properties": {
-        "comment": {
-          "type": "string"
-        },
-        "created": {
-          "format": "date-time",
-          "type": "string"
-        },
-        "owner": {
-          "format": "uuid",
-          "type": "string"
-        }
-      },
-      "type": "object"
+    "created": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "job_id": {
+      "description": "Workflow manager job id",
+      "type": "string",
+      "format": "uuid"
     },
     "run_id": {
       "description": "Workflow manager run id",
-      "format": "uuid",
-      "type": "string"
+      "type": "string",
+      "format": "uuid"
+    },
+    "retain": {
+      "type": "object",
+      "nullable": true,
+      "properties": {
+        "created": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "owner": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "comment": {
+          "type": "string"
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "$ref": "Artifact.json"
+      }
+    },
+    "metadata": {
+      "type": "object"
     }
   },
-  "type": "object",
   "$schema": "http://json-schema.org/schema#"
 }

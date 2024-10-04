@@ -6,15 +6,15 @@
  * Status of a run execution.
  */
 export type Status = {
-    modified_at: string;
-    /**
-     * Progress in % of this execution.
-     */
-    progress: number;
     /**
      * Status of this execution.
      */
     status: Status.status;
+    /**
+     * Progress in % of this execution.
+     */
+    progress: number;
+    modified_at: string;
 };
 export namespace Status {
     /**

@@ -53,28 +53,20 @@ export class ArtifactsService {
         });
     }
     /**
-     * ADMIN. Delete Artifact details
-     * Delete the given artifact.
+     * ADMIN. Get Artifact content
+     * Returns the content of the artifact.
      * @param artifactId Artifact ID
-     * @param deleteData Delete referenced data on drive/object store
-     * @returns any OK
+     * @returns binary Artifact content
      * @throws ApiError
      */
-    public deleteArtifact(
+    public downloadArtifact(
         artifactId: string,
-        deleteData: boolean = false,
-    ): CancelablePromise<any> {
+    ): CancelablePromise<Blob> {
         return this.httpRequest.request({
-            method: 'DELETE',
-            url: '/artifacts/{artifact_id}',
+            method: 'GET',
+            url: '/artifacts/{artifact_id}/download',
             path: {
                 'artifact_id': artifactId,
-            },
-            query: {
-                'delete_data': deleteData,
-            },
-            errors: {
-                404: `Not found`,
             },
         });
     }
@@ -105,20 +97,28 @@ export class ArtifactsService {
         });
     }
     /**
-     * ADMIN. Get Artifact content
-     * Returns the content of the artifact.
+     * ADMIN. Delete Artifact details
+     * Delete the given artifact.
      * @param artifactId Artifact ID
-     * @returns binary Artifact content
+     * @param deleteData Delete referenced data on drive/object store
+     * @returns any OK
      * @throws ApiError
      */
-    public downloadArtifact(
+    public deleteArtifact(
         artifactId: string,
-    ): CancelablePromise<Blob> {
+        deleteData: boolean = false,
+    ): CancelablePromise<any> {
         return this.httpRequest.request({
-            method: 'GET',
-            url: '/artifacts/{artifact_id}/download',
+            method: 'DELETE',
+            url: '/artifacts/{artifact_id}',
             path: {
                 'artifact_id': artifactId,
+            },
+            query: {
+                'delete_data': deleteData,
+            },
+            errors: {
+                404: `Not found`,
             },
         });
     }

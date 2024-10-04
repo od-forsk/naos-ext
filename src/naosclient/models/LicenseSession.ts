@@ -6,41 +6,41 @@ import type { Feature } from './Feature';
 import type { Link } from './Link';
 export type LicenseSession = (Feature & {
     /**
-     * Client IP address
-     */
-    address?: string;
-    /**
-     * Number of license tokens in use by the client
-     */
-    count?: number;
-    /**
      * License key identifier (haspId)
      */
     key?: string;
-    links?: Array<Link>;
     /**
-     * License login date
+     * Client IP address
      */
-    loginDate?: string;
-    /**
-     * Client hostname
-     */
-    machine?: string;
+    address?: string;
     /**
      * System user running the client application
      */
     systemUser?: string;
     /**
-     * Team identifier.
+     * Client hostname
      */
-    teamId?: string;
+    machine?: string;
+    /**
+     * License login date
+     */
+    loginDate?: string;
     /**
      * License timeout in case of client inactivity
      */
     timeout?: string;
     /**
+     * Number of license tokens in use by the client
+     */
+    count?: number;
+    /**
      * User identifier.
      */
     userId?: string;
+    /**
+     * Team identifier.
+     */
+    teamId?: string;
+    links?: Array<Link>;
 });
 

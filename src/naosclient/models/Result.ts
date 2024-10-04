@@ -4,26 +4,26 @@
 /* eslint-disable */
 import type { Artifact } from './Artifact';
 export type Result = {
-    artifacts?: Array<Artifact>;
-    created?: string;
     /**
      * result id
      */
     id?: string;
+    name?: string;
+    created?: string;
     /**
      * Workflow manager job id
      */
     job_id?: string;
-    metadata?: Record<string, any>;
-    name?: string;
-    retain?: {
-        comment?: string;
-        created?: string;
-        owner?: string;
-    } | null;
     /**
      * Workflow manager run id
      */
     run_id?: string;
+    retain?: {
+        created?: string;
+        owner?: string;
+        comment?: string;
+    } | null;
+    artifacts?: Array<Artifact>;
+    metadata?: Record<string, any>;
 };
 

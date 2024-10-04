@@ -1,6 +1,6 @@
 rm -Rf src/naosclient
 
-npx openapi \
+node_modules/.bin/openapi \
     -i http://localhost:9090/v1/openapi.json \
     -o src/naosclient \
     -c axios \

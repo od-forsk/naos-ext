@@ -1,53 +1,53 @@
 {
+  "title": "Project permissions.",
+  "type": "object",
   "properties": {
-    "created": {
-      "format": "date-time",
-      "readOnly": true,
-      "type": "string"
-    },
     "id": {
+      "type": "string",
       "format": "uuid",
-      "readOnly": true,
-      "type": "string"
-    },
-    "modified": {
-      "format": "date-time",
-      "readOnly": true,
-      "type": "string"
+      "readOnly": true
     },
     "project_id": {
+      "type": "string",
       "format": "uuid",
-      "readOnly": true,
-      "type": "string"
+      "readOnly": true
+    },
+    "team_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "team_name": {
+      "type": "string",
+      "readOnly": true
+    },
+    "user_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "user_name": {
+      "type": "string",
+      "readOnly": true
+    },
+    "user_login": {
+      "type": "string",
+      "readOnly": true
     },
     "read": {
       "type": "boolean"
     },
-    "team_id": {
-      "format": "uuid",
-      "type": "string"
-    },
-    "team_name": {
-      "readOnly": true,
-      "type": "string"
-    },
-    "user_id": {
-      "format": "uuid",
-      "type": "string"
-    },
-    "user_login": {
-      "readOnly": true,
-      "type": "string"
-    },
-    "user_name": {
-      "readOnly": true,
-      "type": "string"
-    },
     "write": {
       "type": "boolean"
+    },
+    "created": {
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
+    },
+    "modified": {
+      "type": "string",
+      "format": "date-time",
+      "readOnly": true
     }
   },
-  "title": "Project permissions.",
-  "type": "object",
   "$schema": "http://json-schema.org/schema#"
 }

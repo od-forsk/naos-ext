@@ -32,7 +32,16 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// API client
 	const config = vscode.workspace.getConfiguration("naos");
-	const apiClient = new NaosClient({ BASE: config.get<string>("gatewayURL") });
+	const apiClient = new NaosClient({
+		BASE: config.get<string>("gatewayURL"),
+		async HEADERS(options) {
+			const headers: Record<string, string> = {};
+			if (options.method === "POST" && options.body === undefined) {
+				headers['Content-Type'] = 'application/json';
+			}
+			return headers;
+		},
+	});
 
 	// Config listening
 	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(async e => {
@@ -202,7 +211,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	registerNaosCommand("naos.instance.delete", async (instance: NaosInstance) => {
 		// await apiClient.admin.freeGlobalInstance(instance.id);
-		await apiClient.naos.freeInstance(instance.id);
+		await apiClient.naos.freeInstance(instance.id!);
 		await vscode.commands.executeCommand("naos.refresh");
 	});
 

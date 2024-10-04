@@ -14,138 +14,6 @@ import type { BaseHttpRequest } from '../core/BaseHttpRequest';
 export class CoveragesService {
     constructor(public readonly httpRequest: BaseHttpRequest) {}
     /**
-     * ADMIN. Get coverages list.
-     * Returns a list of all available coverages.
-     * @param name Resource name to look for
-     * @param workAreaId Filter ressource on work area id.
-     *
-     * @param ctype Coverage type to look for
-     * @param createdFrom Filter creation date from (lower bound).
-     * @param createdTo Filter creation date to (upper bound).
-     * @param modifiedFrom Filter on starting modification date
-     * @param modifiedTo Filter on ending modification date
-     * @param skip Number of items to skip.
-     * @param limit Maximum number of items to return.
-     * @param orderBy Order by ressource fields. Multiple fields can be used separated by a comma,
-     * and order can be controlled by prepending fields with '+' (ascending, default) or '-' (descending).
-     *
-     * @returns Coverage Coverages
-     * @returns ApiError Error
-     * @throws ApiError
-     */
-    public getCoverages(
-        name?: string,
-        workAreaId?: string,
-        ctype?: 'Signal Level' | 'RSRP' | 'CSI-RSRP' | 'Best Broadcast Beam' | 'Best Service Beam' | 'PDSCH C/(I+N)' | 'SSS C/(I+N)' | 'Peak RLC Channel Throughput (DL)' | 'Peak RLC Channel Throughput (UL)',
-        createdFrom?: string,
-        createdTo?: string,
-        modifiedFrom?: string,
-        modifiedTo?: string,
-        skip?: number,
-        limit: number = 1000,
-        orderBy?: string,
-    ): CancelablePromise<Array<Coverage> | ApiError> {
-        return this.httpRequest.request({
-            method: 'GET',
-            url: '/coverages',
-            query: {
-                'name': name,
-                'work_area_id': workAreaId,
-                'ctype': ctype,
-                'created_from': createdFrom,
-                'created_to': createdTo,
-                'modified_from': modifiedFrom,
-                'modified_to': modifiedTo,
-                'skip': skip,
-                'limit': limit,
-                'order_by': orderBy,
-            },
-        });
-    }
-    /**
-     * ADMIN. Get coverage details
-     * Return the details of the coverages.
-     * @param coverageId Coverage Id
-     * @returns CoverageDetails OK
-     * @returns ApiError Error
-     * @throws ApiError
-     */
-    public getCoverage(
-        coverageId: string,
-    ): CancelablePromise<CoverageDetails | ApiError> {
-        return this.httpRequest.request({
-            method: 'GET',
-            url: '/coverages/{coverage_id}',
-            path: {
-                'coverage_id': coverageId,
-            },
-        });
-    }
-    /**
-     * Get project's atoll coverages
-     * Retrieve coverages extracted from project's configuration files.
-     * @param projectId Project identifier.
-     * @param name Resource name to look for
-     * @param ctype Coverage type to look for
-     * @param createdFrom Filter creation date from (lower bound).
-     * @param modifiedFrom Filter on starting modification date
-     * @param modifiedTo Filter on ending modification date
-     * @param skip Number of items to skip.
-     * @param limit Maximum number of items to return.
-     * @param orderBy Order by ressource fields. Multiple fields can be used separated by a comma,
-     * and order can be controlled by prepending fields with '+' (ascending, default) or '-' (descending).
-     *
-     * @returns AtollCoverage OK
-     * @returns ApiError Error
-     * @throws ApiError
-     */
-    public getProjectAtollCoverages(
-        projectId: string,
-        name?: string,
-        ctype?: 'Signal Level' | 'RSRP' | 'CSI-RSRP' | 'Best Broadcast Beam' | 'Best Service Beam' | 'PDSCH C/(I+N)' | 'SSS C/(I+N)' | 'Peak RLC Channel Throughput (DL)' | 'Peak RLC Channel Throughput (UL)',
-        createdFrom?: string,
-        modifiedFrom?: string,
-        modifiedTo?: string,
-        skip?: number,
-        limit: number = 1000,
-        orderBy?: string,
-    ): CancelablePromise<Array<AtollCoverage> | ApiError> {
-        return this.httpRequest.request({
-            method: 'GET',
-            url: '/projects/{project_id}/atoll-coverages',
-            path: {
-                'project_id': projectId,
-            },
-            query: {
-                'name': name,
-                'ctype': ctype,
-                'created_from': createdFrom,
-                'modified_from': modifiedFrom,
-                'modified_to': modifiedTo,
-                'skip': skip,
-                'limit': limit,
-                'order_by': orderBy,
-            },
-        });
-    }
-    /**
-     * Delete all project's coverages
-     * @param projectId Project identifier.
-     * @returns ApiError Error
-     * @throws ApiError
-     */
-    public deleteProjectCoverages(
-        projectId: string,
-    ): CancelablePromise<ApiError> {
-        return this.httpRequest.request({
-            method: 'DELETE',
-            url: '/projects/{project_id}/coverages',
-            path: {
-                'project_id': projectId,
-            },
-        });
-    }
-    /**
      * Get project's coverages
      * @param projectId Project identifier.
      * @param name Resource name to look for
@@ -217,88 +85,66 @@ export class CoveragesService {
         });
     }
     /**
-     * Delete project's coverage
+     * Delete all project's coverages
      * @param projectId Project identifier.
-     * @param coverageId Coverage Id
      * @returns ApiError Error
      * @throws ApiError
      */
-    public deleteProjectCoverage(
+    public deleteProjectCoverages(
         projectId: string,
-        coverageId: string,
     ): CancelablePromise<ApiError> {
         return this.httpRequest.request({
             method: 'DELETE',
-            url: '/projects/{project_id}/coverages/{coverage_id}',
+            url: '/projects/{project_id}/coverages',
             path: {
                 'project_id': projectId,
-                'coverage_id': coverageId,
             },
         });
     }
     /**
-     * Get project's coverage
+     * Get project's atoll coverages
+     * Retrieve coverages extracted from project's configuration files.
      * @param projectId Project identifier.
-     * @param coverageId Coverage Id
-     * @returns CoverageDetails OK
+     * @param name Resource name to look for
+     * @param ctype Coverage type to look for
+     * @param createdFrom Filter creation date from (lower bound).
+     * @param modifiedFrom Filter on starting modification date
+     * @param modifiedTo Filter on ending modification date
+     * @param skip Number of items to skip.
+     * @param limit Maximum number of items to return.
+     * @param orderBy Order by ressource fields. Multiple fields can be used separated by a comma,
+     * and order can be controlled by prepending fields with '+' (ascending, default) or '-' (descending).
+     *
+     * @returns AtollCoverage OK
      * @returns ApiError Error
      * @throws ApiError
      */
-    public getProjectCoverage(
+    public getProjectAtollCoverages(
         projectId: string,
-        coverageId: string,
-    ): CancelablePromise<CoverageDetails | ApiError> {
+        name?: string,
+        ctype?: 'Signal Level' | 'RSRP' | 'CSI-RSRP' | 'Best Broadcast Beam' | 'Best Service Beam' | 'PDSCH C/(I+N)' | 'SSS C/(I+N)' | 'Peak RLC Channel Throughput (DL)' | 'Peak RLC Channel Throughput (UL)',
+        createdFrom?: string,
+        modifiedFrom?: string,
+        modifiedTo?: string,
+        skip?: number,
+        limit: number = 1000,
+        orderBy?: string,
+    ): CancelablePromise<Array<AtollCoverage> | ApiError> {
         return this.httpRequest.request({
             method: 'GET',
-            url: '/projects/{project_id}/coverages/{coverage_id}',
+            url: '/projects/{project_id}/atoll-coverages',
             path: {
                 'project_id': projectId,
-                'coverage_id': coverageId,
             },
-        });
-    }
-    /**
-     * Edit project coverage
-     * @param projectId Project identifier.
-     * @param coverageId Coverage Id
-     * @param requestBody
-     * @returns CoverageDetails Ok
-     * @returns ApiError Error
-     * @throws ApiError
-     */
-    public editProjectCoverage(
-        projectId: string,
-        coverageId: string,
-        requestBody?: CoverageDetails,
-    ): CancelablePromise<CoverageDetails | ApiError> {
-        return this.httpRequest.request({
-            method: 'PATCH',
-            url: '/projects/{project_id}/coverages/{coverage_id}',
-            path: {
-                'project_id': projectId,
-                'coverage_id': coverageId,
-            },
-            body: requestBody,
-            mediaType: 'application/json',
-        });
-    }
-    /**
-     * Delete all coverage results
-     * @param projectId Project identifier.
-     * @param coverageId Coverage Id
-     * @returns ApiError Error
-     * @throws ApiError
-     */
-    public deleteProjectCoverageResults(
-        projectId: string,
-        coverageId: string,
-    ): CancelablePromise<ApiError> {
-        return this.httpRequest.request({
-            method: 'DELETE',
-            url: '/projects/{project_id}/coverages/{coverage_id}/results',
-            path: {
-                'project_id': projectId,
-                'coverage_id': coverageId,
+            query: {
+                'name': name,
+                'ctype': ctype,
+                'created_from': createdFrom,
+                'modified_from': modifiedFrom,
+                'modified_to': modifiedTo,
+                'skip': skip,
+                'limit': limit,
+                'order_by': orderBy,
             },
         });
     }
@@ -379,19 +225,19 @@ export class CoveragesService {
         });
     }
     /**
-     * Reset coverage max results
+     * Delete all coverage results
      * @param projectId Project identifier.
      * @param coverageId Coverage Id
      * @returns ApiError Error
      * @throws ApiError
      */
-    public resetProjectCoverageMaxResults(
+    public deleteProjectCoverageResults(
         projectId: string,
         coverageId: string,
     ): CancelablePromise<ApiError> {
         return this.httpRequest.request({
             method: 'DELETE',
-            url: '/projects/{project_id}/coverages/{coverage_id}/results/resize',
+            url: '/projects/{project_id}/coverages/{coverage_id}/results',
             path: {
                 'project_id': projectId,
                 'coverage_id': coverageId,
@@ -425,49 +271,22 @@ export class CoveragesService {
         });
     }
     /**
-     * Delete coverage result
+     * Reset coverage max results
      * @param projectId Project identifier.
      * @param coverageId Coverage Id
-     * @param resultId Result Id
      * @returns ApiError Error
      * @throws ApiError
      */
-    public deleteProjectCoverageResult(
+    public resetProjectCoverageMaxResults(
         projectId: string,
         coverageId: string,
-        resultId: string,
     ): CancelablePromise<ApiError> {
         return this.httpRequest.request({
             method: 'DELETE',
-            url: '/projects/{project_id}/coverages/{coverage_id}/results/{result_id}',
+            url: '/projects/{project_id}/coverages/{coverage_id}/results/resize',
             path: {
                 'project_id': projectId,
                 'coverage_id': coverageId,
-                'result_id': resultId,
-            },
-        });
-    }
-    /**
-     * Get coverage result
-     * @param projectId Project identifier.
-     * @param coverageId Coverage Id
-     * @param resultId Result Id
-     * @returns CoverageResult OK
-     * @returns ApiError Error
-     * @throws ApiError
-     */
-    public getProjectCoverageResult(
-        projectId: string,
-        coverageId: string,
-        resultId: string,
-    ): CancelablePromise<CoverageResult | ApiError> {
-        return this.httpRequest.request({
-            method: 'GET',
-            url: '/projects/{project_id}/coverages/{coverage_id}/results/{result_id}',
-            path: {
-                'project_id': projectId,
-                'coverage_id': coverageId,
-                'result_id': resultId,
             },
         });
     }
@@ -490,6 +309,35 @@ export class CoveragesService {
         return this.httpRequest.request({
             method: 'POST',
             url: '/projects/{project_id}/coverages/{coverage_id}/results/{result_id}/artifacts',
+            path: {
+                'project_id': projectId,
+                'coverage_id': coverageId,
+                'result_id': resultId,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+    /**
+     * Retain a coverage result
+     * @param projectId Project identifier.
+     * @param coverageId Coverage Id
+     * @param resultId Result Id
+     * @param requestBody
+     * @returns ApiError Error
+     * @throws ApiError
+     */
+    public setRetainOnProjectCoverageResult(
+        projectId: string,
+        coverageId: string,
+        resultId: string,
+        requestBody?: {
+            comment?: string;
+        },
+    ): CancelablePromise<ApiError> {
+        return this.httpRequest.request({
+            method: 'PUT',
+            url: '/projects/{project_id}/coverages/{coverage_id}/results/{result_id}/retain',
             path: {
                 'project_id': projectId,
                 'coverage_id': coverageId,
@@ -523,95 +371,115 @@ export class CoveragesService {
         });
     }
     /**
-     * Retain a coverage result
+     * Get coverage result
      * @param projectId Project identifier.
      * @param coverageId Coverage Id
      * @param resultId Result Id
-     * @param requestBody
+     * @returns CoverageResult OK
      * @returns ApiError Error
      * @throws ApiError
      */
-    public setRetainOnProjectCoverageResult(
+    public getProjectCoverageResult(
         projectId: string,
         coverageId: string,
         resultId: string,
-        requestBody?: {
-            comment?: string;
-        },
-    ): CancelablePromise<ApiError> {
+    ): CancelablePromise<CoverageResult | ApiError> {
         return this.httpRequest.request({
-            method: 'PUT',
-            url: '/projects/{project_id}/coverages/{coverage_id}/results/{result_id}/retain',
+            method: 'GET',
+            url: '/projects/{project_id}/coverages/{coverage_id}/results/{result_id}',
             path: {
                 'project_id': projectId,
                 'coverage_id': coverageId,
                 'result_id': resultId,
+            },
+        });
+    }
+    /**
+     * Delete coverage result
+     * @param projectId Project identifier.
+     * @param coverageId Coverage Id
+     * @param resultId Result Id
+     * @returns ApiError Error
+     * @throws ApiError
+     */
+    public deleteProjectCoverageResult(
+        projectId: string,
+        coverageId: string,
+        resultId: string,
+    ): CancelablePromise<ApiError> {
+        return this.httpRequest.request({
+            method: 'DELETE',
+            url: '/projects/{project_id}/coverages/{coverage_id}/results/{result_id}',
+            path: {
+                'project_id': projectId,
+                'coverage_id': coverageId,
+                'result_id': resultId,
+            },
+        });
+    }
+    /**
+     * Get project's coverage
+     * @param projectId Project identifier.
+     * @param coverageId Coverage Id
+     * @returns CoverageDetails OK
+     * @returns ApiError Error
+     * @throws ApiError
+     */
+    public getProjectCoverage(
+        projectId: string,
+        coverageId: string,
+    ): CancelablePromise<CoverageDetails | ApiError> {
+        return this.httpRequest.request({
+            method: 'GET',
+            url: '/projects/{project_id}/coverages/{coverage_id}',
+            path: {
+                'project_id': projectId,
+                'coverage_id': coverageId,
+            },
+        });
+    }
+    /**
+     * Edit project coverage
+     * @param projectId Project identifier.
+     * @param coverageId Coverage Id
+     * @param requestBody
+     * @returns CoverageDetails Ok
+     * @returns ApiError Error
+     * @throws ApiError
+     */
+    public editProjectCoverage(
+        projectId: string,
+        coverageId: string,
+        requestBody?: CoverageDetails,
+    ): CancelablePromise<CoverageDetails | ApiError> {
+        return this.httpRequest.request({
+            method: 'PATCH',
+            url: '/projects/{project_id}/coverages/{coverage_id}',
+            path: {
+                'project_id': projectId,
+                'coverage_id': coverageId,
             },
             body: requestBody,
             mediaType: 'application/json',
         });
     }
     /**
-     * Get workspace atoll coverages
-     * Retrieve coverages extracted from workspace's configuration files.
-     * @param workspaceId Workspace identifier.
-     * @param name Resource name to look for
-     * @param createdFrom Filter creation date from (lower bound).
-     * @param createdTo Filter creation date to (upper bound).
-     * @param modifiedFrom Filter on starting modification date
-     * @param modifiedTo Filter on ending modification date
-     * @param skip Number of items to skip.
-     * @param limit Maximum number of items to return.
-     * @param orderBy Order by ressource fields. Multiple fields can be used separated by a comma,
-     * and order can be controlled by prepending fields with '+' (ascending, default) or '-' (descending).
-     *
-     * @returns AtollCoverage OK
+     * Delete project's coverage
+     * @param projectId Project identifier.
+     * @param coverageId Coverage Id
      * @returns ApiError Error
      * @throws ApiError
      */
-    public getWorkspaceAtollCoverages(
-        workspaceId: string,
-        name?: string,
-        createdFrom?: string,
-        createdTo?: string,
-        modifiedFrom?: string,
-        modifiedTo?: string,
-        skip?: number,
-        limit: number = 1000,
-        orderBy?: string,
-    ): CancelablePromise<Array<AtollCoverage> | ApiError> {
-        return this.httpRequest.request({
-            method: 'GET',
-            url: '/workspaces/{workspace_id}/atoll-coverages',
-            path: {
-                'workspace_id': workspaceId,
-            },
-            query: {
-                'name': name,
-                'created_from': createdFrom,
-                'created_to': createdTo,
-                'modified_from': modifiedFrom,
-                'modified_to': modifiedTo,
-                'skip': skip,
-                'limit': limit,
-                'order_by': orderBy,
-            },
-        });
-    }
-    /**
-     * Delete all workspace's coverages
-     * @param workspaceId Workspace identifier.
-     * @returns ApiError Error
-     * @throws ApiError
-     */
-    public deleteWorkspaceCoverages(
-        workspaceId: string,
+    public deleteProjectCoverage(
+        projectId: string,
+        coverageId: string,
     ): CancelablePromise<ApiError> {
         return this.httpRequest.request({
             method: 'DELETE',
-            url: '/workspaces/{workspace_id}/coverages',
+            url: '/projects/{project_id}/coverages/{coverage_id}',
             path: {
-                'workspace_id': workspaceId,
+                'project_id': projectId,
+                'coverage_id': coverageId,
             },
         });
     }
@@ -687,22 +555,19 @@ export class CoveragesService {
         });
     }
     /**
-     * Delete workspace's coverage
+     * Delete all workspace's coverages
      * @param workspaceId Workspace identifier.
-     * @param coverageId Coverage Id
      * @returns ApiError Error
      * @throws ApiError
      */
-    public deleteWorkspaceCoverage(
+    public deleteWorkspaceCoverages(
         workspaceId: string,
-        coverageId: string,
     ): CancelablePromise<ApiError> {
         return this.httpRequest.request({
             method: 'DELETE',
-            url: '/workspaces/{workspace_id}/coverages/{coverage_id}',
+            url: '/workspaces/{workspace_id}/coverages',
             path: {
                 'workspace_id': workspaceId,
-                'coverage_id': coverageId,
             },
         });
     }
@@ -753,22 +618,69 @@ export class CoveragesService {
         });
     }
     /**
-     * Delete all coverage results
+     * Delete workspace's coverage
      * @param workspaceId Workspace identifier.
      * @param coverageId Coverage Id
      * @returns ApiError Error
      * @throws ApiError
      */
-    public deleteWorkspaceCoverageResults(
+    public deleteWorkspaceCoverage(
         workspaceId: string,
         coverageId: string,
     ): CancelablePromise<ApiError> {
         return this.httpRequest.request({
             method: 'DELETE',
-            url: '/workspaces/{workspace_id}/coverages/{coverage_id}/results',
+            url: '/workspaces/{workspace_id}/coverages/{coverage_id}',
             path: {
                 'workspace_id': workspaceId,
                 'coverage_id': coverageId,
+            },
+        });
+    }
+    /**
+     * Get workspace atoll coverages
+     * Retrieve coverages extracted from workspace's configuration files.
+     * @param workspaceId Workspace identifier.
+     * @param name Resource name to look for
+     * @param createdFrom Filter creation date from (lower bound).
+     * @param createdTo Filter creation date to (upper bound).
+     * @param modifiedFrom Filter on starting modification date
+     * @param modifiedTo Filter on ending modification date
+     * @param skip Number of items to skip.
+     * @param limit Maximum number of items to return.
+     * @param orderBy Order by ressource fields. Multiple fields can be used separated by a comma,
+     * and order can be controlled by prepending fields with '+' (ascending, default) or '-' (descending).
+     *
+     * @returns AtollCoverage OK
+     * @returns ApiError Error
+     * @throws ApiError
+     */
+    public getWorkspaceAtollCoverages(
+        workspaceId: string,
+        name?: string,
+        createdFrom?: string,
+        createdTo?: string,
+        modifiedFrom?: string,
+        modifiedTo?: string,
+        skip?: number,
+        limit: number = 1000,
+        orderBy?: string,
+    ): CancelablePromise<Array<AtollCoverage> | ApiError> {
+        return this.httpRequest.request({
+            method: 'GET',
+            url: '/workspaces/{workspace_id}/atoll-coverages',
+            path: {
+                'workspace_id': workspaceId,
+            },
+            query: {
+                'name': name,
+                'created_from': createdFrom,
+                'created_to': createdTo,
+                'modified_from': modifiedFrom,
+                'modified_to': modifiedTo,
+                'skip': skip,
+                'limit': limit,
+                'order_by': orderBy,
             },
         });
     }
@@ -849,19 +761,19 @@ export class CoveragesService {
         });
     }
     /**
-     * Reset coverage max results
+     * Delete all coverage results
      * @param workspaceId Workspace identifier.
      * @param coverageId Coverage Id
      * @returns ApiError Error
      * @throws ApiError
      */
-    public resetWorkspaceCoverageMaxResults(
+    public deleteWorkspaceCoverageResults(
         workspaceId: string,
         coverageId: string,
     ): CancelablePromise<ApiError> {
         return this.httpRequest.request({
             method: 'DELETE',
-            url: '/workspaces/{workspace_id}/coverages/{coverage_id}/results/resize',
+            url: '/workspaces/{workspace_id}/coverages/{coverage_id}/results',
             path: {
                 'workspace_id': workspaceId,
                 'coverage_id': coverageId,
@@ -895,49 +807,22 @@ export class CoveragesService {
         });
     }
     /**
-     * Delete coverage result
+     * Reset coverage max results
      * @param workspaceId Workspace identifier.
      * @param coverageId Coverage Id
-     * @param resultId Result Id
      * @returns ApiError Error
      * @throws ApiError
      */
-    public deleteWorkspaceCoverageResult(
+    public resetWorkspaceCoverageMaxResults(
         workspaceId: string,
         coverageId: string,
-        resultId: string,
     ): CancelablePromise<ApiError> {
         return this.httpRequest.request({
             method: 'DELETE',
-            url: '/workspaces/{workspace_id}/coverages/{coverage_id}/results/{result_id}',
+            url: '/workspaces/{workspace_id}/coverages/{coverage_id}/results/resize',
             path: {
                 'workspace_id': workspaceId,
                 'coverage_id': coverageId,
-                'result_id': resultId,
-            },
-        });
-    }
-    /**
-     * Get coverage result
-     * @param workspaceId Workspace identifier.
-     * @param coverageId Coverage Id
-     * @param resultId Result Id
-     * @returns CoverageResult OK
-     * @returns ApiError Error
-     * @throws ApiError
-     */
-    public getWorkspaceCoverageResult(
-        workspaceId: string,
-        coverageId: string,
-        resultId: string,
-    ): CancelablePromise<CoverageResult | ApiError> {
-        return this.httpRequest.request({
-            method: 'GET',
-            url: '/workspaces/{workspace_id}/coverages/{coverage_id}/results/{result_id}',
-            path: {
-                'workspace_id': workspaceId,
-                'coverage_id': coverageId,
-                'result_id': resultId,
             },
         });
     }
@@ -960,6 +845,35 @@ export class CoveragesService {
         return this.httpRequest.request({
             method: 'POST',
             url: '/workspaces/{workspace_id}/coverages/{coverage_id}/results/{result_id}/artifacts',
+            path: {
+                'workspace_id': workspaceId,
+                'coverage_id': coverageId,
+                'result_id': resultId,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+    /**
+     * Retain a coverage result
+     * @param workspaceId Workspace identifier.
+     * @param coverageId Coverage Id
+     * @param resultId Result Id
+     * @param requestBody
+     * @returns ApiError Error
+     * @throws ApiError
+     */
+    public setRetainOnWorkspaceCoverageResult(
+        workspaceId: string,
+        coverageId: string,
+        resultId: string,
+        requestBody?: {
+            comment?: string;
+        },
+    ): CancelablePromise<ApiError> {
+        return this.httpRequest.request({
+            method: 'PUT',
+            url: '/workspaces/{workspace_id}/coverages/{coverage_id}/results/{result_id}/retain',
             path: {
                 'workspace_id': workspaceId,
                 'coverage_id': coverageId,
@@ -993,32 +907,118 @@ export class CoveragesService {
         });
     }
     /**
-     * Retain a coverage result
+     * Get coverage result
      * @param workspaceId Workspace identifier.
      * @param coverageId Coverage Id
      * @param resultId Result Id
-     * @param requestBody
+     * @returns CoverageResult OK
      * @returns ApiError Error
      * @throws ApiError
      */
-    public setRetainOnWorkspaceCoverageResult(
+    public getWorkspaceCoverageResult(
         workspaceId: string,
         coverageId: string,
         resultId: string,
-        requestBody?: {
-            comment?: string;
-        },
-    ): CancelablePromise<ApiError> {
+    ): CancelablePromise<CoverageResult | ApiError> {
         return this.httpRequest.request({
-            method: 'PUT',
-            url: '/workspaces/{workspace_id}/coverages/{coverage_id}/results/{result_id}/retain',
+            method: 'GET',
+            url: '/workspaces/{workspace_id}/coverages/{coverage_id}/results/{result_id}',
             path: {
                 'workspace_id': workspaceId,
                 'coverage_id': coverageId,
                 'result_id': resultId,
             },
-            body: requestBody,
-            mediaType: 'application/json',
+        });
+    }
+    /**
+     * Delete coverage result
+     * @param workspaceId Workspace identifier.
+     * @param coverageId Coverage Id
+     * @param resultId Result Id
+     * @returns ApiError Error
+     * @throws ApiError
+     */
+    public deleteWorkspaceCoverageResult(
+        workspaceId: string,
+        coverageId: string,
+        resultId: string,
+    ): CancelablePromise<ApiError> {
+        return this.httpRequest.request({
+            method: 'DELETE',
+            url: '/workspaces/{workspace_id}/coverages/{coverage_id}/results/{result_id}',
+            path: {
+                'workspace_id': workspaceId,
+                'coverage_id': coverageId,
+                'result_id': resultId,
+            },
+        });
+    }
+    /**
+     * ADMIN. Get coverages list.
+     * Returns a list of all available coverages.
+     * @param name Resource name to look for
+     * @param workAreaId Filter ressource on work area id.
+     *
+     * @param ctype Coverage type to look for
+     * @param createdFrom Filter creation date from (lower bound).
+     * @param createdTo Filter creation date to (upper bound).
+     * @param modifiedFrom Filter on starting modification date
+     * @param modifiedTo Filter on ending modification date
+     * @param skip Number of items to skip.
+     * @param limit Maximum number of items to return.
+     * @param orderBy Order by ressource fields. Multiple fields can be used separated by a comma,
+     * and order can be controlled by prepending fields with '+' (ascending, default) or '-' (descending).
+     *
+     * @returns Coverage Coverages
+     * @returns ApiError Error
+     * @throws ApiError
+     */
+    public getCoverages(
+        name?: string,
+        workAreaId?: string,
+        ctype?: 'Signal Level' | 'RSRP' | 'CSI-RSRP' | 'Best Broadcast Beam' | 'Best Service Beam' | 'PDSCH C/(I+N)' | 'SSS C/(I+N)' | 'Peak RLC Channel Throughput (DL)' | 'Peak RLC Channel Throughput (UL)',
+        createdFrom?: string,
+        createdTo?: string,
+        modifiedFrom?: string,
+        modifiedTo?: string,
+        skip?: number,
+        limit: number = 1000,
+        orderBy?: string,
+    ): CancelablePromise<Array<Coverage> | ApiError> {
+        return this.httpRequest.request({
+            method: 'GET',
+            url: '/coverages',
+            query: {
+                'name': name,
+                'work_area_id': workAreaId,
+                'ctype': ctype,
+                'created_from': createdFrom,
+                'created_to': createdTo,
+                'modified_from': modifiedFrom,
+                'modified_to': modifiedTo,
+                'skip': skip,
+                'limit': limit,
+                'order_by': orderBy,
+            },
+        });
+    }
+    /**
+     * ADMIN. Get coverage details
+     * Return the details of the coverages.
+     * @param coverageId Coverage Id
+     * @returns CoverageDetails OK
+     * @returns ApiError Error
+     * @throws ApiError
+     */
+    public getCoverage(
+        coverageId: string,
+    ): CancelablePromise<CoverageDetails | ApiError> {
+        return this.httpRequest.request({
+            method: 'GET',
+            url: '/coverages/{coverage_id}',
+            path: {
+                'coverage_id': coverageId,
+            },
         });
     }
 }

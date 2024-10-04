@@ -7,25 +7,25 @@
  */
 export type GatewayTeam = {
     /**
-     * Number of Naos license tokens that are allocated to the team
+     * Unique team identifier
      */
-    allocated_naos_tokens?: number;
+    readonly id?: string;
+    /**
+     * Name of the team
+     */
+    name: string;
     /**
      * Timestamp of when the team was created
      */
     readonly created?: string;
     /**
-     * Unique team identifier
-     */
-    readonly id: string;
-    /**
      * Timestamp of when the team was last modified
      */
     readonly modified?: string;
     /**
-     * Name of the team
+     * Number of Naos license tokens that are allocated to the team
      */
-    name: string;
+    allocated_naos_tokens?: number;
     /**
      * Number of Naos license tokens that are currently in use by the team members
      */

@@ -4,16 +4,16 @@
 /* eslint-disable */
 export type ChangePasswordObject = {
     /**
-     * Confirmed new password. Must match 'new_password'.
+     * Current password
      */
-    confirm_new: string;
+    old_password: string;
     /**
      * New password
      */
     new_password: string;
     /**
-     * Current password
+     * Confirmed new password. Must match 'new_password'.
      */
-    old_password: string;
+    confirm_new: string;
 };
 

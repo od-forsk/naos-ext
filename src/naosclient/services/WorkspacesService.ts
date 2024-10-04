@@ -81,6 +81,205 @@ export class WorkspacesService {
         });
     }
     /**
+     * Proxy GET to Data Access Service
+     * [Preview]
+     * Forwards a GET request to the Naos Data Access Service.
+     * The service along with its query parameters are specified in the 'route' parameter".
+     *
+     * @param workspaceId Workspace identifier.
+     * @param route
+     * @returns any OK
+     * @throws ApiError
+     */
+    public dasWorkspaceProxyGet(
+        workspaceId: string,
+        route: string,
+    ): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'GET',
+            url: '/workspaces/{workspace_id}/data/{route}',
+            path: {
+                'workspace_id': workspaceId,
+                'route': route,
+            },
+            errors: {
+                404: `Not found`,
+                501: `Not implemented`,
+                502: `Naos Data Access Service is unhealthy`,
+                503: `Connection timeout trying to communicate with the Naos Data Access Service`,
+                504: `Read timeout trying to communicate with the Naos Data Access Service`,
+            },
+        });
+    }
+    /**
+     * Proxy POST to Data Access Service
+     * [Preview]
+     * Forwards a POST request to the Naos Data Access Service.
+     * The service along with its query parameters are specified in the 'route' parameter.
+     *
+     * @param workspaceId Workspace identifier.
+     * @param route
+     * @param requestBody Any value.
+     * @returns any OK
+     * @throws ApiError
+     */
+    public dasWorkspaceProxyPost(
+        workspaceId: string,
+        route: string,
+        requestBody?: (string | Record<string, any>) | null,
+    ): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'POST',
+            url: '/workspaces/{workspace_id}/data/{route}',
+            path: {
+                'workspace_id': workspaceId,
+                'route': route,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: `Not found`,
+                501: `Not implemented`,
+                502: `Naos Data Access Service is unhealthy`,
+                503: `Connection timeout trying to communicate with the Naos Data Access Service`,
+                504: `Read timeout trying to communicate with the Naos Data Access Service`,
+            },
+        });
+    }
+    /**
+     * Proxy PUT to Data Access Service
+     * [Preview]
+     * Forwards a PUT request to the Naos Data Access Service.
+     * The service along with its query parameters are specified in the 'route' parameter.
+     *
+     * @param workspaceId Workspace identifier.
+     * @param route
+     * @param requestBody Any value.
+     * @returns any OK
+     * @throws ApiError
+     */
+    public dasWorkspaceProxyPut(
+        workspaceId: string,
+        route: string,
+        requestBody?: (string | Record<string, any>) | null,
+    ): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'PUT',
+            url: '/workspaces/{workspace_id}/data/{route}',
+            path: {
+                'workspace_id': workspaceId,
+                'route': route,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: `Not found`,
+                501: `Not implemented`,
+                502: `Naos Data Access Service is unhealthy`,
+                503: `Connection timeout trying to communicate with the Naos Data Access Service`,
+                504: `Read timeout trying to communicate with the Naos Data Access Service`,
+            },
+        });
+    }
+    /**
+     * Proxy PATCH to Data Access Service
+     * [Preview]
+     * Forwards a PATCH request to the Naos Data Access Service.
+     * The service along with its query parameters are specified in the 'route' parameter.
+     *
+     * @param workspaceId Workspace identifier.
+     * @param route
+     * @param requestBody Any value.
+     * @returns any OK
+     * @throws ApiError
+     */
+    public dasWorkspaceProxyPatch(
+        workspaceId: string,
+        route: string,
+        requestBody?: (string | Record<string, any>) | null,
+    ): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'PATCH',
+            url: '/workspaces/{workspace_id}/data/{route}',
+            path: {
+                'workspace_id': workspaceId,
+                'route': route,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                404: `Not found`,
+                501: `Not implemented`,
+                502: `Naos Data Access Service is unhealthy`,
+                503: `Connection timeout trying to communicate with the Naos Data Access Service`,
+                504: `Read timeout trying to communicate with the Naos Data Access Service`,
+            },
+        });
+    }
+    /**
+     * Proxy DELETE to Data Access Service
+     * [Preview]
+     * Forwards a DELETE request to the Naos Data Access Service.
+     * The service along with its query parameters are specified in the 'route' parameter.
+     *
+     * @param workspaceId Workspace identifier.
+     * @param route
+     * @returns any OK
+     * @throws ApiError
+     */
+    public dasWorkspaceProxyDelete(
+        workspaceId: string,
+        route: string,
+    ): CancelablePromise<any> {
+        return this.httpRequest.request({
+            method: 'DELETE',
+            url: '/workspaces/{workspace_id}/data/{route}',
+            path: {
+                'workspace_id': workspaceId,
+                'route': route,
+            },
+            errors: {
+                404: `Not found`,
+                501: `Not implemented`,
+                502: `Naos Data Access Service is unhealthy`,
+                503: `Connection timeout trying to communicate with the Naos Data Access Service`,
+                504: `Read timeout trying to communicate with the Naos Data Access Service`,
+            },
+        });
+    }
+    /**
+     * Get details concerning a specific workspace
+     * @param workspaceId Workspace identifier.
+     * @param naosFilepathMode Map URI values in the response to the desired context
+     * @param prefer Prefer header according to RFC 7240.
+     * Supported preferences:
+     * - details: minimal/normal/full <br>Level of details on the targeted resource response. Defaults to 'normal' on listing APIs, and 'full' on single resources.
+     *
+     * @returns Workspace Workspace details
+     * @returns ApiError Error
+     * @throws ApiError
+     */
+    public getWorkspace(
+        workspaceId: string,
+        naosFilepathMode?: 'atoll' | 'naos-service-win' | 'naos-service-linux',
+        prefer?: string,
+    ): CancelablePromise<Workspace | ApiError> {
+        return this.httpRequest.request({
+            method: 'GET',
+            url: '/workspaces/{workspace_id}',
+            path: {
+                'workspace_id': workspaceId,
+            },
+            headers: {
+                'Naos-Filepath-Mode': naosFilepathMode,
+                'Prefer': prefer,
+            },
+            errors: {
+                404: `Not found`,
+            },
+        });
+    }
+    /**
      * Delete a workspace
      * @param workspaceId Workspace identifier.
      * @param force Forces deletion. When applied to workspaces, any pending modifications are not saved.
@@ -102,37 +301,6 @@ export class WorkspacesService {
             },
             query: {
                 'force': force,
-            },
-        });
-    }
-    /**
-     * Get details concerning a specific workspace
-     * @param workspaceId Workspace identifier.
-     * @param naosFilepathMode Map URI values in the response to the desired context
-     * @param prefer Prefer header according to RFC 7240.
-     * Supported preferences:
-     * - details: minimal/normal/full <br>Level of details on the targeted resource response. Defaults to 'normal' on listing APIs, and 'full' on single resources.
-     *
-     * @returns Workspace Workspace details
-     * @throws ApiError
-     */
-    public getWorkspace(
-        workspaceId: string,
-        naosFilepathMode?: 'atoll' | 'naos-service-win' | 'naos-service-linux',
-        prefer?: string,
-    ): CancelablePromise<Workspace> {
-        return this.httpRequest.request({
-            method: 'GET',
-            url: '/workspaces/{workspace_id}',
-            path: {
-                'workspace_id': workspaceId,
-            },
-            headers: {
-                'Naos-Filepath-Mode': naosFilepathMode,
-                'Prefer': prefer,
-            },
-            errors: {
-                404: `Not found`,
             },
         });
     }
@@ -184,173 +352,6 @@ export class WorkspacesService {
             },
             body: requestBody,
             mediaType: 'application/json',
-        });
-    }
-    /**
-     * Proxy DELETE to Data Access Service
-     * [Preview]
-     * Forwards a DELETE request to the Naos Data Access Service.
-     * The service along with its query parameters are specified in the 'route' parameter.
-     *
-     * @param workspaceId Workspace identifier.
-     * @param route
-     * @returns any OK
-     * @throws ApiError
-     */
-    public dasWorkspaceProxyDelete(
-        workspaceId: string,
-        route: string,
-    ): CancelablePromise<any> {
-        return this.httpRequest.request({
-            method: 'DELETE',
-            url: '/workspaces/{workspace_id}/data/{route}',
-            path: {
-                'workspace_id': workspaceId,
-                'route': route,
-            },
-            errors: {
-                404: `Not found`,
-                501: `Not implemented`,
-                502: `Naos Data Access Service is unhealthy`,
-                503: `Connection timeout trying to communicate with the Naos Data Access Service`,
-                504: `Read timeout trying to communicate with the Naos Data Access Service`,
-            },
-        });
-    }
-    /**
-     * Proxy GET to Data Access Service
-     * [Preview]
-     * Forwards a GET request to the Naos Data Access Service.
-     * The service along with its query parameters are specified in the 'route' parameter".
-     *
-     * @param workspaceId Workspace identifier.
-     * @param route
-     * @returns any OK
-     * @throws ApiError
-     */
-    public dasWorkspaceProxyGet(
-        workspaceId: string,
-        route: string,
-    ): CancelablePromise<any> {
-        return this.httpRequest.request({
-            method: 'GET',
-            url: '/workspaces/{workspace_id}/data/{route}',
-            path: {
-                'workspace_id': workspaceId,
-                'route': route,
-            },
-            errors: {
-                404: `Not found`,
-                501: `Not implemented`,
-                502: `Naos Data Access Service is unhealthy`,
-                503: `Connection timeout trying to communicate with the Naos Data Access Service`,
-                504: `Read timeout trying to communicate with the Naos Data Access Service`,
-            },
-        });
-    }
-    /**
-     * Proxy PATCH to Data Access Service
-     * [Preview]
-     * Forwards a PATCH request to the Naos Data Access Service.
-     * The service along with its query parameters are specified in the 'route' parameter.
-     *
-     * @param workspaceId Workspace identifier.
-     * @param route
-     * @param requestBody Any value.
-     * @returns any OK
-     * @throws ApiError
-     */
-    public dasWorkspaceProxyPatch(
-        workspaceId: string,
-        route: string,
-        requestBody?: (string | Record<string, any> | null),
-    ): CancelablePromise<any> {
-        return this.httpRequest.request({
-            method: 'PATCH',
-            url: '/workspaces/{workspace_id}/data/{route}',
-            path: {
-                'workspace_id': workspaceId,
-                'route': route,
-            },
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                404: `Not found`,
-                501: `Not implemented`,
-                502: `Naos Data Access Service is unhealthy`,
-                503: `Connection timeout trying to communicate with the Naos Data Access Service`,
-                504: `Read timeout trying to communicate with the Naos Data Access Service`,
-            },
-        });
-    }
-    /**
-     * Proxy POST to Data Access Service
-     * [Preview]
-     * Forwards a POST request to the Naos Data Access Service.
-     * The service along with its query parameters are specified in the 'route' parameter.
-     *
-     * @param workspaceId Workspace identifier.
-     * @param route
-     * @param requestBody Any value.
-     * @returns any OK
-     * @throws ApiError
-     */
-    public dasWorkspaceProxyPost(
-        workspaceId: string,
-        route: string,
-        requestBody?: (string | Record<string, any> | null),
-    ): CancelablePromise<any> {
-        return this.httpRequest.request({
-            method: 'POST',
-            url: '/workspaces/{workspace_id}/data/{route}',
-            path: {
-                'workspace_id': workspaceId,
-                'route': route,
-            },
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                404: `Not found`,
-                501: `Not implemented`,
-                502: `Naos Data Access Service is unhealthy`,
-                503: `Connection timeout trying to communicate with the Naos Data Access Service`,
-                504: `Read timeout trying to communicate with the Naos Data Access Service`,
-            },
-        });
-    }
-    /**
-     * Proxy PUT to Data Access Service
-     * [Preview]
-     * Forwards a PUT request to the Naos Data Access Service.
-     * The service along with its query parameters are specified in the 'route' parameter.
-     *
-     * @param workspaceId Workspace identifier.
-     * @param route
-     * @param requestBody Any value.
-     * @returns any OK
-     * @throws ApiError
-     */
-    public dasWorkspaceProxyPut(
-        workspaceId: string,
-        route: string,
-        requestBody?: (string | Record<string, any> | null),
-    ): CancelablePromise<any> {
-        return this.httpRequest.request({
-            method: 'PUT',
-            url: '/workspaces/{workspace_id}/data/{route}',
-            path: {
-                'workspace_id': workspaceId,
-                'route': route,
-            },
-            body: requestBody,
-            mediaType: 'application/json',
-            errors: {
-                404: `Not found`,
-                501: `Not implemented`,
-                502: `Naos Data Access Service is unhealthy`,
-                503: `Connection timeout trying to communicate with the Naos Data Access Service`,
-                504: `Read timeout trying to communicate with the Naos Data Access Service`,
-            },
         });
     }
 }

@@ -1,37 +1,33 @@
 {
+  "title": "Instance parameters",
+  "type": "object",
   "properties": {
-    "container_options": {
-      "description": "Extra service options when using docker spawner. Used to define container options at runtime.\nhttps://docs.docker.com/reference/cli/docker/container/run/ for more info and\nhttps://docker-py.readthedocs.io/en/stable/containers.html# for API usage.\nOptions defined here will override the corresponding container options defined in SPAWNER_CONFIG.\n",
-      "example": {
-        "cap_add": [
-          "SYS_ADMIN"
-        ]
-      },
-      "nullable": true,
-      "type": "object"
-    },
     "cpu": {
+      "type": "number",
       "default": 1,
-      "example": 2.5,
-      "type": "number"
-    },
-    "flavor": {
-      "example": "vmcentos8:5000/naos-engine:develop",
-      "type": "string"
-    },
-    "haspid": {
-      "example": "772686143799491514",
-      "nullable": true,
-      "type": "string"
+      "example": 2.5
     },
     "memory": {
+      "type": "string",
       "default": "2GB",
-      "example": "2GB",
-      "type": "string"
+      "example": "2GB"
+    },
+    "flavor": {
+      "type": "string",
+      "example": "vmcentos8:5000/naos-engine:develop"
+    },
+    "haspid": {
+      "type": "string",
+      "example": "772686143799491514",
+      "nullable": true
     },
     "pod_options": {
+      "type": "object",
       "description": "Extra pod options when using kube spawner. Typically used to define node_selector, affinity or tolerations at runtime.\nSee https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/ for more info and\nhttps://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#scheduling for API usage.\nOptions defined here will override the corresponding pod options defined in SPAWNER_CONFIG.\n",
       "example": {
+        "node_selector": {
+          "node_cpus": "high"
+        },
         "affinity": {
           "node_affinity": {
             "required_during_scheduling_ignored_during_execution": {
@@ -52,9 +48,6 @@
             }
           }
         },
-        "node_selector": {
-          "node_cpus": "high"
-        },
         "tolerations": [
           {
             "effect": "NoSchedule",
@@ -64,10 +57,10 @@
           }
         ]
       },
-      "nullable": true,
-      "type": "object"
+      "nullable": true
     },
     "service_options": {
+      "type": "object",
       "description": "Extra service options when using swarm spawner. Typically used to define service constraints or placement preferences at runtime.\nSee https://docs.docker.com/reference/cli/docker/service/create/#constraint for more info and\nhttps://docker-py.readthedocs.io/en/stable/services.html for API usage.\nOptions defined here will override the corresponding service options defined in SPAWNER_CONFIG.\n",
       "example": {
         "constaints": [
@@ -75,11 +68,22 @@
           "node.labels.region==north-west"
         ]
       },
-      "nullable": true,
-      "type": "object"
+      "nullable": true
+    },
+    "container_options": {
+      "type": "object",
+      "description": "Extra service options when using docker spawner. Used to define container options at runtime.\nhttps://docs.docker.com/reference/cli/docker/container/run/ for more info and\nhttps://docker-py.readthedocs.io/en/stable/containers.html# for API usage.\nOptions defined here will override the corresponding container options defined in SPAWNER_CONFIG.\n",
+      "example": {
+        "cap_add": [
+          "SYS_ADMIN"
+        ]
+      },
+      "nullable": true
+    },
+    "license_server": {
+      "type": "string",
+      "nullable": true
     }
   },
-  "title": "Instance parameters",
-  "type": "object",
   "$schema": "http://json-schema.org/schema#"
 }

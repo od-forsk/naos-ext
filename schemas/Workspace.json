@@ -1,56 +1,40 @@
 {
+  "title": "Workspace",
   "allOf": [
     {
-      "$ref": "ProjectBase.json",
-      "x-scope": [
-        "",
-        "#/components/schemas/Workspace"
-      ]
+      "$ref": "ProjectBase.json"
     },
     {
+      "title": "WorkspaceMeta",
+      "type": "object",
       "properties": {
-        "bounding_box": {
-          "$ref": "BoundingBox.json",
-          "x-scope": [
-            "",
-            "#/components/schemas/Workspace"
-          ]
-        },
-        "geo_bounding_box": {
-          "$ref": "BoundingBox.json",
-          "x-scope": [
-            "",
-            "#/components/schemas/Workspace"
-          ]
-        },
-        "net_bounding_box": {
-          "$ref": "BoundingBox.json",
-          "x-scope": [
-            "",
-            "#/components/schemas/Workspace"
-          ]
-        },
-        "project_id": {
-          "format": "uuid",
-          "type": "string"
-        },
-        "project_name": {
-          "readOnly": true,
-          "type": "string"
-        },
         "user": {
           "type": "string"
         },
         "user_id": {
-          "format": "uuid",
-          "type": "string"
+          "type": "string",
+          "format": "uuid"
+        },
+        "project_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "project_name": {
+          "type": "string",
+          "readOnly": true
+        },
+        "geo_bounding_box": {
+          "$ref": "BoundingBox.json"
+        },
+        "net_bounding_box": {
+          "$ref": "BoundingBox.json"
+        },
+        "bounding_box": {
+          "$ref": "BoundingBox.json"
         }
-      },
-      "title": "WorkspaceMeta",
-      "type": "object"
+      }
     }
   ],
-  "title": "Workspace",
   "$schema": "http://json-schema.org/schema#",
   "type": "object"
 }

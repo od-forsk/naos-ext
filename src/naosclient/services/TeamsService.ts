@@ -55,16 +55,16 @@ export class TeamsService {
         });
     }
     /**
-     * ADMIN. Delete team
+     * ADMIN. Get team
      * @param teamId Team identifier.
-     * @returns any Ok
+     * @returns GatewayTeam Ok
      * @throws ApiError
      */
-    public deleteTeam(
+    public getTeam(
         teamId: string,
-    ): CancelablePromise<any> {
+    ): CancelablePromise<GatewayTeam> {
         return this.httpRequest.request({
-            method: 'DELETE',
+            method: 'GET',
             url: '/teams/{team_id}',
             path: {
                 'team_id': teamId,
@@ -76,16 +76,16 @@ export class TeamsService {
         });
     }
     /**
-     * ADMIN. Get team
+     * ADMIN. Delete team
      * @param teamId Team identifier.
-     * @returns GatewayTeam Ok
+     * @returns any Ok
      * @throws ApiError
      */
-    public getTeam(
+    public deleteTeam(
         teamId: string,
-    ): CancelablePromise<GatewayTeam> {
+    ): CancelablePromise<any> {
         return this.httpRequest.request({
-            method: 'GET',
+            method: 'DELETE',
             url: '/teams/{team_id}',
             path: {
                 'team_id': teamId,
@@ -177,6 +177,36 @@ export class TeamsService {
         });
     }
     /**
+     * ADMIN. Add a user to an existing team
+     * @param teamId Team identifier.
+     * @param userId User identifier.
+     * @param role User can be a member or a team admin
+     * @returns GatewayTeamUser Ok
+     * @throws ApiError
+     */
+    public addTeamUser(
+        teamId: string,
+        userId: string,
+        role: 'MEMBER' | 'ADMIN',
+    ): CancelablePromise<GatewayTeamUser> {
+        return this.httpRequest.request({
+            method: 'PUT',
+            url: '/teams/{team_id}/users/{user_id}',
+            path: {
+                'team_id': teamId,
+                'user_id': userId,
+            },
+            query: {
+                'role': role,
+            },
+            errors: {
+                400: `User already exists in the team`,
+                403: `Current user is not admin`,
+                404: `Team/User not found`,
+            },
+        });
+    }
+    /**
      * ADMIN. Remove a user from a team
      * @param teamId Team identifier.
      * @param userId User identifier.
@@ -223,36 +253,6 @@ export class TeamsService {
             body: requestBody,
             mediaType: 'application/json',
             errors: {
-                403: `Current user is not admin`,
-                404: `Team/User not found`,
-            },
-        });
-    }
-    /**
-     * ADMIN. Add a user to an existing team
-     * @param teamId Team identifier.
-     * @param userId User identifier.
-     * @param role User can be a member or a team admin
-     * @returns GatewayTeamUser Ok
-     * @throws ApiError
-     */
-    public addTeamUser(
-        teamId: string,
-        userId: string,
-        role: 'MEMBER' | 'ADMIN',
-    ): CancelablePromise<GatewayTeamUser> {
-        return this.httpRequest.request({
-            method: 'PUT',
-            url: '/teams/{team_id}/users/{user_id}',
-            path: {
-                'team_id': teamId,
-                'user_id': userId,
-            },
-            query: {
-                'role': role,
-            },
-            errors: {
-                400: `User already exists in the team`,
                 403: `Current user is not admin`,
                 404: `Team/User not found`,
             },

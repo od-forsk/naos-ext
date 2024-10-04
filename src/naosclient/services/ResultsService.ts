@@ -59,23 +59,6 @@ export class ResultsService {
         });
     }
     /**
-     * ADMIN. Delete result
-     * @param resultId Result Id
-     * @returns ApiError Error
-     * @throws ApiError
-     */
-    public deleteResult(
-        resultId: string,
-    ): CancelablePromise<ApiError> {
-        return this.httpRequest.request({
-            method: 'DELETE',
-            url: '/results/{result_id}',
-            path: {
-                'result_id': resultId,
-            },
-        });
-    }
-    /**
      * ADMIN. Get result details
      * @param resultId Result Id
      * @returns Result OK
@@ -87,6 +70,23 @@ export class ResultsService {
     ): CancelablePromise<Result | ApiError> {
         return this.httpRequest.request({
             method: 'GET',
+            url: '/results/{result_id}',
+            path: {
+                'result_id': resultId,
+            },
+        });
+    }
+    /**
+     * ADMIN. Delete result
+     * @param resultId Result Id
+     * @returns ApiError Error
+     * @throws ApiError
+     */
+    public deleteResult(
+        resultId: string,
+    ): CancelablePromise<ApiError> {
+        return this.httpRequest.request({
+            method: 'DELETE',
             url: '/results/{result_id}',
             path: {
                 'result_id': resultId,

@@ -1,6 +1,6 @@
 {
   "description": "Process execution input payload (compliant with unit task definition input JSON schema).",
-  "format": "application/json",
   "type": "object",
+  "format": "application/json",
   "$schema": "http://json-schema.org/schema#"
 }

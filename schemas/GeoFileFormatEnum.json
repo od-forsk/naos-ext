@@ -1,5 +1,6 @@
 {
   "description": "Geo file format extension.",
+  "type": "string",
   "enum": [
     "SHP",
     "MIF",
@@ -14,6 +15,5 @@
     "PNG",
     "JPEG"
   ],
-  "type": "string",
   "$schema": "http://json-schema.org/schema#"
 }

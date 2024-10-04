@@ -1,24 +1,24 @@
 {
-  "properties": {
-    "access_token": {
-      "readOnly": true,
-      "type": "string"
-    },
-    "access_token_expires_in": {
-      "description": "access token expiration time in secondes",
-      "readOnly": true,
-      "type": "integer"
-    },
-    "refresh_token": {
-      "readOnly": true,
-      "type": "string"
-    }
-  },
+  "title": "Token response",
+  "type": "object",
   "required": [
     "access_token",
     "access_token_expires_in"
   ],
-  "title": "Token response",
-  "type": "object",
+  "properties": {
+    "access_token": {
+      "type": "string",
+      "readOnly": true
+    },
+    "access_token_expires_in": {
+      "type": "integer",
+      "description": "access token expiration time in secondes",
+      "readOnly": true
+    },
+    "refresh_token": {
+      "type": "string",
+      "readOnly": true
+    }
+  },
   "$schema": "http://json-schema.org/schema#"
 }

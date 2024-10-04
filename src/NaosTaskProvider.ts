@@ -74,7 +74,7 @@ class NaosTaskTerminal implements vscode.Pseudoterminal {
         const job_id = this.definition.jobId;
         // TODO {priority: this.definition.priority}
         this.write(`Starting NAOS Job ${job_id}.\r\n`);
-        const { run_id } = await this.apiClient.scheduler.schedulerProxyPost(`/jobs/${this.definition.jobId}/_run`);
+        const { run_id } = await this.apiClient.scheduler.schedulerProxyPost(`jobs/${this.definition.jobId}/_run`);
         this.write(`posted as run ${run_id}\r\n`);
         vscode.commands.executeCommand("naos.refresh");
 

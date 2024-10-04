@@ -1,111 +1,83 @@
 {
   "description": "Object describing a Naos/Atoll geo file.",
+  "type": "object",
   "properties": {
-    "bounding_box": {
-      "$ref": "BoundingBox.json",
-      "x-scope": [
-        "",
-        "#/components/schemas/Workspace",
-        "#/components/schemas/ProjectBase",
-        "#/components/schemas/GeoFileAssociation",
-        "#/components/schemas/GeoFile"
-      ]
-    },
-    "crs": {
-      "example": 1980,
-      "type": "integer"
-    },
-    "file_format": {
-      "$ref": "GeoFileFormatEnum.json",
-      "x-scope": [
-        "",
-        "#/components/schemas/Workspace",
-        "#/components/schemas/ProjectBase",
-        "#/components/schemas/GeoFileAssociation",
-        "#/components/schemas/GeoFile"
-      ]
-    },
-    "geo_type": {
-      "$ref": "GeoTypeEnum.json",
-      "x-scope": [
-        "",
-        "#/components/schemas/Workspace",
-        "#/components/schemas/ProjectBase",
-        "#/components/schemas/GeoFileAssociation",
-        "#/components/schemas/GeoFile"
-      ]
-    },
-    "graphics_type": {
-      "$ref": "GeoGraphicsTypeEnum.json",
-      "x-scope": [
-        "",
-        "#/components/schemas/Workspace",
-        "#/components/schemas/ProjectBase",
-        "#/components/schemas/GeoFileAssociation",
-        "#/components/schemas/GeoFile"
-      ]
-    },
     "id": {
       "description": "Geo file identifier.",
+      "type": "string",
       "format": "uuid",
-      "readOnly": true,
-      "type": "string"
+      "readOnly": true
     },
     "name": {
       "description": "Geo file name.",
-      "example": "my_geo_file",
-      "type": "string"
+      "type": "string",
+      "example": "my_geo_file"
+    },
+    "uri": {
+      "description": "Geo file URI.",
+      "type": "string",
+      "format": "uri",
+      "example": "file:///mnt/naos_share/my_geo_file.shp"
+    },
+    "geo_type": {
+      "$ref": "GeoTypeEnum.json"
+    },
+    "file_format": {
+      "$ref": "GeoFileFormatEnum.json"
+    },
+    "graphics_type": {
+      "$ref": "GeoGraphicsTypeEnum.json"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "example": "northwest chicago"
+      }
+    },
+    "crs": {
+      "type": "integer",
+      "example": 1980
+    },
+    "bounding_box": {
+      "$ref": "BoundingBox.json"
+    },
+    "resolution": {
+      "description": "Rasters only: pixel size as a pair.",
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
     },
     "raster_properties": {
+      "type": "object",
       "properties": {
         "placeholder": {
           "type": "string"
         }
-      },
-      "type": "object"
-    },
-    "resolution": {
-      "description": "Rasters only: pixel size as a pair.",
-      "items": {
-        "type": "number"
-      },
-      "type": "array"
-    },
-    "tags": {
-      "items": {
-        "example": "northwest chicago",
-        "type": "string"
-      },
-      "type": "array"
-    },
-    "uri": {
-      "description": "Geo file URI.",
-      "example": "file:///mnt/naos_share/my_geo_file.shp",
-      "format": "uri",
-      "type": "string"
+      }
     },
     "vector_properties": {
+      "type": "object",
       "properties": {
-        "fixed_height": {
-          "type": "number"
+        "scope": {
+          "description": "Propagation models in which the geo file can be used",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "height_field": {
           "type": "string"
         },
+        "fixed_height": {
+          "type": "number"
+        },
         "propagation_class": {
           "type": "string"
-        },
-        "scope": {
-          "description": "Propagation models in which the geo file can be used",
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
         }
-      },
-      "type": "object"
+      }
     }
   },
-  "type": "object",
   "$schema": "http://json-schema.org/schema#"
 }

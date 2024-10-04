@@ -1,135 +1,64 @@
 {
+  "title": "ProjectBase",
+  "type": "object",
   "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "readOnly": true
+    },
+    "name": {
+      "type": "string",
+      "example": "Name"
+    },
+    "source": {
+      "$ref": "SourceInfo.json"
+    },
+    "storage": {
+      "$ref": "StorageInfo.json"
+    },
     "configuration_files": {
+      "title": "ProjectConfigurationFiles",
+      "type": "object",
       "properties": {
-        "append": {
-          "description": "Secondary configuration files, meant to append to existing configurations (applicable to geographic files).",
-          "items": {
-            "format": "uri",
-            "type": "string"
-          },
-          "type": "array"
-        },
         "replace": {
+          "type": "array",
           "description": "Main configuration files, meant to replace existing configurations. Applied in array order.",
           "items": {
-            "format": "uri",
-            "type": "string"
-          },
-          "type": "array"
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "append": {
+          "type": "array",
+          "description": "Secondary configuration files, meant to append to existing configurations (applicable to geographic files).",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
         }
-      },
-      "title": "ProjectConfigurationFiles",
-      "type": "object"
-    },
-    "created": {
-      "format": "date-time",
-      "type": "string"
-    },
-    "filters": {
-      "$ref": "NaosFilter.json",
-      "x-scope": [
-        "",
-        "#/components/schemas/Workspace",
-        "#/components/schemas/ProjectBase"
-      ]
+      }
     },
     "geographic_data": {
+      "type": "array",
+      "readOnly": true,
       "description": "List of geographic files associated to this Project/Workspace.",
       "items": {
-        "$ref": "GeoFileAssociation.json",
-        "x-scope": [
-          "",
-          "#/components/schemas/Workspace",
-          "#/components/schemas/ProjectBase"
-        ]
-      },
-      "readOnly": true,
-      "type": "array"
-    },
-    "history": {
-      "properties": {
-        "entries": {
-          "items": {
-            "properties": {
-              "date": {
-                "format": "date-time",
-                "type": "string"
-              },
-              "message": {
-                "type": "string"
-              },
-              "user": {
-                "type": "string"
-              },
-              "user_id": {
-                "format": "uuid",
-                "type": "string"
-              }
-            },
-            "title": "ProjectHistoryEntry",
-            "type": "object"
-          },
-          "type": "array"
-        }
-      },
-      "readOnly": true,
-      "title": "ProjectHistory",
-      "type": "object"
-    },
-    "id": {
-      "format": "uuid",
-      "readOnly": true,
-      "type": "string"
+        "$ref": "GeoFileAssociation.json"
+      }
     },
     "info": {
+      "title": "ProjectInfo",
+      "type": "object",
       "properties": {
-        "bounding_box": {
-          "$ref": "BoundingBox.json",
-          "x-scope": [
-            "",
-            "#/components/schemas/Workspace",
-            "#/components/schemas/ProjectBase"
-          ]
-        },
-        "coordinate_system": {
-          "properties": {
-            "code": {
-              "type": "integer"
-            }
-          },
-          "title": "ProjectInfoCoordinateSystem",
-          "type": "object"
-        },
-        "shared_pathloss": {
-          "type": "string"
-        },
-        "sites": {
-          "type": "integer"
-        },
-        "studies": {
-          "items": {
-            "properties": {
-              "id": {
-                "format": "uuid",
-                "type": "string"
-              },
-              "name": {
-                "type": "string"
-              }
-            },
-            "title": "ProjectInfoStudies",
-            "type": "object"
-          },
-          "type": "array"
-        },
         "technologies": {
+          "type": "array",
           "items": {
+            "title": "ProjectInfoTechnologies",
+            "type": "object",
             "properties": {
-              "cells": {
-                "type": "integer"
-              },
               "name": {
+                "type": "string",
                 "enum": [
                   "5G_NR",
                   "LTE",
@@ -137,56 +66,102 @@
                   "UMTS",
                   "1XRTT",
                   "GSM"
-                ],
+                ]
+              },
+              "cells": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "coordinate_system": {
+          "type": "object",
+          "title": "ProjectInfoCoordinateSystem",
+          "properties": {
+            "code": {
+              "type": "integer"
+            }
+          }
+        },
+        "studies": {
+          "type": "array",
+          "items": {
+            "title": "ProjectInfoStudies",
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "name": {
                 "type": "string"
               }
-            },
-            "title": "ProjectInfoTechnologies",
-            "type": "object"
-          },
-          "type": "array"
+            }
+          }
+        },
+        "bounding_box": {
+          "$ref": "BoundingBox.json"
+        },
+        "sites": {
+          "type": "integer"
+        },
+        "shared_pathloss": {
+          "type": "string"
         }
-      },
-      "title": "ProjectInfo",
-      "type": "object"
+      }
+    },
+    "created": {
+      "type": "string",
+      "format": "date-time"
     },
     "modified": {
-      "format": "date-time",
-      "type": "string"
+      "type": "string",
+      "format": "date-time"
     },
-    "name": {
-      "example": "Name",
-      "type": "string"
-    },
-    "source": {
-      "$ref": "SourceInfo.json",
-      "x-scope": [
-        "",
-        "#/components/schemas/Workspace",
-        "#/components/schemas/ProjectBase"
-      ]
+    "history": {
+      "title": "ProjectHistory",
+      "type": "object",
+      "readOnly": true,
+      "properties": {
+        "entries": {
+          "type": "array",
+          "items": {
+            "title": "ProjectHistoryEntry",
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "user_id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "user": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
     },
     "status": {
-      "readOnly": true,
-      "type": "object"
-    },
-    "storage": {
-      "$ref": "StorageInfo.json",
-      "x-scope": [
-        "",
-        "#/components/schemas/Workspace",
-        "#/components/schemas/ProjectBase"
-      ]
+      "type": "object",
+      "readOnly": true
     },
     "technologies": {
+      "type": "array",
       "items": {
         "type": "string"
       },
-      "readOnly": true,
-      "type": "array"
+      "readOnly": true
+    },
+    "filters": {
+      "$ref": "NaosFilter.json"
     }
   },
-  "title": "ProjectBase",
-  "type": "object",
   "$schema": "http://json-schema.org/schema#"
 }

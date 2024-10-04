@@ -1,27 +1,27 @@
 {
+  "title": "Feature and product",
+  "type": "object",
   "properties": {
-    "featureId": {
-      "description": "Feature identifier",
-      "example": 1001,
-      "type": "integer"
-    },
-    "featureName": {
-      "description": "Feature Name",
-      "example": "Plateforme",
-      "type": "string"
-    },
     "productId": {
       "description": "Product identifier",
-      "example": 2,
-      "type": "integer"
+      "type": "integer",
+      "example": 2
     },
     "productName": {
       "description": "Product Name",
-      "example": "Naos",
-      "type": "string"
+      "type": "string",
+      "example": "Naos"
+    },
+    "featureId": {
+      "description": "Feature identifier",
+      "type": "integer",
+      "example": 1001
+    },
+    "featureName": {
+      "description": "Feature Name",
+      "type": "string",
+      "example": "Plateforme"
     }
   },
-  "title": "Feature and product",
-  "type": "object",
   "$schema": "http://json-schema.org/schema#"
 }

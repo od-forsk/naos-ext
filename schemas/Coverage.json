@@ -1,62 +1,58 @@
 {
+  "type": "object",
   "properties": {
-    "created": {
-      "format": "date-time",
-      "type": "string"
-    },
-    "description": {
-      "nullable": true,
-      "type": "string"
-    },
     "id": {
-      "format": "uuid",
-      "type": "string"
+      "type": "string",
+      "format": "uuid"
     },
-    "metadata": {
-      "type": "object"
-    },
-    "modified": {
-      "format": "date-time",
-      "type": "string"
+    "work_area": {
+      "type": "object",
+      "readOnly": true
     },
     "name": {
       "type": "string"
     },
-    "receiver_heights": {
-      "description": "[NOT IMPLEMENTED] Planned for a later version.\nFor now, uses project default receiver height.\n",
-      "items": {
-        "type": "number"
-      },
-      "nullable": true,
-      "type": "array"
+    "created": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "modified": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "Signal Level",
+        "RSRP"
+      ]
+    },
+    "description": {
+      "type": "string",
+      "nullable": true
+    },
+    "unit": {
+      "type": "string",
+      "readOnly": true
+    },
+    "technologies": {
+      "$ref": "Technologies.json"
     },
     "resolution": {
       "description": "Must be a multiple of project resolution",
       "type": "integer"
     },
-    "technologies": {
-      "$ref": "Technologies.json",
-      "x-scope": [
-        "",
-        "#/components/schemas/Coverage"
-      ]
+    "receiver_heights": {
+      "description": "[NOT IMPLEMENTED] Planned for a later version.\nFor now, uses project default receiver height.\n",
+      "nullable": true,
+      "type": "array",
+      "items": {
+        "type": "number"
+      }
     },
-    "type": {
-      "enum": [
-        "Signal Level",
-        "RSRP"
-      ],
-      "type": "string"
-    },
-    "unit": {
-      "readOnly": true,
-      "type": "string"
-    },
-    "work_area": {
-      "readOnly": true,
+    "metadata": {
       "type": "object"
     }
   },
-  "type": "object",
   "$schema": "http://json-schema.org/schema#"
 }

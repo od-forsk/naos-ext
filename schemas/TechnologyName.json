@@ -1,4 +1,5 @@
 {
+  "type": "string",
   "enum": [
     "5G_NR",
     "LTE",
@@ -7,6 +8,5 @@
     "1XRTT",
     "GSM"
   ],
-  "type": "string",
   "$schema": "http://json-schema.org/schema#"
 }

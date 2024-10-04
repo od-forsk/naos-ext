@@ -1,4 +1,6 @@
 {
+  "title": "ProjectAssociationData",
+  "type": "object",
   "properties": {
     "index": {
       "description": "Index of the geo file association for the given work area.",
@@ -6,13 +8,11 @@
     },
     "propag_model_filters": {
       "description": "Regex filters for propagation model",
+      "type": "array",
       "items": {
         "type": "string"
-      },
-      "type": "array"
+      }
     }
   },
-  "title": "ProjectAssociationData",
-  "type": "object",
   "$schema": "http://json-schema.org/schema#"
 }
