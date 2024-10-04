@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.4] - 2024-10-04
+
+## Fixed
+
+- Compatibility with connexion3 Gateways.
+
+## [1.0.3] - 2024-10-03
+
+## Added
+
+- Command "naos.user.token" allows to create JWT for a user.
+
+## [1.0.2] - 2024-09-30
+
 ### Added
 
 - Delete commands for coverage, artifact
