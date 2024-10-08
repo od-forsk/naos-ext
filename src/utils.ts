@@ -2,6 +2,8 @@
 import { validate as uuidValidate, version as uuidVersion } from 'uuid';
 import * as vscode from 'vscode';
 import { consoleNAOS } from './extension';
+import { Workspace } from './naosclient/models/Workspace';
+import { Project } from './naosclient/models/Project';
 
 export const validColor = new vscode.ThemeColor("naos.serviceStatus.valid");
 export const invalidColor = new vscode.ThemeColor("naos.serviceStatus.invalid");
@@ -32,3 +34,8 @@ export function getActiveEditorText() {
     }
     return text;
 }
+
+export function isProject(workarea: Project | Workspace): workarea is Project {
+    return (workarea as Workspace).project_id === undefined;
+}
+

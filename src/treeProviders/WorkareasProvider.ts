@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { NaosClient } from '../naosclient';
 import { Project } from '../naosclient/models/Project';
 import { Workspace } from '../naosclient/models/Workspace';
+import { isProject } from '../utils';
 
 export class WorkareasProvider implements vscode.TreeDataProvider<Project | Workspace> {
 
@@ -21,11 +22,29 @@ export class WorkareasProvider implements vscode.TreeDataProvider<Project | Work
 	}
 
 	getTreeItem(work_area: Project | Workspace): vscode.TreeItem | Thenable<vscode.TreeItem> {
-		if ("project_id" in work_area) {
+		if (isProject(work_area)) {
+			return {
+				collapsibleState: vscode.TreeItemCollapsibleState.Collapsed,
+				label: work_area.name,
+				description: `[${work_area.source?.type}] ${work_area.id}`,
+				tooltip: work_area.id,
+				iconPath: new vscode.ThemeIcon("database"),
+				contextValue: "naos.project",
+				id: work_area.id,
+				command: {
+					command: "vscode.open",
+					title: "Open Call",
+					arguments: [
+						vscode.Uri.parse(`naos:${work_area.id}.project.naos`),
+						<vscode.TextDocumentShowOptions>{},
+					]
+				}
+			};
+		} else {
 			return {
 				collapsibleState: vscode.TreeItemCollapsibleState.None,
 				label: work_area.name,
-				description: work_area.source?.type ?? '',
+				description: `[${work_area.source?.type}] ${work_area.id}`,
 				tooltip: work_area.id,
 				iconPath: new vscode.ThemeIcon("file"),
 				contextValue: "naos.workspace",
@@ -35,25 +54,6 @@ export class WorkareasProvider implements vscode.TreeDataProvider<Project | Work
 					title: "Open Call",
 					arguments: [
 						vscode.Uri.parse(`naos:${work_area.id}.workspace.naos`),
-						<vscode.TextDocumentShowOptions>{},
-					]
-				}
-			};
-		} else {
-			const project = work_area as Project;
-			return {
-				collapsibleState: vscode.TreeItemCollapsibleState.Collapsed,
-				label: project.name,
-				description: project.source?.type ?? '',
-				tooltip: project.id,
-				iconPath: new vscode.ThemeIcon("database"),
-				contextValue: "naos.project",
-				id: project.id,
-				command: {
-					command: "vscode.open",
-					title: "Open Call",
-					arguments: [
-						vscode.Uri.parse(`naos:${project.id}.project.naos`),
 						<vscode.TextDocumentShowOptions>{},
 					]
 				}
