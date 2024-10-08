@@ -98,6 +98,12 @@
         "icon": "$(trash)"
       },
       {
+        "command": "naos.run.abort",
+        "category": "NAOS",
+        "title": "Abort a running Job.",
+        "icon": "$(stop)"
+      },
+      {
         "command": "naos.job.run",
         "category": "NAOS",
         "title": "Run a NAOS Job.",
@@ -288,6 +294,11 @@
           "command": "naos.job.run",
           "group": "inline",
           "when": "view == naos.jobs && viewItem === naos.job"
+        },
+        {
+          "command": "naos.run.abort",
+          "group": "inline",
+          "when": "view == naos.jobs && viewItem === naos.run"
         },
         {
           "command": "naos.geofile.delete",

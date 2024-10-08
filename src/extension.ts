@@ -25,6 +25,7 @@ import { TeamsProvider, TeamUser } from './treeProviders/TeamsProvider';
 import { UsersProvider } from './treeProviders/UsersProvider';
 import { sendProject, WorkareasProvider } from './treeProviders/WorkareasProvider';
 import { getActiveEditorText, parseNaosURI, uuidValidateV4 } from './utils';
+import { RunDescribe } from './models/RunDescribe';
 
 export let consoleNAOS = vscode.window.createOutputChannel("NAOS-ext", { log: true });
 
@@ -235,6 +236,11 @@ export function activate(context: vscode.ExtensionContext) {
 			type: NaosTaskProvider.taskType,
 			jobId: job.id,
 		});
+		await vscode.commands.executeCommand("naos.refresh");
+	});
+
+	registerNaosCommand("naos.run.abort", async (run: RunDescribe) => {
+		await apiClient.scheduler.schedulerProxyPost(`jobs/${run.job_id}/runs/${run.id}/_abort`);
 		await vscode.commands.executeCommand("naos.refresh");
 	});
 
