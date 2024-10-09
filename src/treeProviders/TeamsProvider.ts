@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { NaosClient } from '../naosclient';
 import { GatewayTeam } from '../naosclient/models/GatewayTeam';
 import { GatewayTeamUser } from '../naosclient/models/GatewayTeamUser';
-import { validColor } from '../utils';
+import { handleErrors, validColor } from '../utils';
 
 export interface TeamUser extends GatewayTeamUser {
 	team_id: string;
@@ -21,6 +21,7 @@ export class TeamsProvider implements vscode.TreeDataProvider<AdminItem> {
 	private _onDidChangeTreeData = new vscode.EventEmitter<any>();
 	readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
+	@handleErrors
 	async getChildren(element?: any): Promise<AdminItem[]> {
 		if (!element) {
 			return await this.api.teams.getTeams();

@@ -3,7 +3,7 @@ import { RunDescribe } from '../models/RunDescribe';
 import { TaskDescribe } from '../models/TaskDescribe';
 import { NaosClient } from '../naosclient';
 import { JobDescribe } from '../naosclient/models/JobDescribe';
-import { invalidColor, validColor } from '../utils';
+import { handleErrors, invalidColor, validColor } from '../utils';
 
 type Job = JobDescribe & { kind: "job" };
 type Run = RunDescribe & { kind: "run" };
@@ -19,6 +19,7 @@ export class JobsProvider implements vscode.TreeDataProvider<SchedulingUnit> {
 	private _onDidChangeTreeData = new vscode.EventEmitter<any>();
 	readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
+	@handleErrors
 	async getChildren(element?: SchedulingUnit) {
 		if (!element) {
 			const jobs: [any] = await this.api.scheduler.schedulerProxyGet("jobs");

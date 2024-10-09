@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { consoleNAOS } from "./extension";
 import { NaosClient } from "./naosclient";
-import { parseNaosURI } from "./utils";
+import { handleErrors, parseNaosURI } from "./utils";
 
 export class NaosTextDocumentContentProvider implements vscode.TextDocumentContentProvider {
 
@@ -12,6 +12,7 @@ export class NaosTextDocumentContentProvider implements vscode.TextDocumentConte
     onDidChangeEmitter = new vscode.EventEmitter<vscode.Uri>();
     onDidChange = this.onDidChangeEmitter.event;
 
+    @handleErrors
     async provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken) {
         consoleNAOS.debug("Opening API Document", uri);
         const [resourceKind, resourceIds] = parseNaosURI(uri);

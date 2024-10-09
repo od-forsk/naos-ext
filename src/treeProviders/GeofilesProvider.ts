@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { NaosClient } from '../naosclient';
 import { GeoFile } from '../naosclient/models/GeoFile';
+import { handleErrors } from '../utils';
 
 export class GeofilesProvider implements vscode.TreeDataProvider<GeoFile> {
 
@@ -11,6 +12,7 @@ export class GeofilesProvider implements vscode.TreeDataProvider<GeoFile> {
 	private _onDidChangeTreeData = new vscode.EventEmitter<any>();
 	readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
+	@handleErrors
 	async getChildren(element?: any) {
 		if (!element) {
 			return await this.api.geo.getGeoFiles();

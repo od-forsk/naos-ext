@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { NaosClient } from '../naosclient';
 import { Project } from '../naosclient/models/Project';
 import { Workspace } from '../naosclient/models/Workspace';
-import { isProject } from '../utils';
+import { handleErrors, isProject } from '../utils';
 
 export class WorkareasProvider implements vscode.TreeDataProvider<Project | Workspace> {
 
@@ -13,6 +13,7 @@ export class WorkareasProvider implements vscode.TreeDataProvider<Project | Work
 	private _onDidChangeTreeData = new vscode.EventEmitter<any>();
 	readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
+	@handleErrors
 	async getChildren(element?: any) {
 		if (!element) {
 			return await this.api.projects.getProjects() as Project[];

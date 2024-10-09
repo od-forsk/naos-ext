@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { NaosClient } from '../naosclient';
 import { Artifact } from '../naosclient/models/Artifact';
+import { handleErrors } from '../utils';
 
 export class ArtifactsProvider implements vscode.TreeDataProvider<Artifact> {
 
@@ -11,6 +12,7 @@ export class ArtifactsProvider implements vscode.TreeDataProvider<Artifact> {
 	private _onDidChangeTreeData = new vscode.EventEmitter<any>();
 	readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
+	@handleErrors
 	async getChildren(element?: any) {
 		if (!element) {
 			return await this.api.artifacts.getArtifacts(

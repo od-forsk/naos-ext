@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { NaosClient } from '../naosclient';
 import { NaosInstance } from '../naosclient/models/NaosInstance';
-import { invalidColor, validColor } from '../utils';
+import { handleErrors, invalidColor, validColor } from '../utils';
 
 
 export class InstancesProvider implements vscode.TreeDataProvider<NaosInstance> {
@@ -13,6 +13,7 @@ export class InstancesProvider implements vscode.TreeDataProvider<NaosInstance> 
 	private _onDidChangeTreeData = new vscode.EventEmitter<any>();
 	readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
+	@handleErrors
 	async getChildren(element?: any) {
 		if (!element) {
 			return await this.api.admin.getGlobalInstances();

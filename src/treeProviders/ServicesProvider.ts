@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { NaosClient } from '../naosclient';
-import { invalidColor, validColor } from '../utils';
+import { handleErrors, invalidColor, validColor } from '../utils';
 
 export interface Service {
 	name: string;
@@ -17,6 +17,7 @@ export class ServicesProvider implements vscode.TreeDataProvider<Service> {
 	private _onDidChangeTreeData = new vscode.EventEmitter<any>();
 	readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
+	@handleErrors
 	async getChildren(element?: any): Promise<Service[]> {
 		const services = await this.api.service.getGlobalStatus();
 		return Object.entries(services).map(([k, v]) => ({ name: k, ...v }));

@@ -6,6 +6,7 @@ import { TaskLogMessage } from "./models/TaskLogMessage";
 import { NaosClient } from "./naosclient";
 import { JobSummary } from "./naosclient/models/JobSummary";
 import { TokenResponse } from "./naosclient/models/TokenResponse";
+import { handleErrors } from "./utils";
 
 
 export interface NaosTaskDefinition extends vscode.TaskDefinition {
@@ -70,6 +71,7 @@ class NaosTaskTerminal implements vscode.Pseudoterminal {
         private apiClient: NaosClient,
     ) { }
 
+    @handleErrors
     async open(initialDimensions?: vscode.TerminalDimensions) {
         const job_id = this.definition.jobId;
         // TODO {priority: this.definition.priority}

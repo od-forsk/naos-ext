@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { NaosClient } from '../naosclient';
 import { UserInfo } from '../naosclient/models/UserInfo';
-import { validColor } from '../utils';
+import { handleErrors, validColor } from '../utils';
 
 export class UsersProvider implements vscode.TreeDataProvider<UserInfo> {
 
@@ -12,6 +12,7 @@ export class UsersProvider implements vscode.TreeDataProvider<UserInfo> {
 	private _onDidChangeTreeData = new vscode.EventEmitter<any>();
 	readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
+	@handleErrors
 	async getChildren(element?: any) {
 		if (!element) {
 			return await this.api.admin.getUsers();

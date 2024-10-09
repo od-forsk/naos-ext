@@ -24,7 +24,7 @@ import { ServicesProvider } from './treeProviders/ServicesProvider';
 import { TeamsProvider, TeamUser } from './treeProviders/TeamsProvider';
 import { UsersProvider } from './treeProviders/UsersProvider';
 import { sendProject, WorkareasProvider } from './treeProviders/WorkareasProvider';
-import { getActiveEditorText, parseNaosURI, uuidValidateV4 } from './utils';
+import { getActiveEditorText, handleErrors, parseNaosURI, uuidValidateV4 } from './utils';
 import { RunDescribe } from './models/RunDescribe';
 
 export let consoleNAOS = vscode.window.createOutputChannel("NAOS-ext", { log: true });
@@ -105,29 +105,22 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Commands
 	function registerNaosCommand(command: string, callback: (...args: any[]) => any) {
-		context.subscriptions.push(vscode.commands.registerCommand(command, callback));
+		context.subscriptions.push(vscode.commands.registerCommand(command, handleErrors(callback)));
 	};
 
 	registerNaosCommand("naos.user.add", async () => {
 		const name = await vscode.window.showInputBox({ title: "user name", prompt: "What is his name?" });
-		if (name) {
-			try {
-				const password = name.padEnd(8, '!1Aa');
-				await apiClient.admin.createUser({
-					name,
-					login: name,
-					email: `${name}@forsk.com`,
-					is_admin: false,
-					password: password,
-					confirm: password,
-				});
-				await vscode.commands.executeCommand("naos.refresh");
-			} catch (error) {
-				if (error instanceof ApiError) {
-					await vscode.window.showErrorMessage(error.message, error.body as string);
-				}
-			}
-		}
+		if (!name) { return; }
+		const password = name.padEnd(8, '!1Aa');
+		await apiClient.admin.createUser({
+			name,
+			login: name,
+			email: `${name}@forsk.com`,
+			is_admin: false,
+			password: password,
+			confirm: password,
+		});
+		await vscode.commands.executeCommand("naos.refresh");
 	});
 
 	registerNaosCommand("naos.user.delete", async (user: UserInfo) => {
@@ -160,16 +153,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 	registerNaosCommand("naos.team.add", async () => {
 		const name = await vscode.window.showInputBox({ title: "team name", prompt: "What is its name?" });
-		if (name) {
-			try {
-				await apiClient.teams.createTeam({ name } as GatewayTeam);
-				await vscode.commands.executeCommand("naos.refresh");
-			} catch (error) {
-				if (error instanceof ApiError) {
-					await vscode.window.showErrorMessage(error.message, error.body as string);
-				}
-			}
-		}
+		if (!name) { return; }
+		await apiClient.teams.createTeam({ name } as GatewayTeam);
+		await vscode.commands.executeCommand("naos.refresh");
 	});
 
 	registerNaosCommand("naos.team.delete", async (team: GatewayTeam) => {
@@ -191,10 +177,9 @@ export function activate(context: vscode.ExtensionContext) {
 		teamId = await getUUID(teamId, { title: "NAOS Team ID" });
 		userId = await getUUID(userId, { title: "NAOS User ID" });
 		role = role ?? await vscode.window.showQuickPick(Object.values(GatewayTeamUser.role)) as GatewayTeamUser.role;
-		if (role !== undefined) {
-			await apiClient.teams.addTeamUser(teamId, userId, role);
-			await vscode.commands.executeCommand("naos.refresh");
-		}
+		if (!role) { return; }
+		await apiClient.teams.addTeamUser(teamId, userId, role);
+		await vscode.commands.executeCommand("naos.refresh");
 	});
 
 	registerNaosCommand("naos.team.removeUser", async (teamUser: TeamUser) => {
@@ -271,83 +256,79 @@ export function activate(context: vscode.ExtensionContext) {
 		);
 	});
 
-	registerNaosCommand("naos.copyid", async (e: any) => {
-		if (e.id !== undefined) {
-			await vscode.env.clipboard.writeText(e.id);
-			await vscode.window.showInformationMessage(`Copied UUID ${e.id}`);
-		}
+	registerNaosCommand("naos.copyid", async (e?: { id: string }) => {
+		if (!e?.id) { return; }
+		await vscode.env.clipboard.writeText(e.id);
+		await vscode.window.showInformationMessage(`Copied UUID ${e.id}`);
 	});
 
 	registerNaosCommand("naos.publish", async () => {
 		// TODO avoid usage with command palette.
 		const uri = vscode.window.activeTextEditor?.document.uri;
-		try {
-			const [resourceKind, resourceIds] = parseNaosURI(uri!);
-			let editorText = getActiveEditorText();
-			switch (resourceKind) {
-				case "user":
-					const user = JSON.parse(editorText) as UserInfo;
-					if (user.id) {
-						await apiClient.admin.editUser(user.id, user);
-					} else {
-						await apiClient.admin.createUser(user);
+		const [resourceKind, resourceIds] = parseNaosURI(uri!);
+		let editorText = getActiveEditorText();
+		switch (resourceKind) {
+			case "user":
+				const user = JSON.parse(editorText) as UserInfo;
+				if (user.id) {
+					await apiClient.admin.editUser(user.id, user);
+				} else {
+					await apiClient.admin.createUser(user);
+				}
+				break;
+
+			case "team":
+				const team = JSON.parse(editorText) as GatewayTeam;
+				if (team.id) {
+					await apiClient.teams.editTeam(team.id, team);
+				} else {
+					await apiClient.teams.createTeam(team);
+				}
+				break;
+
+			case "instance":
+				const instance = JSON.parse(editorText) as NaosInstanceParameters;
+				await apiClient.naos.addInstance(instance);
+				break;
+
+			case "job":
+				const job = JSON.parse(editorText);
+				if (job.id && job.work_area_type && job.work_area_id) {
+					if (job.work_area_type === "project") {
+						await apiClient.jobs.updateProjectJob(job.work_area_id, job.id, job);
+					} else if (job.work_area_type === "workspace") {
+						await apiClient.jobs.updateWorkspaceJob(job.work_area_id, job.id, job);
 					}
-					break;
-
-				case "team":
-					const team = JSON.parse(editorText) as GatewayTeam;
-					if (team.id) {
-						await apiClient.teams.editTeam(team.id, team);
-					} else {
-						await apiClient.teams.createTeam(team);
+				} else {
+					if (job.work_area_type === "project") {
+						await apiClient.jobs.createProjectJob(job.work_area_id, job);
+					} else if (job.work_area_type === "workspace") {
+						await apiClient.jobs.createWorkspaceJob(job.work_area_id, job);
 					}
-					break;
+				}
+				break;
 
-				case "instance":
-					const instance = JSON.parse(editorText) as NaosInstanceParameters;
-					await apiClient.naos.addInstance(instance);
-					break;
+			case "project":
+				await sendProject(editorText, apiClient);
+				break;
 
-				case "job":
-					const job = JSON.parse(editorText);
-					if (job.id && job.work_area_type && job.work_area_id) {
-						if (job.work_area_type === "project") {
-							await apiClient.jobs.updateProjectJob(job.work_area_id, job.id, job);
-						} else if (job.work_area_type === "workspace") {
-							await apiClient.jobs.updateWorkspaceJob(job.work_area_id, job.id, job);
-						}
-					} else {
-						if (job.work_area_type === "project") {
-							await apiClient.jobs.createProjectJob(job.work_area_id, job);
-						} else if (job.work_area_type === "workspace") {
-							await apiClient.jobs.createWorkspaceJob(job.work_area_id, job);
-						}
-					}
-					break;
+			case "workspace":
+				const workspace = JSON.parse(editorText) as Workspace;
+				if (workspace.id) {
+					await apiClient.workspaces.editWorkspace(workspace.id, undefined, workspace);
+				} else {
+					await apiClient.workspaces.createWorkspace(true, workspace);
+				}
+				break;
 
-				case "project":
-					await sendProject(editorText, apiClient);
-					break;
+			// TODO case "geofile":
+			// TODO case "coverage":
 
-				case "workspace":
-					const workspace = JSON.parse(editorText) as Workspace;
-					if (workspace.id) {
-						await apiClient.workspaces.editWorkspace(workspace.id, undefined, workspace);
-					} else {
-						await apiClient.workspaces.createWorkspace(true, workspace);
-					}
-					break;
-
-				// TODO case "geofile":
-				// TODO case "coverage":
-
-				default:
-					vscode.window.showErrorMessage("Unknown NAOS resource kind.");
-			}
-			vscode.commands.executeCommand("naos.refresh");
-		} catch (error) {
-			consoleNAOS.error(error as Error);
+			default:
+				vscode.window.showErrorMessage("Unknown NAOS resource kind.");
 		}
+		vscode.commands.executeCommand("naos.refresh");
+
 	});
 
 	registerNaosCommand("naos.refresh", () => {

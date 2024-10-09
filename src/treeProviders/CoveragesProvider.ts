@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { NaosClient } from '../naosclient';
 import { Coverage } from '../naosclient/models/Coverage';
+import { handleErrors } from '../utils';
 
 export class CoveragesProvider implements vscode.TreeDataProvider<Coverage> {
 
@@ -11,6 +12,7 @@ export class CoveragesProvider implements vscode.TreeDataProvider<Coverage> {
 	private _onDidChangeTreeData = new vscode.EventEmitter<any>();
 	readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
+	@handleErrors
 	async getChildren(element?: any) {
 		if (!element) {
 			return await this.api.coverages.getCoverages() as Coverage[];

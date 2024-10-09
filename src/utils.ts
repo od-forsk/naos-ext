@@ -1,9 +1,11 @@
 
 import { validate as uuidValidate, version as uuidVersion } from 'uuid';
 import * as vscode from 'vscode';
+import { catchError } from './decoration';
 import { consoleNAOS } from './extension';
-import { Workspace } from './naosclient/models/Workspace';
+import { ApiError } from './naosclient';
 import { Project } from './naosclient/models/Project';
+import { Workspace } from './naosclient/models/Workspace';
 
 export const validColor = new vscode.ThemeColor("naos.serviceStatus.valid");
 export const invalidColor = new vscode.ThemeColor("naos.serviceStatus.invalid");
@@ -38,4 +40,20 @@ export function getActiveEditorText() {
 export function isProject(workarea: Project | Workspace): workarea is Project {
     return (workarea as Workspace).project_id === undefined;
 }
+
+export const handleErrors = catchError((error: any) => {
+    if (error instanceof ApiError) {
+        consoleNAOS.error(JSON.stringify(error, undefined, 2));
+        vscode.window.showErrorMessage(error.message);
+    } else if (error instanceof Error) {
+        consoleNAOS.error(error);
+        vscode.window.showErrorMessage(error.message);
+    } else if (typeof error === "string") {
+        consoleNAOS.error(error);
+        vscode.window.showErrorMessage(error);
+    } else {
+        throw error;
+    }
+});
+
 
