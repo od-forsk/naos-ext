@@ -321,8 +321,29 @@ export function activate(context: vscode.ExtensionContext) {
 				}
 				break;
 
+			case "coverage":
+				const coverage = JSON.parse(editorText) as Coverage;
+				if (coverage.work_area?.type && coverage.work_area?.id) {
+					if (coverage.id) {
+						if (coverage.work_area?.type === "project") {
+							await apiClient.coverages.editProjectCoverage(coverage.work_area.id, coverage.id, coverage);
+						} else {
+							await apiClient.coverages.editWorkspaceCoverage(coverage.work_area.id, coverage.id, coverage);
+						}
+					} else {
+						if (coverage.work_area?.type === "project") {
+							await apiClient.coverages.createProjectCoverage(coverage.work_area.id, coverage);
+						} else {
+							await apiClient.coverages.createProjectCoverage(coverage.work_area.id, coverage);
+						}
+					}
+
+				} else {
+					throw new Error("Fill the 'work_area' property.");
+				}
+				break;
+
 			// TODO case "geofile":
-			// TODO case "coverage":
 
 			default:
 				vscode.window.showErrorMessage("Unknown NAOS resource kind.");
