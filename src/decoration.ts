@@ -6,7 +6,7 @@ export function decoratorOrHigherOrder(decorator: Decorator) {
     function decoratedDecorator(targetOrFn: any, propertyKey: string, descriptor: PropertyDescriptor): PropertyDescriptor;
     function decoratedDecorator(targetOrFn: any, propertyKey?: string, descriptor?: PropertyDescriptor
     ) {
-        let toDecorate: Fn = descriptor ? descriptor.value.bind(targetOrFn) : targetOrFn;
+        let toDecorate: Fn = descriptor ? descriptor.value : targetOrFn;
         const decorated = decorator(toDecorate);
         if (descriptor) {
             descriptor.value = decorated;
