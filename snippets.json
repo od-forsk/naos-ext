@@ -78,7 +78,18 @@
     },
     "NAOS Geofile": {
         "prefix": "geofile",
-        "body": [],
+        "body": [
+            "{",
+            "    \"name\": \"${1:name}\",",
+            "    \"uri\": \"${2:fileURL}\",",
+            "    \"geo_type\": \"${3|CLUTTER_CLASSES,CLUTTER_HEIGHTS,DTM,OTHER|}\",",
+            "    \"file_format\": \"${4|SHP,MIF,TAB,BIL,TIFF,BMP,IMG,GRD,GRC,ECW,PNG,JPEG|}\",",
+            "    \"graphics_type\": \"${5|RASTER,VECTOR|}\",",
+            "    \"tags\": [",
+            "        \"${6:location}\"",
+            "    ]$0",
+            "}"
+        ],
         "description": "NAOS Geofile"
     },
     "NAOS Coverage": {

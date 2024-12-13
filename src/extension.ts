@@ -230,7 +230,7 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 
 	registerNaosCommand("naos.geofile.delete", async (geofile: GeoFile) => {
-		await apiClient.geo.deleteGeoFile(geofile.id!, true);
+		await apiClient.geo.deleteGeoFile(geofile.id!, false);
 		await vscode.commands.executeCommand("naos.refresh");
 	});
 
@@ -343,7 +343,14 @@ export function activate(context: vscode.ExtensionContext) {
 				}
 				break;
 
-			// TODO case "geofile":
+			case "geofile":
+				const geofile = JSON.parse(editorText) as GeoFile;
+				if (geofile.id) {
+					await apiClient.geo.editGeoFile(geofile.id, geofile);
+				} else {
+					await apiClient.geo.createGeoFile(true, {geo_file: geofile});
+				}
+				break;
 
 			default:
 				vscode.window.showErrorMessage("Unknown NAOS resource kind.");

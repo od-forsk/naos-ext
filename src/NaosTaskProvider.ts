@@ -85,6 +85,7 @@ class NaosTaskTerminal implements vscode.Pseudoterminal {
         const baseURL = config.get<string>("gatewayURL");
         const host = new URL(baseURL!).host;
         const minLogLevel = config.get<number>("messages.minloglevel", 20);
+        this.write(`minimum log level: ${minLogLevel}\r\n`);
 
         let lastMessage = Date.now();
         const tasks: TaskDescribe[] = await this.apiClient.scheduler.schedulerProxyGet(`jobs/${job_id}/runs/${run_id}/tasks`);
