@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.7] - 2024-12-13
+
 ## Added
 
-- ".coverage/naos" files publish.
+- ".coverage.naos" files publish.
+- ".geofile.naos" files publish and snippet.
 
 ## [1.0.6] - 2024-10-10
 
