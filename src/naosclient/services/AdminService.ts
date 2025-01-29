@@ -22,6 +22,9 @@ export class AdminService {
      * @param email User email to look for
      * @param skip Number of items to skip.
      * @param limit Maximum number of items to return.
+     * @param orderBy Order by ressource fields. Multiple fields can be used separated by a comma,
+     * and order can be controlled by prepending fields with '+' (ascending, default) or '-' (descending).
+     *
      * @param prefer Prefer header according to RFC 7240.
      * Supported preferences:
      * - details: minimal/normal/full <br>Level of details on the targeted resource response. Defaults to 'normal' on listing APIs, and 'full' on single resources.
@@ -35,6 +38,7 @@ export class AdminService {
         email?: string,
         skip?: number,
         limit: number = 1000,
+        orderBy?: string,
         prefer?: string,
     ): CancelablePromise<Array<UserInfo>> {
         return this.httpRequest.request({
@@ -49,6 +53,7 @@ export class AdminService {
                 'email': email,
                 'skip': skip,
                 'limit': limit,
+                'order_by': orderBy,
             },
         });
     }
@@ -125,6 +130,9 @@ export class AdminService {
      * @param expiresTo Filter expiration date to (upper bound).
      * @param lastSeenFrom Filter last seen date from (lower bound).
      * @param lastSeenTo Filter last seen date to (upper bound).
+     * @param orderBy Order by ressource fields. Multiple fields can be used separated by a comma,
+     * and order can be controlled by prepending fields with '+' (ascending, default) or '-' (descending).
+     *
      * @returns UserToken Ok
      * @throws ApiError
      */
@@ -138,6 +146,7 @@ export class AdminService {
         expiresTo?: string,
         lastSeenFrom?: string,
         lastSeenTo?: string,
+        orderBy?: string,
     ): CancelablePromise<Array<UserToken>> {
         return this.httpRequest.request({
             method: 'GET',
@@ -154,6 +163,7 @@ export class AdminService {
                 'expires_to': expiresTo,
                 'last_seen_from': lastSeenFrom,
                 'last_seen_to': lastSeenTo,
+                'order_by': orderBy,
             },
             errors: {
                 403: `Current user is not admin`,
@@ -235,6 +245,9 @@ export class AdminService {
      * @param userId User identifier.
      * @param skip Number of items to skip.
      * @param limit Maximum number of items to return.
+     * @param orderBy Order by ressource fields. Multiple fields can be used separated by a comma,
+     * and order can be controlled by prepending fields with '+' (ascending, default) or '-' (descending).
+     *
      * @param prefer Prefer header according to RFC 7240.
      * Supported preferences:
      * - details: minimal/normal/full <br>Level of details on the targeted resource response. Defaults to 'normal' on listing APIs, and 'full' on single resources.
@@ -246,6 +259,7 @@ export class AdminService {
         userId: string,
         skip?: number,
         limit: number = 1000,
+        orderBy?: string,
         prefer?: string,
     ): CancelablePromise<Array<NaosInstance>> {
         return this.httpRequest.request({
@@ -260,6 +274,7 @@ export class AdminService {
             query: {
                 'skip': skip,
                 'limit': limit,
+                'order_by': orderBy,
             },
             errors: {
                 403: `Current user is not admin`,
@@ -453,6 +468,9 @@ export class AdminService {
      * ADMIN. List global active instances
      * @param skip Number of items to skip.
      * @param limit Maximum number of items to return.
+     * @param orderBy Order by ressource fields. Multiple fields can be used separated by a comma,
+     * and order can be controlled by prepending fields with '+' (ascending, default) or '-' (descending).
+     *
      * @param prefer Prefer header according to RFC 7240.
      * Supported preferences:
      * - details: minimal/normal/full <br>Level of details on the targeted resource response. Defaults to 'normal' on listing APIs, and 'full' on single resources.
@@ -464,6 +482,7 @@ export class AdminService {
     public getGlobalInstances(
         skip?: number,
         limit: number = 1000,
+        orderBy?: string,
         prefer?: string,
         matchPattern?: string,
     ): CancelablePromise<Array<NaosInstance>> {
@@ -476,6 +495,7 @@ export class AdminService {
             query: {
                 'skip': skip,
                 'limit': limit,
+                'order_by': orderBy,
                 'match_pattern': matchPattern,
             },
             errors: {
@@ -547,6 +567,9 @@ export class AdminService {
      * @param expiresTo Filter expiration date to (upper bound).
      * @param lastSeenFrom Filter last seen date from (lower bound).
      * @param lastSeenTo Filter last seen date to (upper bound).
+     * @param orderBy Order by ressource fields. Multiple fields can be used separated by a comma,
+     * and order can be controlled by prepending fields with '+' (ascending, default) or '-' (descending).
+     *
      * @returns UserToken Ok
      * @throws ApiError
      */
@@ -560,6 +583,7 @@ export class AdminService {
         expiresTo?: string,
         lastSeenFrom?: string,
         lastSeenTo?: string,
+        orderBy?: string,
     ): CancelablePromise<Array<UserToken>> {
         return this.httpRequest.request({
             method: 'GET',
@@ -574,6 +598,7 @@ export class AdminService {
                 'expires_to': expiresTo,
                 'last_seen_from': lastSeenFrom,
                 'last_seen_to': lastSeenTo,
+                'order_by': orderBy,
             },
             errors: {
                 403: `Current user is not admin`,

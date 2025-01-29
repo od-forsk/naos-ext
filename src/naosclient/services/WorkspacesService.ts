@@ -19,6 +19,9 @@ export class WorkspacesService {
      * @param modifiedTo Filter on ending modification date
      * @param technologies Determines the radio technologies for the query.
      * @param naosFilepathMode Map URI values in the response to the desired context
+     * @param orderBy Order by ressource fields. Multiple fields can be used separated by a comma,
+     * and order can be controlled by prepending fields with '+' (ascending, default) or '-' (descending).
+     *
      * @param prefer Prefer header according to RFC 7240.
      * Supported preferences:
      * - details: minimal/normal/full <br>Level of details on the targeted resource response. Defaults to 'normal' on listing APIs, and 'full' on single resources.
@@ -35,6 +38,7 @@ export class WorkspacesService {
         modifiedTo?: string,
         technologies?: Array<'5G_NR' | 'LTE' | 'NB_IOT' | 'UMTS' | '1XRTT' | 'GSM'>,
         naosFilepathMode?: 'atoll' | 'naos-service-win' | 'naos-service-linux',
+        orderBy?: string,
         prefer?: string,
     ): CancelablePromise<Array<Workspace> | ApiError> {
         return this.httpRequest.request({
@@ -51,6 +55,7 @@ export class WorkspacesService {
                 'modified_from': modifiedFrom,
                 'modified_to': modifiedTo,
                 'technologies': technologies,
+                'order_by': orderBy,
             },
         });
     }
@@ -82,7 +87,6 @@ export class WorkspacesService {
     }
     /**
      * Proxy GET to Data Access Service
-     * [Preview]
      * Forwards a GET request to the Naos Data Access Service.
      * The service along with its query parameters are specified in the 'route' parameter".
      *
@@ -113,7 +117,6 @@ export class WorkspacesService {
     }
     /**
      * Proxy POST to Data Access Service
-     * [Preview]
      * Forwards a POST request to the Naos Data Access Service.
      * The service along with its query parameters are specified in the 'route' parameter.
      *
@@ -148,7 +151,6 @@ export class WorkspacesService {
     }
     /**
      * Proxy PUT to Data Access Service
-     * [Preview]
      * Forwards a PUT request to the Naos Data Access Service.
      * The service along with its query parameters are specified in the 'route' parameter.
      *
@@ -183,7 +185,6 @@ export class WorkspacesService {
     }
     /**
      * Proxy PATCH to Data Access Service
-     * [Preview]
      * Forwards a PATCH request to the Naos Data Access Service.
      * The service along with its query parameters are specified in the 'route' parameter.
      *
@@ -218,7 +219,6 @@ export class WorkspacesService {
     }
     /**
      * Proxy DELETE to Data Access Service
-     * [Preview]
      * Forwards a DELETE request to the Naos Data Access Service.
      * The service along with its query parameters are specified in the 'route' parameter.
      *

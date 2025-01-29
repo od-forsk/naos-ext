@@ -16,11 +16,11 @@ export type CoverageDetails = (Coverage & {
          */
         server_mode?: CoverageDetails.server_mode;
         /**
-         * [NOT IMPLEMENTED] Server layer filtering
+         * [PREVIEW] Server layer filtering
          */
         server_layers?: Array<Reference> | null;
         /**
-         * [NOT IMPLEMENTED] Server channel filtering
+         * [PREVIEW] Server channel filtering
          */
         server_channels?: Array<Reference> | null;
         /**
@@ -38,7 +38,7 @@ export type CoverageDetails = (Coverage & {
             secondary_index?: number;
         };
         /**
-         * Standalone or Both. For now, only standalone is available.
+         * Standalone or Non standalone. Both is a placeholder and is for now mapped to NSA.
          *
          */
         cell_mode?: CoverageDetails.cell_mode;
@@ -84,12 +84,13 @@ export namespace CoverageDetails {
         BEST = 'best',
     }
     /**
-     * Standalone or Both. For now, only standalone is available.
+     * Standalone or Non standalone. Both is a placeholder and is for now mapped to NSA.
      *
      */
     export enum cell_mode {
         SA = 'SA',
         BOTH = 'Both',
+        NSA = 'NSA',
     }
 }
 

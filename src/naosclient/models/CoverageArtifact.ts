@@ -4,13 +4,7 @@
 /* eslint-disable */
 import type { Artifact } from './Artifact';
 export type CoverageArtifact = (Artifact & {
-    type?: CoverageArtifact.type;
+    type?: string;
     receiver_heights?: Array<number>;
 });
-export namespace CoverageArtifact {
-    export enum type {
-        RAW = 'raw',
-        TILED = 'tiled',
-    }
-}
 

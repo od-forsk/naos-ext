@@ -23,7 +23,7 @@
             "server_layers": {
               "type": "array",
               "nullable": true,
-              "description": "[NOT IMPLEMENTED] Server layer filtering",
+              "description": "[PREVIEW] Server layer filtering",
               "items": {
                 "$ref": "Reference.json"
               }
@@ -31,7 +31,7 @@
             "server_channels": {
               "type": "array",
               "nullable": true,
-              "description": "[NOT IMPLEMENTED] Server channel filtering",
+              "description": "[PREVIEW] Server channel filtering",
               "items": {
                 "$ref": "Reference.json"
               }
@@ -54,10 +54,11 @@
             },
             "cell_mode": {
               "type": "string",
-              "description": "Standalone or Both. For now, only standalone is available.\n",
+              "description": "Standalone or Non standalone. Both is a placeholder and is for now mapped to NSA.\n",
               "enum": [
                 "SA",
-                "Both"
+                "Both",
+                "NSA"
               ],
               "default": "SA"
             },

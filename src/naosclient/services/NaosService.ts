@@ -16,6 +16,9 @@ export class NaosService {
      * List user active instances
      * @param skip Number of items to skip.
      * @param limit Maximum number of items to return.
+     * @param orderBy Order by ressource fields. Multiple fields can be used separated by a comma,
+     * and order can be controlled by prepending fields with '+' (ascending, default) or '-' (descending).
+     *
      * @param prefer Prefer header according to RFC 7240.
      * Supported preferences:
      * - details: minimal/normal/full <br>Level of details on the targeted resource response. Defaults to 'normal' on listing APIs, and 'full' on single resources.
@@ -27,6 +30,7 @@ export class NaosService {
     public getInstances(
         skip?: number,
         limit: number = 1000,
+        orderBy?: string,
         prefer?: string,
         matchPattern?: string,
     ): CancelablePromise<Array<NaosInstance>> {
@@ -39,6 +43,7 @@ export class NaosService {
             query: {
                 'skip': skip,
                 'limit': limit,
+                'order_by': orderBy,
                 'match_pattern': matchPattern,
             },
         });
@@ -161,6 +166,7 @@ export class NaosService {
      * Only available for projects whose source type is Atl
      * @param instanceId Instance identifier.
      * @param historyMessage An optional message indicating the changes that were made to the document. If omitted, a default meaningful message will be generated.
+     * @param runInBackground Whether the operation should be executed asynchronously or not. If true, a **202** status code is returned with a *HateoasResponse* indicating the next uri to get the resuts later.
      * @returns Project Ok
      * @returns any Accepted
      * @throws ApiError
@@ -168,6 +174,7 @@ export class NaosService {
     public saveProject(
         instanceId: string,
         historyMessage?: string,
+        runInBackground: boolean = false,
     ): CancelablePromise<Project | any> {
         return this.httpRequest.request({
             method: 'PATCH',
@@ -177,6 +184,7 @@ export class NaosService {
             },
             query: {
                 'history_message': historyMessage,
+                'run_in_background': runInBackground,
             },
             errors: {
                 403: `Current user has no access to this instance`,

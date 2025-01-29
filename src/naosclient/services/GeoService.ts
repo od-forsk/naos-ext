@@ -58,6 +58,9 @@ export class GeoService {
      * @param uri Filter by URI. The URI is translated internally to perform the search. If provided, all other filters are ignored.
      * @param skip Number of items to skip.
      * @param limit Maximum number of items to return.
+     * @param orderBy Order by ressource fields. Multiple fields can be used separated by a comma,
+     * and order can be controlled by prepending fields with '+' (ascending, default) or '-' (descending).
+     *
      * @param naosFilepathMode Map URI values in the response to the desired context
      * @returns GeoFile Geo files
      * @throws ApiError
@@ -75,6 +78,7 @@ export class GeoService {
         uri?: string,
         skip?: number,
         limit: number = 1000,
+        orderBy?: string,
         naosFilepathMode?: 'atoll' | 'naos-service-win' | 'naos-service-linux',
     ): CancelablePromise<Array<GeoFile>> {
         return this.httpRequest.request({
@@ -96,6 +100,7 @@ export class GeoService {
                 'uri': uri,
                 'skip': skip,
                 'limit': limit,
+                'order_by': orderBy,
             },
             errors: {
                 400: `Bad request`,

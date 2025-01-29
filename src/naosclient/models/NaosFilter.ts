@@ -9,7 +9,8 @@ export type NaosFilter = {
      */
     geometry?: string;
     /**
-     * Data filter using the DAS filtering syntax, ie `<column>.<operator>.<value>`
+     * Data filter using the DAS filtering syntax, ie `<column>.<operator>.<value>`.
+     * For now, when applied on Naos projects, this only targets 'sites' attributes.
      *
      */
     data?: string;

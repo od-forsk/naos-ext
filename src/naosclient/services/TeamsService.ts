@@ -13,6 +13,9 @@ export class TeamsService {
      * ADMIN. List teams
      * @param skip Number of items to skip.
      * @param limit Maximum number of items to return.
+     * @param orderBy Order by ressource fields. Multiple fields can be used separated by a comma,
+     * and order can be controlled by prepending fields with '+' (ascending, default) or '-' (descending).
+     *
      * @param matchPattern Regular expression pattern used to match teams names
      * @returns GatewayTeam Ok
      * @throws ApiError
@@ -20,6 +23,7 @@ export class TeamsService {
     public getTeams(
         skip?: number,
         limit: number = 1000,
+        orderBy?: string,
         matchPattern?: string,
     ): CancelablePromise<Array<GatewayTeam>> {
         return this.httpRequest.request({
@@ -28,6 +32,7 @@ export class TeamsService {
             query: {
                 'skip': skip,
                 'limit': limit,
+                'order_by': orderBy,
                 'match_pattern': matchPattern,
             },
             errors: {

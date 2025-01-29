@@ -7,7 +7,7 @@
       "type": "string"
     },
     "data": {
-      "description": "Data filter using the DAS filtering syntax, ie `<column>.<operator>.<value>`\n",
+      "description": "Data filter using the DAS filtering syntax, ie `<column>.<operator>.<value>`.\nFor now, when applied on Naos projects, this only targets 'sites' attributes.\n",
       "type": "string"
     }
   },

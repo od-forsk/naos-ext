@@ -9,6 +9,7 @@ import { AdminService } from './services/AdminService';
 import { ArtifactsService } from './services/ArtifactsService';
 import { AuthService } from './services/AuthService';
 import { CoveragesService } from './services/CoveragesService';
+import { DataAccessServiceService } from './services/DataAccessServiceService';
 import { GeoService } from './services/GeoService';
 import { JobsService } from './services/JobsService';
 import { LicenseService } from './services/LicenseService';
@@ -26,6 +27,7 @@ export class NaosClient {
     public readonly artifacts: ArtifactsService;
     public readonly auth: AuthService;
     public readonly coverages: CoveragesService;
+    public readonly dataAccessService: DataAccessServiceService;
     public readonly geo: GeoService;
     public readonly jobs: JobsService;
     public readonly license: LicenseService;
@@ -41,7 +43,7 @@ export class NaosClient {
     constructor(config?: Partial<OpenAPIConfig>, HttpRequest: HttpRequestConstructor = AxiosHttpRequest) {
         this.request = new HttpRequest({
             BASE: config?.BASE ?? '/v1',
-            VERSION: config?.VERSION ?? '1.8.0',
+            VERSION: config?.VERSION ?? '1.9.0',
             WITH_CREDENTIALS: config?.WITH_CREDENTIALS ?? false,
             CREDENTIALS: config?.CREDENTIALS ?? 'include',
             TOKEN: config?.TOKEN,
@@ -54,6 +56,7 @@ export class NaosClient {
         this.artifacts = new ArtifactsService(this.request);
         this.auth = new AuthService(this.request);
         this.coverages = new CoveragesService(this.request);
+        this.dataAccessService = new DataAccessServiceService(this.request);
         this.geo = new GeoService(this.request);
         this.jobs = new JobsService(this.request);
         this.license = new LicenseService(this.request);

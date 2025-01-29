@@ -7,11 +7,7 @@
       "type": "object",
       "properties": {
         "type": {
-          "type": "string",
-          "enum": [
-            "raw",
-            "tiled"
-          ]
+          "type": "string"
         },
         "receiver_heights": {
           "type": "array",
