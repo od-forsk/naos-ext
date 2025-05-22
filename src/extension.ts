@@ -26,6 +26,7 @@ import { UsersProvider } from './treeProviders/UsersProvider';
 import { sendProject, WorkareasProvider } from './treeProviders/WorkareasProvider';
 import { getActiveEditorText, handleErrors, parseNaosURI, uuidValidateV4 } from './utils';
 import { RunDescribe } from './models/RunDescribe';
+import { NAOSConfigAgent } from './agent';
 
 export let consoleNAOS = vscode.window.createOutputChannel("NAOS-ext", { log: true });
 
@@ -371,6 +372,7 @@ export function activate(context: vscode.ExtensionContext) {
 		artifactsProvider.refresh();
 	});
 
+	registerChatTools(context);
 }
 
 export function deactivate() { }
@@ -401,4 +403,10 @@ function impersonate(apiClient: NaosClient, user: UserInfo, password: string) {
 		PASSWORD: password,
 	});
 	return impersonateClient;
+}
+
+export function registerChatTools(context: vscode.ExtensionContext) {
+  context.subscriptions.push(
+    vscode.lm.registerTool('naos-config-connection', new NAOSConfigAgent())
+  );
 }

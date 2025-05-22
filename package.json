@@ -545,6 +545,37 @@
         "language": "json",
         "path": "./snippets.json"
       }
+    ],
+    "languageModelTools": [
+      {
+        "name": "naos-config-connection",
+        "displayName": "NAOS Config Connection",
+        "canBeReferencedInPrompt": true,
+        "toolReferenceName": "naos-configConnection",
+        "icon": "resources/naos.svg",
+        "userDescription": "Set the NAOS server connection parameters in VSCode settings.",
+        "modelDescription": "Set the NAOS server connection parameters in VSCode settings. Returns a simple status message.",
+        "tags": [
+          "naos",
+          "config",
+          "settings",
+          "connection"
+        ],
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "protocol": {
+              "type": "string",
+              "description": "description",
+              "enum": [
+                "http",
+                "https"
+              ],
+              "default": "http"
+            }
+          }
+        }
+      }
     ]
   },
   "scripts": {
